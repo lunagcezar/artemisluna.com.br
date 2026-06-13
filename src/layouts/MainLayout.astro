@@ -1,0 +1,28 @@
+---
+export interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title ?? 'Artemis Luna'}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/art/">Arte</a>
+      <a href="/blog/">Blog</a>
+      <a href="/wiki/">Wiki</a>
+      <a href="/resume/">Currículo</a>
+    </nav>
+    <small>Artemis Luna © {new Date().getFullYear()}</small>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

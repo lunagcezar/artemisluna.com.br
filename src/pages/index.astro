@@ -1,17 +1,14 @@
 ---
-
+import MainLayout from '../layouts/MainLayout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout>
+  <h1>Artemis Luna</h1>
+  <nav>
+    <ul>
+      <li><a href="/art/">Arte</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/wiki/">Wiki</a></li>
+    </ul>
+  </nav>
+</MainLayout>

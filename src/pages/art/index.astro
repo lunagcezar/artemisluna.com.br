@@ -1,0 +1,22 @@
+---
+export const title = 'Arte';
+import MainLayout from '../../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('art')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<MainLayout>
+  <h1>Arte</h1>
+  <ul>
+    {entries.map((entry) => (
+      <li>
+        <a href={`/art/${entry.id}/`}>
+          {entry.data.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</MainLayout>

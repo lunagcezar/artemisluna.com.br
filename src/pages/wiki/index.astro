@@ -1,0 +1,22 @@
+---
+export const title = 'Wiki';
+import MainLayout from '../../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('wiki')).sort(
+  (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0),
+);
+---
+
+<MainLayout>
+  <h1>Wiki</h1>
+  <ul>
+    {entries.map((entry) => (
+      <li>
+        <a href={`/wiki/${entry.id}/`}>
+          {entry.data.title}
+        </a>
+      </li>
+    ))}
+  </ul>
+</MainLayout>
