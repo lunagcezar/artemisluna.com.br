@@ -1,11 +1,9 @@
 ---
 export const title = 'Arte';
 import MainLayout from '../../layouts/MainLayout.astro';
-import { getCollection } from 'astro:content';
+import { getSortedCollection } from '../../lib/collections';
 
-const entries = (await getCollection('art')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const entries = await getSortedCollection('art')
 ---
 
 <MainLayout>

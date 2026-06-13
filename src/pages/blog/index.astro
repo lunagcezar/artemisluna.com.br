@@ -1,11 +1,10 @@
 ---
 export const title = 'Blog';
 import MainLayout from '../../layouts/MainLayout.astro';
-import { getCollection } from 'astro:content';
+import { getSortedCollection } from '../../lib/collections';
 
-const entries = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const entries = await getSortedCollection('blog')
+
 ---
 
 <MainLayout>
