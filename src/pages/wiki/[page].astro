@@ -1,13 +1,15 @@
 ---
-import type { GetStaticPaths } from 'astro';
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import CollectionList from '@components/CollectionList.astro';
 import MainLayout from '@layouts/MainLayout.astro';
 import { getSortedCollection } from '@lib/collections';
 
-export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+export const getStaticPaths = (async ({ paginate }) => {
   const entries = await getSortedCollection('wiki');
   return paginate(entries, { pageSize: 10 });
-};
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { page } = Astro.props;
 ---
