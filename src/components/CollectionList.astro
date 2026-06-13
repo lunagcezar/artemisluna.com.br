@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Pagination from "./Pagination.astro";
+
+export interface Props {
+  title: string;
+  entries: CollectionEntry<"art" | "blog" | "wiki">[];
+  currentPage: number;
+  totalPages: number;
+  prevUrl?: string;
+  nextUrl?: string;
+}
+
+const { title, entries, currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
+---
+
+<h1>{title}</h1>
+<ul>
+  {entries.map((entry) => (
+    <li>
+      <a href={`/${entry.collection}/${entry.id}/`}>
+        {entry.data.title}
+      </a>
+    </li>
+  ))}
+</ul>
+<Pagination {currentPage} {totalPages} {prevUrl} {nextUrl} />

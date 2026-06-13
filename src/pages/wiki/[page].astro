@@ -1,0 +1,25 @@
+---
+import CollectionList from '@components/CollectionList.astro';
+import MainLayout from '@layouts/MainLayout.astro';
+import { getSortedCollection } from '@lib/collections';
+
+
+
+export async function getStaticPaths({ paginate }) {
+  const entries = await getSortedCollection('wiki');
+  return paginate(entries, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+---
+
+<MainLayout>
+  <CollectionList
+    title="Wiki"
+    entries={page.data}
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    prevUrl={page.url.prev}
+    nextUrl={page.url.next}
+  />
+</MainLayout>
