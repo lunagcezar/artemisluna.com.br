@@ -9,6 +9,8 @@
       "@pages/*": ["./src/pages/*"],
       "@lib/*": ["./src/lib/*"],
       "@styles/*": ["./src/styles/*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   }
 }
