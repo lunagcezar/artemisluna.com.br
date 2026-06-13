@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CollectionList from "./CollectionList.astro";
+import { getSortedCollection } from "@lib/collections";
+
+export interface Props {
+  collection: "art" | "blog" | "wiki";
+  title: string;
+  page?: number;
+  pageSize?: number;
+}
+
+const { collection, title, page = 1, pageSize = 10 } = Astro.props;
+const entries = await getSortedCollection(collection);
+const totalPages = Math.max(1, Math.ceil(entries.length / pageSize));
+const pageEntries = entries.slice((page - 1) * pageSize, page * pageSize);
+
+const prevUrl = page > 1 ? `/${collection}/${page - 1}/` : undefined;
+const nextUrl = page < totalPages ? `/${collection}/${page + 1}/` : undefined;
+---
+
+<CollectionList
+  title={title}
+  entries={pageEntries as CollectionEntry<"art" | "blog" | "wiki">[]}
+  currentPage={page}
+  totalPages={totalPages}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+/>

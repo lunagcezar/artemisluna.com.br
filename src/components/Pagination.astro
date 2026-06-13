@@ -11,37 +11,26 @@ const { currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
 
 {
   totalPages > 1 && (
-    <nav class="pagination">
-      {prevUrl ? <a href={prevUrl}>← Anterior</a> : <span class="disabled">← Anterior</span>}
+    <nav class="flex items-center justify-center gap-4 mt-8 py-4">
+      {prevUrl ? (
+        <a href={prevUrl} class="text-inherit underline">
+          ← Anterior
+        </a>
+      ) : (
+        <span class="opacity-40 cursor-default">← Anterior</span>
+      )}
 
-      <span class="info">
+      <span class="text-sm opacity-70">
         Página {currentPage} de {totalPages}
       </span>
 
-      {nextUrl ? <a href={nextUrl}>Próxima →</a> : <span class="disabled">Próxima →</span>}
+      {nextUrl ? (
+        <a href={nextUrl} class="text-inherit underline">
+          Próxima →
+        </a>
+      ) : (
+        <span class="opacity-40 cursor-default">Próxima →</span>
+      )}
     </nav>
   )
 }
-
-<style>
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding: 1rem 0;
-  }
-  a {
-    color: inherit;
-    text-decoration: underline;
-  }
-  .disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-  .info {
-    font-size: 0.875rem;
-    opacity: 0.7;
-  }
-</style>
