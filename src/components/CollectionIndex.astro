@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import CollectionList from "./CollectionList.astro";
 import { getSortedCollection } from "@lib/collections";
 
-export interface Props {
+interface Props {
   collection: "art" | "blog" | "wiki";
   title: string;
   page?: number;
@@ -15,6 +15,7 @@ const entries = await getSortedCollection(collection);
 const totalPages = Math.max(1, Math.ceil(entries.length / pageSize));
 const pageEntries = entries.slice((page - 1) * pageSize, page * pageSize);
 
+const baseUrl = `/${collection}/`;
 const prevUrl = page > 1 ? `/${collection}/${page - 1}/` : undefined;
 const nextUrl = page < totalPages ? `/${collection}/${page + 1}/` : undefined;
 ---
@@ -26,4 +27,5 @@ const nextUrl = page < totalPages ? `/${collection}/${page + 1}/` : undefined;
   totalPages={totalPages}
   prevUrl={prevUrl}
   nextUrl={nextUrl}
+  baseUrl={baseUrl}
 />

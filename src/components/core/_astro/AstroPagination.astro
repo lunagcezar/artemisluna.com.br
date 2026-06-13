@@ -1,0 +1,61 @@
+---
+import { getPaginationRange } from "@lib/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "../pagination";
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  prevUrl?: string;
+  nextUrl?: string;
+  baseUrl: string;
+}
+
+const { currentPage, totalPages, prevUrl, nextUrl, baseUrl } = Astro.props;
+const range = getPaginationRange(currentPage, totalPages);
+
+---
+
+{
+  totalPages > 1 && (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          {prevUrl ? (
+            <PaginationPrevious href={prevUrl} />
+          ) : (
+            <span class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50">
+              Anterior
+            </span>
+          )}
+        </PaginationItem>
+
+        {range.map((item, index) =>
+          item === "ellipsis" ? (
+            <PaginationItem key={`ellipsis-${index}`}>
+              <PaginationEllipsis />
+            </PaginationItem>
+          ) : (
+            <PaginationItem key={item}>
+              <PaginationLink
+                href={`${baseUrl}${item}/`}
+                isActive={item === currentPage}
+              >
+                {item}
+              </PaginationLink>
+            </PaginationItem>
+          )
+        )}
+
+        <PaginationItem>
+          {nextUrl ? (
+            <PaginationNext href={nextUrl} />
+          ) : (
+            <span class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50">
+              Próxima
+            </span>
+          )}
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  )
+}

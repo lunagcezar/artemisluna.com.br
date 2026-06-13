@@ -1,17 +1,18 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import Pagination from "./Pagination.astro";
+import AstroPagination from "./core/_astro/AstroPagination.astro";
 
-export interface Props {
+interface Props {
   title: string;
   entries: CollectionEntry<"art" | "blog" | "wiki">[];
   currentPage: number;
   totalPages: number;
   prevUrl?: string;
   nextUrl?: string;
+  baseUrl: string;
 }
 
-const { title, entries, currentPage, totalPages, prevUrl, nextUrl } = Astro.props;
+const {title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl} = Astro.props;
 ---
 
 <h1>{title}</h1>
@@ -24,4 +25,9 @@ const { title, entries, currentPage, totalPages, prevUrl, nextUrl } = Astro.prop
     </li>
   ))}
 </ul>
-<Pagination {currentPage} {totalPages} {prevUrl} {nextUrl} />
+
+<AstroPagination currentPage={currentPage}
+  totalPages={totalPages}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+  baseUrl={baseUrl} />

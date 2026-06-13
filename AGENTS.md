@@ -1,6 +1,17 @@
+# Frameworks used
+
+- Astro
+- React
+
+# UI Libraries used
+
+- shadcn/ui
+- Phosphor icons
+
 # Code quality
 
 - Always use SOLID and DRY;
+- Always check for skills already installed to improve the workflow;
 
 # Components
 
