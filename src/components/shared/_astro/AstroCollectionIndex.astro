@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import CollectionList from "./CollectionList.astro";
+import AstroCollectionList from "./AstroCollectionList.astro";
 import { getSortedCollection } from "@lib/collections";
 
 interface Props {
@@ -20,7 +20,7 @@ const prevUrl = page > 1 ? `/${collection}/${page - 1}/` : undefined;
 const nextUrl = page < totalPages ? `/${collection}/${page + 1}/` : undefined;
 ---
 
-<CollectionList
+<AstroCollectionList
   title={title}
   entries={pageEntries as CollectionEntry<"art" | "blog" | "wiki">[]}
   currentPage={page}

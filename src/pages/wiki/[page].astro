@@ -1,6 +1,6 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
-import CollectionIndex from '@components/CollectionIndex.astro';
+import AstroCollectionIndex from '@components/shared/_astro/AstroCollectionIndex.astro';
 import MainLayout from '@layouts/MainLayout.astro';
 import { getSortedCollection } from '@lib/collections';
 
@@ -15,5 +15,5 @@ const { page } = Astro.props;
 ---
 
 <MainLayout>
-  <CollectionIndex collection="wiki" title="Wiki" page={page.currentPage} />
+  <AstroCollectionIndex collection="wiki" title="Wiki" page={page.currentPage} />
 </MainLayout>

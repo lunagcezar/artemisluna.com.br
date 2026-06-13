@@ -1,6 +1,6 @@
 ---
 import MainLayout from '@layouts/MainLayout.astro';
-import EntryContent from '@components/EntryContent.astro';
+import AstroEntryContent from '@components/core/_astro/AstroEntryContent.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -18,6 +18,6 @@ const entry = Astro.props;
   <article>
     <h1>{entry.data.title}</h1>
     <time>{entry.data.date.toLocaleDateString('pt-BR')}</time>
-    <EntryContent entry={entry} />
+    <AstroEntryContent entry={entry} />
   </article>
 </MainLayout>
