@@ -13,6 +13,10 @@
 - Always use SOLID and DRY;
 - Always check for skills already installed to improve the workflow;
 
+# Tooling
+
+- Always use pnpm instead of npm
+
 # Components
 
 - The UI components must be organized in three folders, like an atomic design:
