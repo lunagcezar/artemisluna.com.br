@@ -5,14 +5,20 @@ import { cn } from "@lib/utils";
 
 type Props = {
   currentPath: string;
+  className?: string;
 };
 
-const { currentPath } = Astro.props;
+const { currentPath, className } = Astro.props;
 
 const activeSegment = getActiveSegment(currentPath);
 ---
 
-<nav class="fixed flex h-12 w-full items-center justify-between gap-4 border-b">
+<nav
+  class={cn(
+    "fixed flex w-full items-center justify-between gap-4 border-b",
+    className,
+  )}
+>
   <a href="/" class="font-bold">Luna G. Cezar</a>
   <div class="flex gap-4">
     {
@@ -20,7 +26,10 @@ const activeSegment = getActiveSegment(currentPath);
         const isActive = item.href.replace("/", "") === activeSegment;
         const Icon = item.icon;
         return (
-          <a href={item.href} class={cn(isActive && "font-bold")}>
+          <a
+            href={item.href}
+            class={cn(isActive && "font-bold", "flex items-center gap-2")}
+          >
             {Icon && <Icon weight="duotone" />}
             {item.label}
           </a>

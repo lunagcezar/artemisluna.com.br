@@ -16,7 +16,7 @@ const currentPath = Astro.url.pathname;
     <meta name="viewport" content="width=device-width" />
     <title>{title ?? "Artemis Luna"}</title>
   </head>
-  <body>
+  <body class="grid min-h-screen w-full">
     <AstroPageShell currentPath={currentPath}>
       <slot />
     </AstroPageShell>

@@ -16,21 +16,23 @@ const { title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl } =
   Astro.props;
 ---
 
-<h1>{title}</h1>
-<ul>
-  {
-    entries.map((entry) => (
-      <li>
-        <a href={`/${entry.collection}/${entry.id}/`}>{entry.data.title}</a>
-      </li>
-    ))
-  }
-</ul>
+<div class="grid gap-4">
+  <h1>{title}</h1>
+  <ul class="grid grid-flow-row gap-2">
+    {
+      entries.map((entry) => (
+        <li>
+          <a href={`/${entry.collection}/${entry.id}/`}>{entry.data.title}</a>
+        </li>
+      ))
+    }
+  </ul>
 
-<AstroPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  prevUrl={prevUrl}
-  nextUrl={nextUrl}
-  baseUrl={baseUrl}
-/>
+  <AstroPagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    prevUrl={prevUrl}
+    nextUrl={nextUrl}
+    baseUrl={baseUrl}
+  />
+</div>

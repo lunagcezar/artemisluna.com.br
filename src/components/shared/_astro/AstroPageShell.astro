@@ -1,15 +1,22 @@
 ---
 import { TooltipProvider } from "@components/core/tooltip";
 import AstroNavbar from "./AstroNavbar.astro";
+import { cn } from "@lib/utils";
 
 type Props = {
   currentPath: string;
+  className?: string;
 };
 
-const { currentPath } = Astro.props;
+const { currentPath, className } = Astro.props;
 ---
 
 <TooltipProvider client:load>
-  <AstroNavbar currentPath={currentPath} />
-  <main class="mt-16"><slot /></main>
+  <AstroNavbar
+    currentPath={currentPath}
+    className="inset-x-0 mx-auto h-12 w-1/2"
+  />
+  <main class={cn("mt-12 w-1/2 justify-self-center", className)}>
+    <slot />
+  </main>
 </TooltipProvider>
