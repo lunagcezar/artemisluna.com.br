@@ -1,5 +1,5 @@
 ---
-import { PageShell } from "@components/shared/page-shell";
+import AstroPageShell from "@components/shared/_astro/AstroPageShell.astro";
 import "@styles/global.css";
 
 export interface Props {
@@ -17,8 +17,8 @@ const currentPath = Astro.url.pathname;
     <title>{title ?? "Artemis Luna"}</title>
   </head>
   <body>
-    <PageShell currentPath={currentPath} client:load>
+    <AstroPageShell currentPath={currentPath}>
       <slot />
-    </PageShell>
+    </AstroPageShell>
   </body>
 </html>

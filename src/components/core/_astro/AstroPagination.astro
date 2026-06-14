@@ -1,18 +1,25 @@
 ---
 import { getPaginationRange } from "@lib/pagination";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationEllipsis, PaginationLink, PaginationNext } from "../pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationEllipsis,
+  PaginationLink,
+  PaginationNext,
+} from "../pagination";
 
-interface Props {
+type Props = {
   currentPage: number;
   totalPages: number;
   prevUrl?: string;
   nextUrl?: string;
   baseUrl: string;
-}
+};
 
 const { currentPage, totalPages, prevUrl, nextUrl, baseUrl } = Astro.props;
 const range = getPaginationRange(currentPage, totalPages);
-
 ---
 
 {
@@ -43,7 +50,7 @@ const range = getPaginationRange(currentPage, totalPages);
                 {item}
               </PaginationLink>
             </PaginationItem>
-          )
+          ),
         )}
 
         <PaginationItem>

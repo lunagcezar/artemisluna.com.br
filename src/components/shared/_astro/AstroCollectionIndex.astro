@@ -3,12 +3,12 @@ import type { CollectionEntry } from "astro:content";
 import AstroCollectionList from "./AstroCollectionList.astro";
 import { getSortedCollection } from "@lib/collections";
 
-interface Props {
+type Props = {
   collection: "art" | "blog" | "wiki";
   title: string;
   page?: number;
   pageSize?: number;
-}
+};
 
 const { collection, title, page = 1, pageSize = 10 } = Astro.props;
 const entries = await getSortedCollection(collection);

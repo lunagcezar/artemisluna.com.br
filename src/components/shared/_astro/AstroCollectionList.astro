@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 
-interface Props {
+type Props = {
   title: string;
   entries: CollectionEntry<"art" | "blog" | "wiki">[];
   currentPage: number;
@@ -10,24 +10,27 @@ interface Props {
   prevUrl?: string;
   nextUrl?: string;
   baseUrl: string;
-}
+};
 
-const {title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl} = Astro.props;
+const { title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl } =
+  Astro.props;
 ---
 
 <h1>{title}</h1>
 <ul>
-  {entries.map((entry) => (
-    <li>
-      <a href={`/${entry.collection}/${entry.id}/`}>
-        {entry.data.title}
-      </a>
-    </li>
-  ))}
+  {
+    entries.map((entry) => (
+      <li>
+        <a href={`/${entry.collection}/${entry.id}/`}>{entry.data.title}</a>
+      </li>
+    ))
+  }
 </ul>
 
-<AstroPagination currentPage={currentPage}
+<AstroPagination
+  currentPage={currentPage}
   totalPages={totalPages}
   prevUrl={prevUrl}
   nextUrl={nextUrl}
-  baseUrl={baseUrl} />
+  baseUrl={baseUrl}
+/>
