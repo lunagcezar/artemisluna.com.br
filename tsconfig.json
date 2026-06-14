@@ -10,7 +10,6 @@
       "@lib/*": ["./src/lib/*"],
       "@styles/*": ["./src/styles/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@types/*": ["./src/types/*"],
       "@constants/*": ["./src/constants/*"]
     },
     "jsx": "react-jsx",
