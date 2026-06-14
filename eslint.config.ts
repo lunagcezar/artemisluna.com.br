@@ -15,6 +15,7 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat["jsx-runtime"],
   {
     files: ["**/*.md"],
     plugins: { markdown },
