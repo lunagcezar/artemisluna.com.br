@@ -2,7 +2,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
@@ -31,18 +30,13 @@ export function AppSidebar({ currentPath = "" }: { currentPath?: string }) {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="font-bold">Luna G. Cezar</SidebarHeader>
       <SidebarContent>
         {navItems.map((item) => {
           const isActive = item.href.replace("/", "") === activeSegment;
           return (
             <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                isActive={isActive}
-                asChild
-                tooltip={item.label}
-              >
-                <a href={item.href} className="w-full">
+              <SidebarMenuButton isActive={isActive} asChild>
+                <a href={item.href}>
                   {item.icon && <>{item.icon}</>}
                   {item.label}
                 </a>

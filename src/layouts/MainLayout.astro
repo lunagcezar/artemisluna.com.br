@@ -17,7 +17,7 @@ const currentPath = Astro.url.pathname;
     <title>{title ?? "Artemis Luna"}</title>
   </head>
   <body>
-    <PageShell currentPath={currentPath}>
+    <PageShell currentPath={currentPath} client:load>
       <slot />
     </PageShell>
   </body>
