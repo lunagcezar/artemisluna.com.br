@@ -34,7 +34,7 @@ mount /dev/mapper/${DEVICE_MAPPER_NAME} ${MOUNT_POINT}
 **Variables:**
 
 - **YOUR_DRIVE**: Your drive identification, like `/dev/sda` or UUID;
-- **PATH_TO_KEY_FILE**: The path for the key file that you created in the [Encrypt second drive when the first is encrypted with TPM](/wiki/linux/encryption/encrypt-second-drive-when-the-first-is-encrypted-with-tpm/) guide;
+- **PATH_TO_KEY_FILE**: The path for the key file that you created in the [[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]] guide;
 - **DEVICE_MAPPER_NAME**: A chosen name by you for the device. It can be any name.
 - **MOUNT_POINT**: The directory that will show the directories of your encrypted partition.
 

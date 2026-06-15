@@ -106,8 +106,9 @@ Art-only helpers are in `src/lib/art.ts`:
 
 ## Foam (VSCode) configuration
 
-- Foam is used as a note-taking helper in VSCode, but wiki pages are built as plain Markdown. Do not rely on Foam-generated link-reference definitions in `src/content/wiki/` files; they are not rewritten at build time.
-- Link to other wiki articles with standard Markdown links using root-relative URLs, e.g. `[CMakeLists](/wiki/programming/cmake/cmakelists/)`.
+- Foam is used as a note-taking helper in VSCode. Wiki pages are built as plain Markdown, but Foam-style wikilinks and link-reference definitions are rewritten to real `/wiki/<id>/` URLs at build time by the custom remark plugin in `src/lib/remark-wiki-links.ts`.
+- The plugin resolves link text / filenames against the markdown files in `src/content/wiki/` and only runs on files inside that folder.
+- Link to other wiki articles with Foam wikilinks (`[[filename]]` / `[[filename|alias]]`) or standard Markdown links using root-relative URLs, e.g. `[CMakeLists](/wiki/programming/cmake/cmakelists/)`.
 
 ## Wiki metadata convention
 
