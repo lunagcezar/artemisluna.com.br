@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { Badge } from "@components/core/badge";
+import { Card } from "@components/core/card";
 
 type Props = {
   entry: CollectionEntry<"art">;
@@ -54,21 +55,30 @@ function resolveImage(src: string): string | ImageMetadata {
     </div>
   </div>
 
-  <div class="columns-1 gap-4 sm:columns-2">
+  <div class="grid grid-cols-1 gap-2">
     {
       data.images?.map((img) => {
         const resolved = resolveImage(img.src);
         const src = typeof resolved === "string" ? resolved : resolved.src;
 
         return (
-          <figure class="border-border bg-background mb-4 break-inside-avoid overflow-hidden rounded-lg border">
-            <img src={src} alt={img.alt} loading="lazy" class="h-auto w-full" />
-            {img.caption && (
-              <figcaption class="text-muted-foreground p-3 text-sm">
-                {img.caption}
-              </figcaption>
-            )}
-          </figure>
+          <a href={src}>
+            <Card className="p-0">
+              <figure class="break-inside-avoid overflow-hidden">
+                <img
+                  src={src}
+                  alt={img.alt}
+                  loading="lazy"
+                  class="h-auto w-full"
+                />
+                {img.caption && (
+                  <figcaption class="text-muted-foreground p-3 text-sm">
+                    {img.caption}
+                  </figcaption>
+                )}
+              </figure>
+            </Card>
+          </a>
         );
       })
     }
