@@ -67,14 +67,5 @@ const items = NAV_ITEMS.map((item) => {
         if (labels[locale]) el.textContent = labels[locale];
       } catch (_) {}
     });
-
-    var themeCookie = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
-    var theme = themeCookie ? themeCookie[1] : null;
-    var isDark =
-      theme === "dark" ||
-      (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    }
   })();
 </script>

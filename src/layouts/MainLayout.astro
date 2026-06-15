@@ -15,6 +15,19 @@ const currentPath = Astro.url.pathname;
 
 <html lang="pt">
   <head>
+    <script is:inline>
+      (function () {
+        var themeCookie = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
+        var theme = themeCookie ? themeCookie[1] : null;
+        var isDark =
+          theme === "dark" ||
+          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     {description && <meta name="description" content={description} />}
