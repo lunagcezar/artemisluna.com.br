@@ -12,4 +12,4 @@ tags:
 
 **Created:** 2024-04-10
 
-Build file for [CMake](/wiki/programming/cmake/)
+Build file for CMake

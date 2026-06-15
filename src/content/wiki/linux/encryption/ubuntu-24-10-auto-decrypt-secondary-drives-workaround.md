@@ -13,7 +13,7 @@ tags:
 
 **Created:** 2024-10-12
 
-If you are upgrading Ubuntu from version 24.04 to 24.10 and used the [Encrypt second drive when the first is encrypted with TPM](/wiki/linux/encryption/encrypt-second-drive-when-the-first-is-encrypted-with-tpm/) guide, you'll probably notice that the boot process is much slower and the auto mount for secondary encrypted drives doesn't work, entering in the emergency mode.
+If you are upgrading Ubuntu from version 24.04 to 24.10 and used the [[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]] guide, you'll probably notice that the boot process is much slower and the auto mount for secondary encrypted drives doesn't work, entering in the emergency mode.
 
 To solve this problem, you need to comment or exclude the references to the encrypted secondary drives listed in the `/etc/crypttab` and `/etc/fstab` files.
 
@@ -78,3 +78,5 @@ sudo systemctl enable fix-auto-crypt-mount.service
 ## References
 
 1. [Running a sudo command automatically on startup](https://unix.stackexchange.com/questions/645914/running-a-sudo-command-automatically-on-startup)
+
+[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]: encrypt-second-drive-when-the-first-is-encrypted-with-tpm "Encrypt second drive when the first is encrypted with TPM"
