@@ -15,13 +15,7 @@ const { data } = entry;
 
 const isImageMetadata = typeof resolvedImage !== "string";
 
-const badges = [
-  data.type,
-  data.category,
-  data.medium,
-  ...(data.series ? [data.series] : []),
-  ...data.tags,
-];
+const badges = [...data.tags];
 ---
 
 <a

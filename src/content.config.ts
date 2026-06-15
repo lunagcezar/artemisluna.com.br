@@ -2,40 +2,11 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-const artType = z.enum(["digital", "traditional"]);
-const artCategory = z.enum([
-  "drawing",
-  "illustration",
-  "mixed-media",
-  "other",
-  "painting",
-  "ui-design",
-]);
-const artMedium = z.enum([
-  "acrylic",
-  "charcoal",
-  "colored-pencil",
-  "digital-painting",
-  "gouache",
-  "ink",
-  "mixed-media",
-  "oil",
-  "oil-pastel",
-  "pastel",
-  "pencil",
-  "watercolor",
-  "other",
-]);
-
 const art = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/art" }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    type: artType,
-    category: artCategory,
-    medium: artMedium,
-    series: z.string().optional(),
     tags: z.array(z.string()),
     date: z.coerce.date(),
     author: z.string().optional(),

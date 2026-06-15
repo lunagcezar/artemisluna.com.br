@@ -1,10 +1,6 @@
 ---
 title: "Lagoa das Almecegas Trairi (Monochrome)"
 description: "Monochrome urban sketch of Lagoa das Almecegas in Trairi."
-type: "traditional"
-category: "drawing"
-medium: "ink"
-series: "urban-sketching"
 tags: ["ink", "drawing", "urban-sketching", "monochrome"]
 date: 2025-04-16
 author: Luna G. Cezar

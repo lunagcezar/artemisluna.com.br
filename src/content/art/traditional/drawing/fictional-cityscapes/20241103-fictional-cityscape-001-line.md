@@ -1,10 +1,6 @@
 ---
 title: "Fictional Cityscape 001 Line"
 description: "Ink line drawing of a fictional cityscape."
-type: "traditional"
-category: "drawing"
-medium: "ink"
-series: "fictional-cityscapes"
 tags: ["ink", "drawing", "fictional-cityscapes", "line"]
 date: 2024-11-03
 author: Luna G. Cezar

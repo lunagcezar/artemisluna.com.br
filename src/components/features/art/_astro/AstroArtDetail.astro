@@ -30,28 +30,10 @@ function resolveImage(src: string): string | ImageMetadata {
     <h1 class="text-3xl font-semibold tracking-tight">{data.title}</h1>
 
     <p class="text-muted-foreground text-sm">
-      {data.type}
-      {" · "}
-      {data.category}
-      {" · "}
-      {data.medium}
-      {
-        data.series && (
-          <>
-            {" · "}
-            {data.series}
-          </>
-        )
-      }
-      {" · "}
       {data.date.toLocaleDateString("pt-BR")}
     </p>
 
     <div class="flex flex-wrap gap-1.5">
-      <Badge variant="default">{data.type}</Badge>
-      <Badge variant="secondary">{data.category}</Badge>
-      <Badge variant="outline">{data.medium}</Badge>
-      {data.series && <Badge variant="outline">{data.series}</Badge>}
       {data.tags.map((tag) => <Badge variant="ghost">{tag}</Badge>)}
     </div>
   </div>
