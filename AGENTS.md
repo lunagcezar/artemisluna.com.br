@@ -144,12 +144,11 @@ See `docs/remark-wiki-links.md` for full implementation details.
 
 Client-side locale detection for UI strings. No server routing or content restructuring.
 
-- **Translation map** — `src/i18n/labels.ts` exports `ptLabels` mapping collection names to their Portuguese equivalents. Unmapped collections fall back to English via `formatSegment()`.
-- **UI strings** — `src/i18n/ui.ts` exports `ui` (translation map), `getLocale()` (reads `locale` cookie or `navigator.language`), and `t(key)` (returns translated string for current locale). Add new UI strings here.
+- **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key.
 - **Bilingual rendering** — Nav item labels are embedded as `data-en`/`data-pt` attributes on the server-rendered HTML. A script or React component swaps textContent based on locale.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React, shadcn `DropdownMenu`). Reads cookie, swaps `[data-pt]`/`[data-en]` text, persists choice.
-- **Segment / tag translations** —`src/i18n/labels.ts` exports `ptSegmentLabels` (dot-notation keys like `art.gouache`) and `createTranslateLabel(collection)` which returns a `TranslateLabel = (segment) => { en, pt }` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroRecursiveChildFolders`, `AstroArtCard`).
+- **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroRecursiveChildFolders`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
 - See `docs/i18n.md` for the full pattern reference.
 
 # Theme / Dark Mode

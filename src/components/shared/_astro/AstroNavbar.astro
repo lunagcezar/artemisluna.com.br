@@ -2,7 +2,7 @@
 import { NAV_ITEMS } from "@constants/navigation";
 import { getActiveSegment } from "@lib/url";
 import { cn } from "@lib/utils";
-import { ptLabels, SUPPORTED_LOCALES } from "@i18n/labels";
+import { translations, SUPPORTED_LOCALES } from "@i18n/labels";
 import LocaleSwitcher from "@components/shared/locale-switcher";
 import ThemeSwitcher from "@components/shared/theme-switcher";
 
@@ -19,7 +19,8 @@ const items = NAV_ITEMS.map((item) => {
   const name = item.href.replace("/", "");
   const labels: Record<string, string> = { en: item.label };
   for (const locale of SUPPORTED_LOCALES) {
-    if (locale !== "en") labels[locale] = ptLabels[name] ?? item.label;
+    if (locale !== "en")
+      labels[locale] = translations[locale]?.[name] ?? item.label;
   }
   return { href: item.href, labels };
 });

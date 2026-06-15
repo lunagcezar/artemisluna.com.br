@@ -8,7 +8,7 @@ import {
 } from "@components/core/dropdown-menu";
 import { cn } from "@lib/utils";
 import { setCookie } from "@lib/cookie";
-import { t } from "@i18n/ui";
+import { t } from "@i18n/labels";
 
 type Theme = "light" | "dark";
 
