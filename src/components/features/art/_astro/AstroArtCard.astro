@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Badge } from "@components/core/badge";
@@ -12,8 +13,7 @@ type Props = {
 const { entry, resolvedImage } = Astro.props;
 const { data } = entry;
 
-const imageSrc =
-  typeof resolvedImage === "string" ? resolvedImage : resolvedImage.src;
+const isImageMetadata = typeof resolvedImage !== "string";
 
 const badges = [
   data.type,
@@ -31,12 +31,22 @@ const badges = [
   <span class="sr-only">{data.title}</span>
 
   <Card className="relative aspect-square overflow-hidden p-0">
-    <img
-      src={imageSrc}
-      alt={data.images[0]?.alt ?? data.title}
-      loading="lazy"
-      class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-    />
+    {
+      isImageMetadata ? (
+        <Image
+          src={resolvedImage}
+          alt={data.images[0]?.alt ?? data.title}
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : (
+        <img
+          src={resolvedImage}
+          alt={data.images[0]?.alt ?? data.title}
+          loading="lazy"
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      )
+    }
 
     <div
       class="absolute inset-0 flex flex-col justify-end bg-black/60 p-4 opacity-0 transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100"
