@@ -1,5 +1,4 @@
 ---
-import { formatSegment } from "@lib/collections";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -8,14 +7,16 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "../breadcrumb";
+import type { TranslateLabel } from "@i18n/labels";
 
 type Props = {
   slug?: string;
   baseUrl: string;
   baseLabel: string;
+  translateLabel: TranslateLabel;
 };
 
-const { baseUrl, baseLabel, slug } = Astro.props;
+const { baseUrl, baseLabel, slug, translateLabel } = Astro.props;
 
 const segments = slug ? slug.split("/") : [];
 ---
@@ -30,16 +31,23 @@ const segments = slug ? slug.split("/") : [];
       segments.map((segment, index) => {
         const isLast = index === segments.length - 1;
         const path = segments.slice(0, index + 1).join("/");
+        const { en, pt } = translateLabel(segment);
 
         return (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               {isLast ? (
-                <BreadcrumbPage>{formatSegment(segment)}</BreadcrumbPage>
+                <BreadcrumbPage data-en={en} data-pt={pt}>
+                  {en}
+                </BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={`${baseUrl}${path}/`}>
-                  {formatSegment(segment)}
+                <BreadcrumbLink
+                  href={`${baseUrl}${path}/`}
+                  data-en={en}
+                  data-pt={pt}
+                >
+                  {en}
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

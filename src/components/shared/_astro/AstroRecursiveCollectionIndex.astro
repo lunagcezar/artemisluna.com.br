@@ -5,6 +5,7 @@ import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBrea
 import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { formatSegment } from "@lib/collections";
+import { createTranslateLabel } from "@i18n/labels";
 
 type Props = {
   collection: "blog" | "wiki";
@@ -33,6 +34,7 @@ const {
 const segments = slug ? slug.split("/") : [];
 const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
 const rootUrl = `/${collection}/`;
+const translateLabel = createTranslateLabel(collection);
 ---
 
 <div class="grid gap-6">
@@ -41,12 +43,17 @@ const rootUrl = `/${collection}/`;
       baseUrl={rootUrl}
       baseLabel={baseLabel}
       slug={slug}
+      translateLabel={translateLabel}
     />
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>
 
-  <AstroRecursiveChildFolders baseUrl={baseUrl} childFolders={childFolders} />
+  <AstroRecursiveChildFolders
+    baseUrl={baseUrl}
+    childFolders={childFolders}
+    translateLabel={translateLabel}
+  />
 
   {indexEntry && <AstroEntryContent entry={indexEntry} />}
 

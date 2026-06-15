@@ -10,12 +10,14 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
+import { createTranslateLabel } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   return await getIndexAndDetailPaths("art");
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
+const translateLabel = createTranslateLabel("art");
 
 const filtered = mode === "index" ? filterEntriesByPrefix(entries, slug) : [];
 const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
@@ -35,7 +37,7 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
   <div class="container mx-auto px-4 py-8">
     {
       mode === "detail" ? (
-        <AstroArtDetail entry={entry} />
+        <AstroArtDetail entry={entry} translateLabel={translateLabel} />
       ) : (
         <AstroArtGallery
           collection="art"

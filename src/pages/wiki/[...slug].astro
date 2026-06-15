@@ -13,12 +13,14 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
+import { createTranslateLabel } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   return await getIndexAndDetailPaths("wiki");
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
+const translateLabel = createTranslateLabel("wiki");
 
 const indexEntry = mode === "index" ? findIndexEntry(entries, slug) : undefined;
 const filtered =
@@ -49,9 +51,18 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
             </h1>
             {entry.data.tags.length > 0 && (
               <div class="flex flex-wrap gap-1.5">
-                {entry.data.tags.map((tag) => (
-                  <Badge variant="secondary">{tag}</Badge>
-                ))}
+                {entry.data.tags.map((tag) => {
+                  const labels = translateLabel(tag);
+                  return (
+                    <Badge
+                      variant="secondary"
+                      data-en={labels.en}
+                      data-pt={labels.pt}
+                    >
+                      {labels.en}
+                    </Badge>
+                  );
+                })}
               </div>
             )}
           </div>

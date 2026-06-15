@@ -5,12 +5,14 @@ import type { ImageMetadata } from "astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { Badge } from "@components/core/badge";
 import { Card } from "@components/core/card";
+import type { TranslateLabel } from "@i18n/labels";
 
 type Props = {
   entry: CollectionEntry<"art">;
+  translateLabel?: TranslateLabel;
 };
 
-const { entry } = Astro.props;
+const { entry, translateLabel } = Astro.props;
 const { data } = entry;
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
@@ -34,7 +36,16 @@ function resolveImage(src: string): string | ImageMetadata {
     </p>
 
     <div class="flex flex-wrap gap-1.5">
-      {data.tags.map((tag) => <Badge variant="ghost">{tag}</Badge>)}
+      {
+        data.tags.map((tag) => {
+          const labels = translateLabel?.(tag);
+          return (
+            <Badge variant="ghost" data-en={labels?.en} data-pt={labels?.pt}>
+              {labels?.en ?? tag}
+            </Badge>
+          );
+        })
+      }
     </div>
   </div>
 

@@ -4,18 +4,18 @@ import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Badge } from "@components/core/badge";
 import { Card } from "@components/core/card";
+import type { TranslateLabel } from "@i18n/labels";
 
 type Props = {
   entry: CollectionEntry<"art">;
   resolvedImage: string | ImageMetadata;
+  translateLabel: TranslateLabel;
 };
 
-const { entry, resolvedImage } = Astro.props;
+const { entry, resolvedImage, translateLabel } = Astro.props;
 const { data } = entry;
 
 const isImageMetadata = typeof resolvedImage !== "string";
-
-const badges = [...data.tags];
 ---
 
 <a
@@ -51,14 +51,19 @@ const badges = [...data.tags];
 
       <div class="mt-2 flex flex-wrap gap-1.5">
         {
-          badges.map((badge) => (
-            <Badge
-              variant="outline"
-              className="h-auto border-white/30 bg-white/10 px-1.5 py-0.5 text-[10px] text-white"
-            >
-              {badge}
-            </Badge>
-          ))
+          data.tags.map((tag) => {
+            const { en, pt } = translateLabel(tag);
+            return (
+              <Badge
+                variant="outline"
+                className="h-auto border-white/30 bg-white/10 px-1.5 py-0.5 text-[10px] text-white"
+                data-en={en}
+                data-pt={pt}
+              >
+                {en}
+              </Badge>
+            );
+          })
         }
       </div>
     </div>

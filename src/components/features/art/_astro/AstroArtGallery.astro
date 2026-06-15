@@ -7,6 +7,7 @@ import { resolveArtImage } from "@lib/art";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
+import { createTranslateLabel } from "@i18n/labels";
 
 type Props = {
   collection: "art";
@@ -25,6 +26,7 @@ const segments = slug ? slug.split("/") : [];
 const baseLabel = formatSegment(collection);
 const rootUrl = `/${collection}/`;
 const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
+const translateLabel = createTranslateLabel(collection);
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/art/**/*.{jpg,jpeg,png,webp,gif}",
@@ -38,12 +40,17 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
       baseUrl={rootUrl}
       baseLabel={baseLabel}
       slug={slug}
+      translateLabel={translateLabel}
     />
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>
 
-  <AstroRecursiveChildFolders baseUrl={baseUrl} childFolders={childFolders} />
+  <AstroRecursiveChildFolders
+    baseUrl={baseUrl}
+    childFolders={childFolders}
+    translateLabel={translateLabel}
+  />
 
   <section
     aria-label="Artworks"
@@ -56,7 +63,13 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
           ? resolveArtImage(firstImage.src, imageModules)
           : "";
 
-        return <AstroArtCard entry={entry} resolvedImage={resolved} />;
+        return (
+          <AstroArtCard
+            entry={entry}
+            resolvedImage={resolved}
+            translateLabel={translateLabel}
+          />
+        );
       })
     }
   </section>

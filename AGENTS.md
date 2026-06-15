@@ -102,7 +102,7 @@ Art-only helpers are in `src/lib/art.ts`:
 - Images are resolved at build time with `import.meta.glob`, so assets are hashed and emitted to `/_astro/`.
 - The gallery uses a CSS-column masonry layout (`columns-1 sm:columns-2 lg:columns-3`) with `break-inside-avoid`.
 - Child-folder links are rendered as badge links under each index heading.
-- Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`.
+- Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`, with bilingual labels via a `translateLabel` prop.
 
 ## Remark Wiki Links plugin
 
@@ -148,6 +148,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Bilingual rendering** — Nav item labels are embedded as `data-en`/`data-pt` attributes on the server-rendered HTML. A script or React component swaps textContent based on locale.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React, shadcn `DropdownMenu`). Reads cookie, swaps `[data-pt]`/`[data-en]` text, persists choice.
+- **Segment / tag translations** —`src/i18n/labels.ts` exports `ptSegmentLabels` (dot-notation keys like `art.gouache`) and `createTranslateLabel(collection)` which returns a `TranslateLabel = (segment) => { en, pt }` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroRecursiveChildFolders`, `AstroArtCard`).
 - See `docs/i18n.md` for the full pattern reference.
 
 # Theme / Dark Mode
