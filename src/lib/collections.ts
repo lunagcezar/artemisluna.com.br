@@ -3,8 +3,59 @@ import {
   type CollectionEntry,
   type DataEntryMap,
 } from "astro:content";
+import type {
+  IndexPath,
+  DetailPath,
+  PaginationPath,
+} from "../types/collection";
 
-export const DEFAULT_PAGE_SIZE = 12;
+export async function getIndexAndDetailPaths<C extends keyof DataEntryMap>(
+  collection: C,
+): Promise<Array<IndexPath<C> | DetailPath<C>>> {
+  const entries = await getCollection(collection);
+  const directoryPaths = getDirectoryPaths(entries);
+
+  const detailPaths: DetailPath<C>[] = entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { mode: "detail", entry },
+  }));
+
+  const indexPaths: IndexPath<C>[] = [
+    {
+      params: { slug: undefined },
+      props: { mode: "index", slug: undefined, entries },
+    },
+    ...directoryPaths.map((slug) => ({
+      params: { slug },
+      props: { mode: "index" as const, slug, entries },
+    })),
+  ];
+
+  return [...detailPaths, ...indexPaths];
+}
+
+export async function getPaginationPaths<C extends keyof DataEntryMap>(
+  collection: C,
+  pageSize: number,
+): Promise<PaginationPath<C>[]> {
+  const entries = await getCollection(collection);
+  const directoryPaths = [undefined, ...getDirectoryPaths(entries)];
+  const paths: PaginationPath<C>[] = [];
+
+  for (const slug of directoryPaths) {
+    const filtered = filterEntriesByPrefix(entries, slug);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+
+    for (let page = 2; page <= totalPages; page++) {
+      paths.push({
+        params: { slug, page: String(page) },
+        props: { slug, page, entries },
+      });
+    }
+  }
+
+  return paths;
+}
 
 export async function getSortedCollection<
   C extends keyof DataEntryMap,

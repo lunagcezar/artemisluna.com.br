@@ -1,7 +1,5 @@
 import type { ImageMetadata } from "astro";
 
-export const ART_PAGE_SIZE = 12;
-
 export type ArtImageModules = Record<string, { default: ImageMetadata }>;
 
 export function resolveArtImage(

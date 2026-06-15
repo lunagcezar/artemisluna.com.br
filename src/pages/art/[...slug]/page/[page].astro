@@ -1,45 +1,18 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroArtGallery from "@components/features/art/_astro/AstroArtGallery.astro";
-import { getCollection } from "astro:content";
 import {
   filterEntriesByPrefix,
   getChildFolders,
-  getDirectoryPaths,
+  getPaginationPaths,
   paginateEntries,
 } from "@lib/collections";
-import { ART_PAGE_SIZE } from "@lib/art";
+import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
 
-type PaginationPath = {
-  params: { slug: string | undefined; page: string };
-  props: {
-    slug: string | undefined;
-    page: number;
-    entries: CollectionEntry<"art">[];
-  };
-};
-
-export async function getStaticPaths() {
-  const entries = await getCollection("art");
-  const directoryPaths = [undefined, ...getDirectoryPaths(entries)];
-
-  const paths: PaginationPath[] = [];
-
-  for (const slug of directoryPaths) {
-    const filtered = filterEntriesByPrefix(entries, slug);
-    const totalPages = Math.max(1, Math.ceil(filtered.length / ART_PAGE_SIZE));
-
-    for (let page = 2; page <= totalPages; page++) {
-      paths.push({
-        params: { slug, page: String(page) },
-        props: { slug, page, entries },
-      });
-    }
-  }
-
-  return paths;
-}
+export const getStaticPaths = (async () => {
+  return await getPaginationPaths("art", DEFAULT_PAGE_SIZE);
+}) satisfies GetStaticPaths;
 
 const { slug, page, entries } = Astro.props;
 
@@ -48,7 +21,7 @@ const childFolders = getChildFolders(entries, slug);
 const { pageEntries, totalPages, currentPage } = paginateEntries(
   filtered,
   page,
-  ART_PAGE_SIZE,
+  DEFAULT_PAGE_SIZE,
 );
 const baseUrl = slug ? `/art/${slug}/` : "/art/";
 ---

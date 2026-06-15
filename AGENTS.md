@@ -87,6 +87,8 @@ Shared helpers are in `src/lib/collections.ts`:
 - `getChildFolders` — immediate child folders for navigation links
 - `paginateEntries` — pagination slicing
 - `formatSegment` — turns URL segments into readable titles
+- `getIndexAndDetailPaths` — builds `getStaticPaths` for `[...slug].astro` routes
+- `getPaginationPaths` — builds `getStaticPaths` for `[...slug]/page/[page].astro` routes
 
 Art-only helpers are in `src/lib/art.ts`:
 
@@ -99,3 +101,7 @@ Art-only helpers are in `src/lib/art.ts`:
 - The gallery uses a CSS-column masonry layout (`columns-1 sm:columns-2 lg:columns-3`) with `break-inside-avoid`.
 - Child-folder links are rendered as badge links under each index heading.
 - Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`.
+
+# For agents
+
+- When implementing relevant modifications in this project, please update the AGENTS.md file with documentation

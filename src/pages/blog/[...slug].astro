@@ -1,55 +1,29 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
-import { getCollection } from "astro:content";
 import {
-  DEFAULT_PAGE_SIZE,
   filterEntriesByPrefix,
   getChildFolders,
-  getDirectoryPaths,
+  getIndexAndDetailPaths,
   paginateEntries,
 } from "@lib/collections";
+import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
 
-type DetailPath = {
-  params: { slug: string };
-  props: { mode: "detail"; entry: CollectionEntry<"blog"> };
-};
-
-type IndexPath = {
-  params: { slug: string | undefined };
-  props: {
-    mode: "index";
-    slug: string | undefined;
-    entries: CollectionEntry<"blog">[];
-  };
-};
-
-export async function getStaticPaths() {
-  const entries = await getCollection("blog");
-  const directoryPaths = getDirectoryPaths(entries);
-
-  const detailPaths: DetailPath[] = entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { mode: "detail", entry },
-  }));
-
-  const indexPaths: IndexPath[] = [
-    {
-      params: { slug: undefined },
-      props: { mode: "index", slug: undefined, entries },
-    },
-    ...directoryPaths.map((slug) => ({
-      params: { slug },
-      props: { mode: "index" as const, slug, entries },
-    })),
-  ];
-
-  return [...detailPaths, ...indexPaths];
-}
+export const getStaticPaths = (async () => {
+  return await getIndexAndDetailPaths("blog");
+}) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
+
+const filtered = mode === "index" ? filterEntriesByPrefix(entries, slug) : [];
+const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
+const { pageEntries, totalPages, currentPage } =
+  mode === "index"
+    ? paginateEntries(filtered, 1, DEFAULT_PAGE_SIZE)
+    : { pageEntries: [], totalPages: 1, currentPage: 1 };
+const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
 ---
 
 <MainLayout title={mode === "detail" ? entry.data.title : "Blog"}>
@@ -66,29 +40,16 @@ const { mode, entry, slug, entries } = Astro.props;
           <AstroEntryContent entry={entry} />
         </article>
       ) : (
-        (() => {
-          const filtered = filterEntriesByPrefix(entries, slug);
-          const childFolders = getChildFolders(entries, slug);
-          const { pageEntries, totalPages, currentPage } = paginateEntries(
-            filtered,
-            1,
-            DEFAULT_PAGE_SIZE,
-          );
-          const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
-
-          return (
-            <AstroRecursiveCollectionIndex
-              collection="blog"
-              entries={pageEntries}
-              slug={slug}
-              childFolders={childFolders}
-              page={currentPage}
-              totalPages={totalPages}
-              baseUrl={baseUrl}
-              baseLabel="Blog"
-            />
-          );
-        })()
+        <AstroRecursiveCollectionIndex
+          collection="blog"
+          entries={pageEntries}
+          slug={slug}
+          childFolders={childFolders}
+          page={currentPage}
+          totalPages={totalPages}
+          baseUrl={baseUrl}
+          baseLabel="Blog"
+        />
       )
     }
   </div>

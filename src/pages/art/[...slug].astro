@@ -1,59 +1,29 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroArtDetail from "@components/features/art/_astro/AstroArtDetail.astro";
 import AstroArtGallery from "@components/features/art/_astro/AstroArtGallery.astro";
-import { getCollection } from "astro:content";
 import {
   filterEntriesByPrefix,
   getChildFolders,
-  getDirectoryPaths,
+  getIndexAndDetailPaths,
   paginateEntries,
 } from "@lib/collections";
-import { ART_PAGE_SIZE } from "@lib/art";
+import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
 
-type DetailPath = {
-  params: { slug: string };
-  props: {
-    mode: "detail";
-    entry: CollectionEntry<"art">;
-    entries: CollectionEntry<"art">[];
-  };
-};
-
-type IndexPath = {
-  params: { slug: string | undefined };
-  props: {
-    mode: "index";
-    slug: string | undefined;
-    entries: CollectionEntry<"art">[];
-  };
-};
-
-export async function getStaticPaths() {
-  const entries = await getCollection("art");
-  const directoryPaths = getDirectoryPaths(entries);
-
-  const detailPaths: DetailPath[] = entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { mode: "detail", entry, entries },
-  }));
-
-  const indexPaths: IndexPath[] = [
-    {
-      params: { slug: undefined },
-      props: { mode: "index", slug: undefined, entries },
-    },
-    ...directoryPaths.map((slug) => ({
-      params: { slug },
-      props: { mode: "index" as const, slug, entries },
-    })),
-  ];
-
-  return [...detailPaths, ...indexPaths];
-}
+export const getStaticPaths = (async () => {
+  return await getIndexAndDetailPaths("art");
+}) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
+
+const filtered = mode === "index" ? filterEntriesByPrefix(entries, slug) : [];
+const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
+const { pageEntries, totalPages, currentPage } =
+  mode === "index"
+    ? paginateEntries(filtered, 1, DEFAULT_PAGE_SIZE)
+    : { pageEntries: [], totalPages: 1, currentPage: 1 };
+const baseUrl = slug ? `/art/${slug}/` : "/art/";
 ---
 
 <MainLayout title={mode === "detail" ? entry.data.title : undefined}>
@@ -62,27 +32,14 @@ const { mode, entry, slug, entries } = Astro.props;
       mode === "detail" ? (
         <AstroArtDetail entry={entry} />
       ) : (
-        (() => {
-          const filtered = filterEntriesByPrefix(entries, slug);
-          const childFolders = getChildFolders(entries, slug);
-          const { pageEntries, totalPages, currentPage } = paginateEntries(
-            filtered,
-            1,
-            ART_PAGE_SIZE,
-          );
-          const baseUrl = slug ? `/art/${slug}/` : "/art/";
-
-          return (
-            <AstroArtGallery
-              entries={pageEntries}
-              slug={slug}
-              childFolders={childFolders}
-              page={currentPage}
-              totalPages={totalPages}
-              baseUrl={baseUrl}
-            />
-          );
-        })()
+        <AstroArtGallery
+          entries={pageEntries}
+          slug={slug}
+          childFolders={childFolders}
+          page={currentPage}
+          totalPages={totalPages}
+          baseUrl={baseUrl}
+        />
       )
     }
   </div>
