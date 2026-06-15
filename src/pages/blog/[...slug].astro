@@ -1,9 +1,16 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import MainLayout from "@layouts/MainLayout.astro";
-import AstroCollectionIndex from "@components/shared/_astro/AstroCollectionIndex.astro";
+import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { getCollection } from "astro:content";
+import {
+  DEFAULT_PAGE_SIZE,
+  filterEntriesByPrefix,
+  getChildFolders,
+  getDirectoryPaths,
+  paginateEntries,
+} from "@lib/collections";
 
 type DetailPath = {
   params: { slug: string };
@@ -11,43 +18,78 @@ type DetailPath = {
 };
 
 type IndexPath = {
-  params: { slug: undefined };
-  props: { mode: "index" };
+  params: { slug: string | undefined };
+  props: {
+    mode: "index";
+    slug: string | undefined;
+    entries: CollectionEntry<"blog">[];
+  };
 };
 
 export async function getStaticPaths() {
   const entries = await getCollection("blog");
+  const directoryPaths = getDirectoryPaths(entries);
 
   const detailPaths: DetailPath[] = entries.map((entry) => ({
     params: { slug: entry.id },
     props: { mode: "detail", entry },
   }));
 
-  const indexPath: IndexPath = {
-    params: { slug: undefined },
-    props: { mode: "index" },
-  };
+  const indexPaths: IndexPath[] = [
+    {
+      params: { slug: undefined },
+      props: { mode: "index", slug: undefined, entries },
+    },
+    ...directoryPaths.map((slug) => ({
+      params: { slug },
+      props: { mode: "index" as const, slug, entries },
+    })),
+  ];
 
-  return [...detailPaths, indexPath];
+  return [...detailPaths, ...indexPaths];
 }
 
-const { mode, entry } = Astro.props;
+const { mode, entry, slug, entries } = Astro.props;
 ---
 
 <MainLayout title={mode === "detail" ? entry.data.title : "Blog"}>
-  {
-    mode === "detail" ? (
-      <article class="grid gap-4">
-        <h1 class="text-3xl font-semibold tracking-tight">
-          {entry.data.title}
-        </h1>
-        <time class="text-muted-foreground text-sm">
-          {entry.data.date.toLocaleDateString("pt-BR")}
-        </time>
-        <AstroEntryContent entry={entry} />
-      </article>
-    ) : (
-      <AstroCollectionIndex collection="blog" title="Blog" />
-    )
-  }
+  <div class="container mx-auto px-4 py-8">
+    {
+      mode === "detail" ? (
+        <article class="grid gap-4">
+          <h1 class="text-3xl font-semibold tracking-tight">
+            {entry.data.title}
+          </h1>
+          <time class="text-muted-foreground text-sm">
+            {entry.data.date.toLocaleDateString("pt-BR")}
+          </time>
+          <AstroEntryContent entry={entry} />
+        </article>
+      ) : (
+        (() => {
+          const filtered = filterEntriesByPrefix(entries, slug);
+          const childFolders = getChildFolders(entries, slug);
+          const { pageEntries, totalPages, currentPage } = paginateEntries(
+            filtered,
+            1,
+            DEFAULT_PAGE_SIZE,
+          );
+          const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
+
+          return (
+            <AstroRecursiveCollectionIndex
+              collection="blog"
+              entries={pageEntries}
+              slug={slug}
+              childFolders={childFolders}
+              page={currentPage}
+              totalPages={totalPages}
+              baseUrl={baseUrl}
+              baseLabel="Blog"
+            />
+          );
+        })()
+      )
+    }
+  </div>
 </MainLayout>

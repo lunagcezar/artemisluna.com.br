@@ -2,7 +2,8 @@
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import AstroArtCard from "./AstroArtCard.astro";
-import { formatSegment, resolveArtImage } from "@lib/art";
+import { formatSegment } from "@lib/collections";
+import { resolveArtImage } from "@lib/art";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
@@ -29,7 +30,7 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
 
 <div class="grid gap-6">
   <div class="grid gap-2">
-    <AstroRecursiveBreadcrumb baseUrl="/art" slug={slug} />
+    <AstroRecursiveBreadcrumb baseUrl="/art/" baseLabel="Art" slug={slug} />
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>

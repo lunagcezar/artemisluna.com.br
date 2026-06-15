@@ -4,12 +4,12 @@ import MainLayout from "@layouts/MainLayout.astro";
 import AstroArtGallery from "@components/features/art/_astro/AstroArtGallery.astro";
 import { getCollection } from "astro:content";
 import {
-  ART_PAGE_SIZE,
   filterEntriesByPrefix,
   getChildFolders,
   getDirectoryPaths,
   paginateEntries,
-} from "@lib/art";
+} from "@lib/collections";
+import { ART_PAGE_SIZE } from "@lib/art";
 
 type PaginationPath = {
   params: { slug: string | undefined; page: string };
@@ -48,6 +48,7 @@ const childFolders = getChildFolders(entries, slug);
 const { pageEntries, totalPages, currentPage } = paginateEntries(
   filtered,
   page,
+  ART_PAGE_SIZE,
 );
 const baseUrl = slug ? `/art/${slug}/` : "/art/";
 ---

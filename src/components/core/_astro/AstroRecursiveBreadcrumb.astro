@@ -1,5 +1,5 @@
 ---
-import { formatSegment } from "@lib/art";
+import { formatSegment } from "@lib/collections";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -12,9 +12,10 @@ import {
 type Props = {
   slug?: string;
   baseUrl: string;
+  baseLabel: string;
 };
 
-const { baseUrl, slug } = Astro.props;
+const { baseUrl, baseLabel, slug } = Astro.props;
 
 const segments = slug ? slug.split("/") : [];
 ---
@@ -22,7 +23,7 @@ const segments = slug ? slug.split("/") : [];
 <Breadcrumb>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href={baseUrl}>Art</BreadcrumbLink>
+      <BreadcrumbLink href={baseUrl}>{baseLabel}</BreadcrumbLink>
     </BreadcrumbItem>
 
     {
@@ -37,7 +38,7 @@ const segments = slug ? slug.split("/") : [];
               {isLast ? (
                 <BreadcrumbPage>{formatSegment(segment)}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={`/art/${path}/`}>
+                <BreadcrumbLink href={`${baseUrl}${path}/`}>
                   {formatSegment(segment)}
                 </BreadcrumbLink>
               )}

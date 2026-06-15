@@ -71,15 +71,25 @@ Shared pagination is handled by `src/components/core/_astro/AstroPagination.astr
 
 Both follow the same pattern as the art section:
 
-- `src/pages/blog/[...slug].astro` and `src/pages/wiki/[...slug].astro` handle the root index and detail pages.
+- `src/pages/blog/[...slug].astro` and `src/pages/wiki/[...slug].astro` handle the root index, directory indexes, and detail pages.
 - `src/pages/blog/[...slug]/page/[page].astro` and `src/pages/wiki/[...slug]/page/[page].astro` handle pagination with `/page/N/` URLs.
+- `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links for blog and wiki.
 
-Shared helpers are in `src/lib/art.ts`:
+Shared recursive UI pieces live in `src/components/core/_astro/`:
+
+- `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree
+- `AstroRecursiveChildFolders.astro` — badge links to immediate child folders
+
+Shared helpers are in `src/lib/collections.ts`:
 
 - `getDirectoryPaths` — generates all directory index slugs from entry ids
 - `filterEntriesByPrefix` — recursive filtering for directory indexes
 - `getChildFolders` — immediate child folders for navigation links
 - `paginateEntries` — pagination slicing
+- `formatSegment` — turns URL segments into readable titles
+
+Art-only helpers are in `src/lib/art.ts`:
+
 - `resolveArtImage` — resolves root-relative image paths via `import.meta.glob`
 
 ## Behavior

@@ -9,7 +9,8 @@ import {
   getChildFolders,
   getDirectoryPaths,
   paginateEntries,
-} from "@lib/art";
+} from "@lib/collections";
+import { ART_PAGE_SIZE } from "@lib/art";
 
 type DetailPath = {
   params: { slug: string };
@@ -67,6 +68,7 @@ const { mode, entry, slug, entries } = Astro.props;
           const { pageEntries, totalPages, currentPage } = paginateEntries(
             filtered,
             1,
+            ART_PAGE_SIZE,
           );
           const baseUrl = slug ? `/art/${slug}/` : "/art/";
 

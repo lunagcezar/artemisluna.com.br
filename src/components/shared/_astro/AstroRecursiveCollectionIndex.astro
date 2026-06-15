@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from "astro:content";
+import AstroPagination from "@components/core/_astro/AstroPagination.astro";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
+import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
+import { formatSegment } from "@lib/collections";
+
+type Props = {
+  collection: "blog" | "wiki";
+  entries: CollectionEntry<"blog" | "wiki">[];
+  slug?: string;
+  childFolders: string[];
+  page: number;
+  totalPages: number;
+  baseUrl: string;
+  baseLabel: string;
+};
+
+const {
+  collection,
+  entries,
+  slug,
+  childFolders,
+  page,
+  totalPages,
+  baseUrl,
+  baseLabel,
+} = Astro.props;
+
+const segments = slug ? slug.split("/") : [];
+const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
+---
+
+<div class="grid gap-6">
+  <div class="grid gap-2">
+    <AstroRecursiveBreadcrumb
+      baseUrl={baseUrl}
+      baseLabel={baseLabel}
+      slug={slug}
+    />
+
+    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+  </div>
+
+  <AstroRecursiveChildFolders baseUrl={baseUrl} childFolders={childFolders} />
+
+  <ul class="grid gap-4">
+    {
+      entries.map((entry) => (
+        <li>
+          <a
+            href={`/${collection}/${entry.id}/`}
+            class="border-border hover:bg-muted block rounded-lg border p-4 transition-colors"
+          >
+            <h2 class="font-medium">{entry.data.title}</h2>
+            {entry.data.date && (
+              <time class="text-muted-foreground text-sm">
+                {entry.data.date.toLocaleDateString("pt-BR")}
+              </time>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <AstroPagination
+    baseUrl={baseUrl}
+    currentPage={page}
+    totalPages={totalPages}
+  />
+</div>

@@ -1,27 +1,72 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
-import AstroCollectionIndex from "@components/shared/_astro/AstroCollectionIndex.astro";
+import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import { getCollection } from "astro:content";
+import {
+  DEFAULT_PAGE_SIZE,
+  filterEntriesByPrefix,
+  getChildFolders,
+  getDirectoryPaths,
+  paginateEntries,
+} from "@lib/collections";
+
+type PaginationPath = {
+  params: { slug: string | undefined; page: string };
+  props: {
+    slug: string | undefined;
+    page: number;
+    entries: CollectionEntry<"wiki">[];
+  };
+};
 
 export const getStaticPaths = (async () => {
-  const PAGE_SIZE = 12;
   const entries = await getCollection("wiki");
-  const totalPages = Math.max(1, Math.ceil(entries.length / PAGE_SIZE));
-  const paths = [];
+  const directoryPaths = [undefined, ...getDirectoryPaths(entries)];
+  const paths: PaginationPath[] = [];
 
-  for (let page = 2; page <= totalPages; page++) {
-    paths.push({
-      params: { slug: undefined, page: String(page) },
-    });
+  for (const slug of directoryPaths) {
+    const filtered = filterEntriesByPrefix(entries, slug);
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filtered.length / DEFAULT_PAGE_SIZE),
+    );
+
+    for (let page = 2; page <= totalPages; page++) {
+      paths.push({
+        params: { slug, page: String(page) },
+        props: { slug, page, entries },
+      });
+    }
   }
 
   return paths;
 }) satisfies GetStaticPaths;
 
-const currentPage = Number(Astro.params.page);
+const { slug, page, entries } = Astro.props;
+
+const filtered = filterEntriesByPrefix(entries, slug);
+const childFolders = getChildFolders(entries, slug);
+const { pageEntries, totalPages, currentPage } = paginateEntries(
+  filtered,
+  page,
+  DEFAULT_PAGE_SIZE,
+);
+const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
 ---
 
 <MainLayout>
-  <AstroCollectionIndex collection="wiki" title="Wiki" page={currentPage} />
+  <div class="container mx-auto px-4 py-8">
+    <AstroRecursiveCollectionIndex
+      collection="wiki"
+      entries={pageEntries}
+      slug={slug}
+      childFolders={childFolders}
+      page={currentPage}
+      totalPages={totalPages}
+      baseUrl={baseUrl}
+      baseLabel="Wiki"
+    />
+  </div>
 </MainLayout>
