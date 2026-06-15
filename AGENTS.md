@@ -139,6 +139,15 @@ See `docs/remark-wiki-links.md` for full implementation details.
 - Use `tags` for cross-cutting topics; they are rendered as badges on detail pages and included in the page keywords meta tag.
 - Wiki supports `index: true` index pages. Place a markdown file with the same name as a folder (e.g. `linux.md` next to `linux/`) and set `index: true` in its frontmatter. The plugin will treat it as a directory index — its content is rendered at the top of the directory listing, and it is filtered out from the article listing and pagination.
 
+# i18n
+
+Client-side locale detection for UI strings. No server routing or content restructuring.
+
+- **Translation map** — `src/i18n/labels.ts` exports `ptLabels` mapping collection names to their Portuguese equivalents. Unmapped collections fall back to English via `formatSegment()`.
+- **Bilingual rendering** — Components render the English label and embed the Portuguese translation in a `data-pt` attribute.
+- **Client swap** — An inline `<script>` checks `navigator.language` and swaps `[data-pt]` text content if it starts with `"pt"`.
+- See `docs/i18n.md` for the full pattern reference.
+
 # For agents
 
 - When implementing relevant modifications in this project, please update the AGENTS.md file with documentation

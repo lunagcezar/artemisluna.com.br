@@ -2,6 +2,7 @@
 import { NAV_ITEMS } from "@constants/navigation";
 import { getActiveSegment } from "@lib/url";
 import { cn } from "@lib/utils";
+import { ptLabels } from "@i18n/labels";
 
 type Props = {
   currentPath: string;
@@ -11,6 +12,12 @@ type Props = {
 const { currentPath, className } = Astro.props;
 
 const activeSegment = getActiveSegment(currentPath);
+
+const items = NAV_ITEMS.map((item) => ({
+  href: item.href,
+  en: item.label,
+  pt: ptLabels[item.href.replace("/", "")] ?? item.label,
+}));
 ---
 
 <nav
@@ -22,14 +29,27 @@ const activeSegment = getActiveSegment(currentPath);
   <a href="/" class="font-bold">Luna G. Cezar</a>
   <div class="flex gap-4">
     {
-      NAV_ITEMS.map((item) => {
+      items.map((item) => {
         const isActive = item.href.replace("/", "") === activeSegment;
         return (
-          <a href={item.href} class={cn(isActive && "font-bold")}>
-            {item.label}
+          <a
+            href={item.href}
+            class={cn(isActive && "font-bold")}
+            data-en={item.en}
+            data-pt={item.pt}
+          >
+            {item.en}
           </a>
         );
       })
     }
   </div>
 </nav>
+
+<script>
+  if (navigator.language.startsWith("pt")) {
+    document.querySelectorAll("[data-pt]").forEach((el) => {
+      el.textContent = el.getAttribute("data-pt");
+    });
+  }
+</script>

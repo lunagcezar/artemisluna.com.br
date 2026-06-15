@@ -10,7 +10,8 @@
       "@lib/*": ["./src/lib/*"],
       "@styles/*": ["./src/styles/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@constants/*": ["./src/constants/*"]
+      "@constants/*": ["./src/constants/*"],
+      "@i18n/*": ["./src/i18n/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"
