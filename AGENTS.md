@@ -104,11 +104,34 @@ Art-only helpers are in `src/lib/art.ts`:
 - Child-folder links are rendered as badge links under each index heading.
 - Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`.
 
-## Foam (VSCode) configuration
+## Remark Wiki Links plugin
 
-- Foam is used as a note-taking helper in VSCode. Wiki pages are built as plain Markdown, but Foam-style wikilinks and link-reference definitions are rewritten to real `/wiki/<id>/` URLs at build time by the custom remark plugin in `src/lib/remark-wiki-links.ts`.
-- The plugin resolves link text / filenames against the markdown files in `src/content/wiki/` and only runs on files inside that folder.
-- Link to other wiki articles with Foam wikilinks (`[[filename]]` / `[[filename|alias]]`) or standard Markdown links using root-relative URLs, e.g. `[CMakeLists](/wiki/programming/cmake/cmakelists/)`.
+Wiki internal links (both Foam-style `[[wikilinks]]` and markdown link references) are resolved at build time by the custom remark plugin in `src/lib/remark-wiki-links.ts`.
+
+### Configuration
+
+The plugin is registered in `astro.config.mjs` via the `markdown.processor` key using `unified()` from `@astrojs/markdown-remark`. During build it scans `src/content/wiki/` to build a routing table of all wiki pages, then processes every `.md` file in that directory.
+
+### Writing wiki links
+
+Link to other wiki articles with:
+
+- **Foam wikilinks**: `[[filename]]` / `[[filename|alias]]`
+- **Standard markdown links**: `[text](/wiki/path/to/page/)`
+
+Both resolve to the target page's canonical URL and render the link text as `[Page Title]` (bracketed title from target frontmatter). If the page doesn't exist in the wiki, the text still shows `[target]` to visually mark it as an unresolved backlink.
+
+### How it works
+
+The plugin performs three AST transformations:
+
+1. **Definition URL rewriting** — rewrites `[slug]: raw-path "Title"` definitions to point to the proper `/wiki/<id>/` route.
+2. **Link reference conversion** — converts Foam-generated `[slug]` link references into `<a>` tags with `[Title]` display text.
+3. **Raw wikilink syntax** — catches any `[[target]]` / `[[target|alias]]` patterns that weren't pre-processed by Foam.
+
+See `docs/remark-wiki-links.md` for full implementation details.
+
+## Wiki metadata convention
 
 ## Wiki metadata convention
 
