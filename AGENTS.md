@@ -133,13 +133,11 @@ See `docs/remark-wiki-links.md` for full implementation details.
 
 ## Wiki metadata convention
 
-## Wiki metadata convention
-
 - Folder structure is the source of categorization; do not add a `category` field to wiki frontmatter.
 - Allowed fields: `title`, `description`, `tags`, `date`, `image`, `author`, `status`.
 - Always provide a `description` for SEO. It is rendered in page meta tags and should summarize the article in one sentence.
 - Use `tags` for cross-cutting topics; they are rendered as badges on detail pages and included in the page keywords meta tag.
-- Wiki does not use `index: true` index pages; directory indexes are generated automatically from the folder structure.
+- Wiki supports `index: true` index pages. Place a markdown file with the same name as a folder (e.g. `linux.md` next to `linux/`) and set `index: true` in its frontmatter. The plugin will treat it as a directory index — its content is rendered at the top of the directory listing, and it is filtered out from the article listing and pagination.
 
 # For agents
 

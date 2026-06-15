@@ -14,6 +14,14 @@ export async function getIndexAndDetailPaths<C extends keyof DataEntryMap>(
 ): Promise<Array<IndexPath<C> | DetailPath<C>>> {
   const entries = await getCollection(collection);
   const directoryPaths = getDirectoryPaths(entries);
+
+  // Treat index entries as directory sources so they don't generate detail pages
+  for (const entry of entries) {
+    if ((entry.data as any).index === true) {
+      directoryPaths.push(entry.id);
+    }
+  }
+
   const directorySet = new Set(directoryPaths);
 
   const detailPaths: DetailPath<C>[] = entries
@@ -46,7 +54,9 @@ export async function getPaginationPaths<C extends keyof DataEntryMap>(
   const paths: PaginationPath<C>[] = [];
 
   for (const slug of directoryPaths) {
-    const filtered = filterEntriesByPrefix(entries, slug);
+    const filtered = filterOutIndexEntries(
+      filterEntriesByPrefix(entries, slug),
+    );
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
 
     for (let page = 2; page <= totalPages; page++) {

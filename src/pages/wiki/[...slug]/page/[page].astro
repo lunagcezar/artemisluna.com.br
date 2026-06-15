@@ -4,6 +4,8 @@ import MainLayout from "@layouts/MainLayout.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import {
   filterEntriesByPrefix,
+  filterOutIndexEntries,
+  findIndexEntry,
   getChildFolders,
   getPaginationPaths,
   paginateEntries,
@@ -16,7 +18,8 @@ export const getStaticPaths = (async () => {
 
 const { slug, page, entries } = Astro.props;
 
-const filtered = filterEntriesByPrefix(entries, slug);
+const filtered = filterOutIndexEntries(filterEntriesByPrefix(entries, slug));
+const indexEntry = findIndexEntry(entries, slug);
 const childFolders = getChildFolders(entries, slug);
 const { pageEntries, totalPages, currentPage } = paginateEntries(
   filtered,
@@ -37,6 +40,7 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
       totalPages={totalPages}
       baseUrl={baseUrl}
       baseLabel="Wiki"
+      indexEntry={indexEntry}
     />
   </div>
 </MainLayout>

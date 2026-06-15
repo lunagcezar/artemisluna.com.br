@@ -72,6 +72,7 @@ const wiki = defineCollection({
     image: z.string().optional(),
     author: z.string().optional(),
     status: z.enum(["draft", "published"]).optional(),
+    index: z.boolean().optional(),
   }),
 });
 

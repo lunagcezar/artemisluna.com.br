@@ -13,7 +13,7 @@ tags:
 
 **Created:** 2024-04-10
 
-After adding your executable on [[cmakelists]], you can do a file operation with CMake:
+After adding your executable on [[cmakelists]], you can do a file operation with [[cmake]]:
 
 ```cmake
 if(WIN32 AND (CMAKE_C_COMPILER_ID MATCHES Clang OR MSVC))
@@ -33,3 +33,4 @@ endif()
 **PATH_TO_DLL** is the path of the DLL provided by the third-party library
 
 [cmakelists]: cmakelists "CMakeLists"
+[cmake]: ../cmake "CMake"

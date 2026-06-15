@@ -12,4 +12,6 @@ tags:
 
 **Created:** 2024-04-10
 
-Build file for CMake
+Build file for [[cmake]]
+
+[cmake]: ../cmake "CMake"
