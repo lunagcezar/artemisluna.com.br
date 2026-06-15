@@ -43,5 +43,20 @@ const currentPath = Astro.url.pathname;
     <AstroPageShell currentPath={currentPath}>
       <slot />
     </AstroPageShell>
+
+    <script is:inline>
+      (function () {
+        var match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+        var locale =
+          (match ? match[1] : "") ||
+          (navigator.language.startsWith("pt") ? "pt" : "en");
+        document.querySelectorAll("[data-locales]").forEach(function (el) {
+          try {
+            var labels = JSON.parse(el.getAttribute("data-locales") || "{}");
+            if (labels[locale]) el.textContent = labels[locale];
+          } catch (_) {}
+        });
+      })();
+    </script>
   </body>
 </html>

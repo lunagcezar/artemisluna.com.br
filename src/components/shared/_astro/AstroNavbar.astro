@@ -53,19 +53,3 @@ const items = NAV_ITEMS.map((item) => {
     <ThemeSwitcher client:load />
   </div>
 </nav>
-
-<script>
-  (function () {
-    var localeMatch = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-    var locale =
-      (localeMatch ? localeMatch[1] : "") ||
-      (navigator.language.startsWith("pt") ? "pt" : "en");
-
-    document.querySelectorAll("[data-locales]").forEach(function (el) {
-      try {
-        var labels = JSON.parse(el.getAttribute("data-locales") || "{}");
-        if (labels[locale]) el.textContent = labels[locale];
-      } catch (_) {}
-    });
-  })();
-</script>
