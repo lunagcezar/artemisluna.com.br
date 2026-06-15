@@ -65,10 +65,12 @@ const wiki = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    category: z.string(),
-    tags: z.array(z.string()),
+    category: z.string().optional(),
+    tags: z.array(z.string()).default([]),
     date: z.coerce.date().optional(),
     image: z.string().optional(),
+    author: z.string().optional(),
+    status: z.enum(["draft", "published"]).optional(),
   }),
 });
 

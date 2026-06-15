@@ -13,6 +13,7 @@ export type IndexPath<C extends keyof DataEntryMap> = {
     mode: "index";
     slug: string | undefined;
     entries: CollectionEntry<C>[];
+    entry?: CollectionEntry<C>;
   };
 };
 

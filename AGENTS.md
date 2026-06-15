@@ -74,6 +74,7 @@ Both follow the same pattern as the art section:
 - `src/pages/blog/[...slug].astro` and `src/pages/wiki/[...slug].astro` handle the root index, directory indexes, and detail pages.
 - `src/pages/blog/[...slug]/page/[page].astro` and `src/pages/wiki/[...slug]/page/[page].astro` handle pagination with `/page/N/` URLs.
 - `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links for blog and wiki.
+- If a Markdown file has the same slug as a directory (e.g. `wiki/programming/cmake.md` alongside `wiki/programming/cmake/...`), it is treated as the directory's index page. The directory index renders that entry's content plus its children, and no separate detail page is generated for the index entry.
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
