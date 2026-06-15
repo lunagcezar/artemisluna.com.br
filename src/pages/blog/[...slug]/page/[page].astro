@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroCollectionIndex from "@components/shared/_astro/AstroCollectionIndex.astro";
+import { getCollection } from "astro:content";
+
+export const getStaticPaths = (async () => {
+  const PAGE_SIZE = 12;
+  const entries = await getCollection("blog");
+  const totalPages = Math.max(1, Math.ceil(entries.length / PAGE_SIZE));
+  const paths = [];
+
+  for (let page = 2; page <= totalPages; page++) {
+    paths.push({
+      params: { slug: undefined, page: String(page) },
+    });
+  }
+
+  return paths;
+}) satisfies GetStaticPaths;
+
+const currentPage = Number(Astro.params.page);
+---
+
+<MainLayout>
+  <AstroCollectionIndex collection="blog" title="Blog" page={currentPage} />
+</MainLayout>

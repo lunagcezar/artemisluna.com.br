@@ -7,13 +7,10 @@ type Props = {
   entries: CollectionEntry<"art" | "blog" | "wiki">[];
   currentPage: number;
   totalPages: number;
-  prevUrl?: string;
-  nextUrl?: string;
   baseUrl: string;
 };
 
-const { title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl } =
-  Astro.props;
+const { title, entries, currentPage, totalPages, baseUrl } = Astro.props;
 ---
 
 <div class="grid gap-4">
@@ -31,8 +28,6 @@ const { title, entries, currentPage, totalPages, prevUrl, nextUrl, baseUrl } =
   <AstroPagination
     currentPage={currentPage}
     totalPages={totalPages}
-    prevUrl={prevUrl}
-    nextUrl={nextUrl}
     baseUrl={baseUrl}
   />
 </div>

@@ -3,23 +3,28 @@ import { getPaginationRange } from "@lib/pagination";
 import {
   Pagination,
   PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
   PaginationEllipsis,
+  PaginationItem,
   PaginationLink,
   PaginationNext,
-} from "../pagination";
+  PaginationPrevious,
+} from "@components/core/pagination";
+import { getPageUrl } from "@lib/url";
 
 type Props = {
+  baseUrl: string;
   currentPage: number;
   totalPages: number;
-  prevUrl?: string;
-  nextUrl?: string;
-  baseUrl: string;
 };
 
-const { currentPage, totalPages, prevUrl, nextUrl, baseUrl } = Astro.props;
+const { baseUrl, currentPage, totalPages } = Astro.props;
+
 const range = getPaginationRange(currentPage, totalPages);
+
+const prevUrl =
+  currentPage > 1 ? getPageUrl(baseUrl, currentPage - 1) : undefined;
+const nextUrl =
+  currentPage < totalPages ? getPageUrl(baseUrl, currentPage + 1) : undefined;
 ---
 
 {
@@ -44,7 +49,7 @@ const range = getPaginationRange(currentPage, totalPages);
           ) : (
             <PaginationItem key={item}>
               <PaginationLink
-                href={`${baseUrl}${item}/`}
+                href={getPageUrl(baseUrl, item)}
                 isActive={item === currentPage}
               >
                 {item}

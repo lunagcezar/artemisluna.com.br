@@ -1,0 +1,66 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroArtGallery from "@components/features/art/_astro/AstroArtGallery.astro";
+import { getCollection } from "astro:content";
+import {
+  ART_PAGE_SIZE,
+  filterEntriesByPrefix,
+  getChildFolders,
+  getDirectoryPaths,
+  paginateEntries,
+} from "@lib/art";
+
+type PaginationPath = {
+  params: { slug: string | undefined; page: string };
+  props: {
+    slug: string | undefined;
+    page: number;
+    entries: CollectionEntry<"art">[];
+  };
+};
+
+export async function getStaticPaths() {
+  const entries = await getCollection("art");
+  const directoryPaths = [undefined, ...getDirectoryPaths(entries)];
+
+  const paths: PaginationPath[] = [];
+
+  for (const slug of directoryPaths) {
+    const filtered = filterEntriesByPrefix(entries, slug);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ART_PAGE_SIZE));
+
+    for (let page = 2; page <= totalPages; page++) {
+      paths.push({
+        params: { slug, page: String(page) },
+        props: { slug, page, entries },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { slug, page, entries } = Astro.props;
+
+const filtered = filterEntriesByPrefix(entries, slug);
+const childFolders = getChildFolders(entries, slug);
+const { pageEntries, totalPages, currentPage } = paginateEntries(
+  filtered,
+  page,
+);
+const baseUrl = slug ? `/art/${slug}/` : "/art/";
+---
+
+<MainLayout>
+  <div class="container mx-auto px-4 py-8">
+    <AstroArtGallery
+      entries={pageEntries}
+      slug={slug}
+      childFolders={childFolders}
+      page={currentPage}
+      totalPages={totalPages}
+      baseUrl={baseUrl}
+    />
+  </div>
+</MainLayout>

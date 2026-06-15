@@ -1,0 +1,78 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import { Badge } from "@components/core/badge";
+
+type Props = {
+  entry: CollectionEntry<"art">;
+};
+
+const { entry } = Astro.props;
+const { data } = entry;
+
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/art/**/*.{jpg,jpeg,png,webp,gif}",
+  { eager: true },
+);
+
+function resolveImage(src: string): string | ImageMetadata {
+  if (!src.startsWith("/src/assets/art/")) return src;
+  const mod = imageModules[src] as { default: ImageMetadata } | undefined;
+  return mod ? mod.default : src;
+}
+---
+
+<article class="grid gap-6">
+  <div class="grid gap-2">
+    <h1 class="text-3xl font-semibold tracking-tight">{data.title}</h1>
+
+    <p class="text-muted-foreground text-sm">
+      {data.type}
+      {" · "}
+      {data.category}
+      {" · "}
+      {data.medium}
+      {
+        data.series && (
+          <>
+            {" · "}
+            {data.series}
+          </>
+        )
+      }
+      {" · "}
+      {data.date.toLocaleDateString("pt-BR")}
+    </p>
+
+    <div class="flex flex-wrap gap-1.5">
+      <Badge variant="default">{data.type}</Badge>
+      <Badge variant="secondary">{data.category}</Badge>
+      <Badge variant="outline">{data.medium}</Badge>
+      {data.series && <Badge variant="outline">{data.series}</Badge>}
+      {data.tags.map((tag) => <Badge variant="ghost">{tag}</Badge>)}
+    </div>
+  </div>
+
+  <div class="columns-1 gap-4 sm:columns-2">
+    {
+      data.images?.map((img) => {
+        const resolved = resolveImage(img.src);
+        const src = typeof resolved === "string" ? resolved : resolved.src;
+
+        return (
+          <figure class="border-border bg-background mb-4 break-inside-avoid overflow-hidden rounded-lg border">
+            <img src={src} alt={img.alt} loading="lazy" class="h-auto w-full" />
+            {img.caption && (
+              <figcaption class="text-muted-foreground p-3 text-sm">
+                {img.caption}
+              </figcaption>
+            )}
+          </figure>
+        );
+      })
+    }
+  </div>
+
+  <AstroEntryContent entry={entry} />
+</article>

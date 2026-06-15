@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from "astro:content";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroCollectionIndex from "@components/shared/_astro/AstroCollectionIndex.astro";
+import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import { getCollection } from "astro:content";
+
+type DetailPath = {
+  params: { slug: string };
+  props: { mode: "detail"; entry: CollectionEntry<"blog"> };
+};
+
+type IndexPath = {
+  params: { slug: undefined };
+  props: { mode: "index" };
+};
+
+export async function getStaticPaths() {
+  const entries = await getCollection("blog");
+
+  const detailPaths: DetailPath[] = entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { mode: "detail", entry },
+  }));
+
+  const indexPath: IndexPath = {
+    params: { slug: undefined },
+    props: { mode: "index" },
+  };
+
+  return [...detailPaths, indexPath];
+}
+
+const { mode, entry } = Astro.props;
+---
+
+<MainLayout title={mode === "detail" ? entry.data.title : "Blog"}>
+  {
+    mode === "detail" ? (
+      <article class="grid gap-4">
+        <h1 class="text-3xl font-semibold tracking-tight">
+          {entry.data.title}
+        </h1>
+        <time class="text-muted-foreground text-sm">
+          {entry.data.date.toLocaleDateString("pt-BR")}
+        </time>
+        <AstroEntryContent entry={entry} />
+      </article>
+    ) : (
+      <AstroCollectionIndex collection="blog" title="Blog" />
+    )
+  }
+</MainLayout>

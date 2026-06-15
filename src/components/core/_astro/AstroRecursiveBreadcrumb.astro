@@ -1,0 +1,50 @@
+---
+import { formatSegment } from "@lib/art";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "../breadcrumb";
+
+type Props = {
+  slug?: string;
+  baseUrl: string;
+};
+
+const { baseUrl, slug } = Astro.props;
+
+const segments = slug ? slug.split("/") : [];
+---
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href={baseUrl}>Art</BreadcrumbLink>
+    </BreadcrumbItem>
+
+    {
+      segments.map((segment, index) => {
+        const isLast = index === segments.length - 1;
+        const path = segments.slice(0, index + 1).join("/");
+
+        return (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              {isLast ? (
+                <BreadcrumbPage>{formatSegment(segment)}</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink href={`/art/${path}/`}>
+                  {formatSegment(segment)}
+                </BreadcrumbLink>
+              )}
+            </BreadcrumbItem>
+          </>
+        );
+      })
+    }
+  </BreadcrumbList>
+</Breadcrumb>
