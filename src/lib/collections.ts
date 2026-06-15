@@ -14,11 +14,14 @@ export async function getIndexAndDetailPaths<C extends keyof DataEntryMap>(
 ): Promise<Array<IndexPath<C> | DetailPath<C>>> {
   const entries = await getCollection(collection);
   const directoryPaths = getDirectoryPaths(entries);
+  const directorySet = new Set(directoryPaths);
 
-  const detailPaths: DetailPath<C>[] = entries.map((entry) => ({
-    params: { slug: entry.id },
-    props: { mode: "detail", entry },
-  }));
+  const detailPaths: DetailPath<C>[] = entries
+    .filter((entry) => !directorySet.has(entry.id))
+    .map((entry) => ({
+      params: { slug: entry.id },
+      props: { mode: "detail", entry },
+    }));
 
   const indexPaths: IndexPath<C>[] = [
     {
@@ -146,4 +149,19 @@ export function formatSegment(segment: string): string {
   return segment
     .replace(/-/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function findIndexEntry<
+  T extends { id: string; data: { tags?: string[] } },
+>(entries: T[], slug?: string): T | undefined {
+  if (!slug) return undefined;
+  return entries.find(
+    (entry) => entry.id === slug && entry.data.tags?.includes("index"),
+  );
+}
+
+export function filterOutIndexEntries<
+  T extends { id: string; data: { tags?: string[] } },
+>(entries: T[]): T[] {
+  return entries.filter((entry) => !entry.data.tags?.includes("index"));
 }

@@ -14,7 +14,7 @@ tags:
 
 **DISCLAIMER**: This solution doesn't work on Ubuntu 24.10, please see [[Ubuntu 24.10 auto decrypt secondary drives workaround]]
 
-After installing a [[linux]] distro using TPM as an option, the secondary partitions isn't encrypted because the usual installers, like the Ubuntu installer, only encrypt the main partition, needing a workaround to protect the other drives.
+After installing a [[Linux]] distro using TPM as an option, the secondary partitions isn't encrypted because the usual installers, like the Ubuntu installer, only encrypt the main partition, needing a workaround to protect the other drives.
 
 To do that, you need to generate a key and insert it in the root folder located in the main partition protected with TPM:
 

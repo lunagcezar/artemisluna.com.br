@@ -75,6 +75,7 @@ Both follow the same pattern as the art section:
 - `src/pages/blog/[...slug]/page/[page].astro` and `src/pages/wiki/[...slug]/page/[page].astro` handle pagination with `/page/N/` URLs.
 - `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links for blog and wiki.
 - If a Markdown file has the same slug as a directory (e.g. `wiki/programming/cmake.md` alongside `wiki/programming/cmake/...`), it is treated as the directory's index page. The directory index renders that entry's content plus its children, and no separate detail page is generated for the index entry.
+- Wiki entries with the `index` tag are filtered out from the child-entry listing in directory indexes. They are only accessible through the `AstroRecursiveChildFolders` badge links. Their markdown content is rendered above the child-entry list on the directory index page.
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
@@ -88,8 +89,10 @@ Shared helpers are in `src/lib/collections.ts`:
 - `getChildFolders` — immediate child folders for navigation links
 - `paginateEntries` — pagination slicing
 - `formatSegment` — turns URL segments into readable titles
-- `getIndexAndDetailPaths` — builds `getStaticPaths` for `[...slug].astro` routes
+- `getIndexAndDetailPaths` — builds `getStaticPaths` for `[...slug].astro` routes; entries whose `id` matches a directory path skip detail path generation (they become directory indexes only)
 - `getPaginationPaths` — builds `getStaticPaths` for `[...slug]/page/[page].astro` routes
+- `findIndexEntry` — finds the entry serving as a directory's index page (matches `id === slug` and has the `index` tag)
+- `filterOutIndexEntries` — removes entries with the `index` tag from a listing
 
 Art-only helpers are in `src/lib/art.ts`:
 
@@ -102,6 +105,11 @@ Art-only helpers are in `src/lib/art.ts`:
 - The gallery uses a CSS-column masonry layout (`columns-1 sm:columns-2 lg:columns-3`) with `break-inside-avoid`.
 - Child-folder links are rendered as badge links under each index heading.
 - Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`.
+
+## Foam (VSCode) configuration
+
+- `.vscode/settings.json` sets `foam.edit.linkReferenceDefinitions` to `"relative"` so that auto-generated link reference definitions use relative paths (sibling/parent files) instead of workspace-absolute paths that may resolve to child files.
+- Wiki index files (e.g. `programming/cmake.md`) use the `index` tag. Child entries should link to them with explicit relative wikilinks (e.g. `[[../cmake]]`) since Foam resolves `[[index]]` by filename, not by tag.
 
 # For agents
 

@@ -5,8 +5,10 @@ import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecurs
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import {
   filterEntriesByPrefix,
+  filterOutIndexEntries,
   getChildFolders,
   getIndexAndDetailPaths,
+  findIndexEntry,
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
@@ -17,7 +19,11 @@ export const getStaticPaths = (async () => {
 
 const { mode, entry, slug, entries } = Astro.props;
 
-const filtered = mode === "index" ? filterEntriesByPrefix(entries, slug) : [];
+const indexEntry = mode === "index" ? findIndexEntry(entries, slug) : undefined;
+const filtered =
+  mode === "index"
+    ? filterOutIndexEntries(filterEntriesByPrefix(entries, slug))
+    : [];
 const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
 const { pageEntries, totalPages, currentPage } =
   mode === "index"
@@ -46,6 +52,7 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
           totalPages={totalPages}
           baseUrl={baseUrl}
           baseLabel="Wiki"
+          indexEntry={indexEntry}
         />
       )
     }

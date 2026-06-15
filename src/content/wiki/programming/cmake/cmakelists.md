@@ -11,6 +11,6 @@ tags:
 
 **Created:** 2024-04-10
 
-Build file for [[index]]
+Build file for [[CMake]]
 
 [CMake]: ../CMake "CMake"
