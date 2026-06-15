@@ -152,16 +152,16 @@ export function formatSegment(segment: string): string {
 }
 
 export function findIndexEntry<
-  T extends { id: string; data: { tags?: string[] } },
+  T extends { id: string; data: Record<string, unknown> },
 >(entries: T[], slug?: string): T | undefined {
   if (!slug) return undefined;
   return entries.find(
-    (entry) => entry.id === slug && entry.data.tags?.includes("index"),
+    (entry) => entry.id === slug && entry.data.index === true,
   );
 }
 
 export function filterOutIndexEntries<
-  T extends { id: string; data: { tags?: string[] } },
+  T extends { id: string; data: Record<string, unknown> },
 >(entries: T[]): T[] {
-  return entries.filter((entry) => !entry.data.tags?.includes("index"));
+  return entries.filter((entry) => entry.data.index !== true);
 }

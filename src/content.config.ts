@@ -38,6 +38,7 @@ const art = defineCollection({
     series: z.string().optional(),
     tags: z.array(z.string()),
     date: z.coerce.date(),
+    author: z.string().optional(),
     images: z.array(
       z.object({
         src: z.string(),
@@ -56,6 +57,7 @@ const blog = defineCollection({
     category: z.string(),
     tags: z.array(z.string()),
     date: z.coerce.date(),
+    author: z.string().optional(),
     image: z.string().optional(),
   }),
 });
@@ -65,7 +67,6 @@ const wiki = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    category: z.string().optional(),
     tags: z.array(z.string()).default([]),
     date: z.coerce.date().optional(),
     image: z.string().optional(),

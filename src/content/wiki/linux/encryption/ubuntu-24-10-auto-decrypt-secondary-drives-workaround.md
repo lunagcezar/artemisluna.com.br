@@ -1,18 +1,19 @@
 ---
 title: Ubuntu 24.10 auto decrypt secondary drives workaround
+description: Workaround for slow boot and missing auto-mount of secondary encrypted drives after upgrading to Ubuntu 24.10.
 date: 2024-10-12 23:49 -03:00
 author: Luna G. Cezar
-category: linux
 tags:
   - linux
   - encryption
+  - ubuntu
 ---
 
 # Ubuntu 24.10 auto decrypt secondary drives workaround
 
 **Created:** 2024-10-12
 
-If you are upgrading Ubuntu from version 24.04 to 24.10 and used the [[Encrypt second drive when the first is encrypted with TPM]] guide, you'll probably notice that the boot process is much slower and the auto mount for secondary encrypted drives doesn't work, entering in the emergency mode.
+If you are upgrading Ubuntu from version 24.04 to 24.10 and used the [Encrypt second drive when the first is encrypted with TPM](/wiki/linux/encryption/encrypt-second-drive-when-the-first-is-encrypted-with-tpm/) guide, you'll probably notice that the boot process is much slower and the auto mount for secondary encrypted drives doesn't work, entering in the emergency mode.
 
 To solve this problem, you need to comment or exclude the references to the encrypted secondary drives listed in the `/etc/crypttab` and `/etc/fstab` files.
 
@@ -33,7 +34,7 @@ mount /dev/mapper/${DEVICE_MAPPER_NAME} ${MOUNT_POINT}
 **Variables:**
 
 - **YOUR_DRIVE**: Your drive identification, like `/dev/sda` or UUID;
-- **PATH_TO_KEY_FILE**: The path for the key file that you created in the [[Encrypt second drive when the first is encrypted with TPM]] guide;
+- **PATH_TO_KEY_FILE**: The path for the key file that you created in the [Encrypt second drive when the first is encrypted with TPM](/wiki/linux/encryption/encrypt-second-drive-when-the-first-is-encrypted-with-tpm/) guide;
 - **DEVICE_MAPPER_NAME**: A chosen name by you for the device. It can be any name.
 - **MOUNT_POINT**: The directory that will show the directories of your encrypted partition.
 
@@ -77,5 +78,3 @@ sudo systemctl enable fix-auto-crypt-mount.service
 ## References
 
 1. [Running a sudo command automatically on startup](https://unix.stackexchange.com/questions/645914/running-a-sudo-command-automatically-on-startup)
-
-[Encrypt second drive when the first is encrypted with TPM]: <Encrypt second drive when the first is encrypted with TPM> "Encrypt second drive when the first is encrypted with TPM"

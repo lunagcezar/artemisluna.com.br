@@ -1,11 +1,12 @@
 ---
 title: Disable NetworkManager powersave to avoid RTW89 jittery ping
+description: Fix unstable ping and jitter on Realtek RTW89 Wi-Fi adapters by disabling NetworkManager powersave.
 date: 2025-09-26 13:42 -03:00
 author: Luna G. Cezar
-category: linux
 tags:
   - linux
   - networking
+  - wifi
 ---
 
 # Disable NetworkManager powersave to avoid RTW89 jittery ping

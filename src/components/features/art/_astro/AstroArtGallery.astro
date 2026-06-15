@@ -9,6 +9,7 @@ import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBrea
 import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
 
 type Props = {
+  collection: "art";
   entries: CollectionEntry<"art">[];
   slug?: string;
   childFolders: string[];
@@ -17,10 +18,13 @@ type Props = {
   baseUrl: string;
 };
 
-const { entries, slug, childFolders, page, totalPages, baseUrl } = Astro.props;
+const { collection, entries, slug, childFolders, page, totalPages, baseUrl } =
+  Astro.props;
 
 const segments = slug ? slug.split("/") : [];
-const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : "Art";
+const baseLabel = formatSegment(collection);
+const rootUrl = `/${collection}/`;
+const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/art/**/*.{jpg,jpeg,png,webp,gif}",
@@ -30,7 +34,11 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
 
 <div class="grid gap-6">
   <div class="grid gap-2">
-    <AstroRecursiveBreadcrumb baseUrl="/art/" baseLabel="Art" slug={slug} />
+    <AstroRecursiveBreadcrumb
+      baseUrl={rootUrl}
+      baseLabel={baseLabel}
+      slug={slug}
+    />
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>

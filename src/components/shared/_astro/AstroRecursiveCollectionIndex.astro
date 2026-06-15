@@ -32,12 +32,13 @@ const {
 
 const segments = slug ? slug.split("/") : [];
 const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
+const rootUrl = `/${collection}/`;
 ---
 
 <div class="grid gap-6">
   <div class="grid gap-2">
     <AstroRecursiveBreadcrumb
-      baseUrl={baseUrl}
+      baseUrl={rootUrl}
       baseLabel={baseLabel}
       slug={slug}
     />

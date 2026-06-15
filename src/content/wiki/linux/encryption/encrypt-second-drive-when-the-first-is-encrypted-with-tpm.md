@@ -1,20 +1,21 @@
 ---
 title: Encrypt second drive when the first is encrypted with TPM
+description: How to encrypt a secondary drive when the primary drive is already protected with TPM.
 date: 2024-07-31 16:00 -03:00
 author: Luna G. Cezar
-category: linux
 tags:
   - linux
   - encryption
+  - tpm
 ---
 
 # Encrypt second drive when the first is encrypted with TPM
 
 **Created:** 2024-07-31
 
-**DISCLAIMER**: This solution doesn't work on Ubuntu 24.10, please see [[Ubuntu 24.10 auto decrypt secondary drives workaround]]
+**DISCLAIMER**: This solution doesn't work on Ubuntu 24.10, please see [Ubuntu 24.10 auto decrypt secondary drives workaround](/wiki/linux/encryption/ubuntu-24-10-auto-decrypt-secondary-drives-workaround/)
 
-After installing a [[Linux]] distro using TPM as an option, the secondary partitions isn't encrypted because the usual installers, like the Ubuntu installer, only encrypt the main partition, needing a workaround to protect the other drives.
+After installing a Linux distro using TPM as an option, the secondary partitions isn't encrypted because the usual installers, like the Ubuntu installer, only encrypt the main partition, needing a workaround to protect the other drives.
 
 To do that, you need to generate a key and insert it in the root folder located in the main partition protected with TPM:
 
@@ -35,7 +36,7 @@ After that, you need to format the secondary drive with LUKS and, after that, ad
 sudo cryptsetup luksFormat ${YOUR_DRIVE}
 
 # Adding the luks_key after formatting
-sudo cryptsetup luksAddKey ${YOUR_DRIVE} /root/luks_key --pbkdf-force-iterations=4 --pbkdf-parallel=1
+sudo cryptsetup luksAddKey ${YOUR_DRIVE} /root/luks_key --pbdf-force-iterations=4 --pbdf-parallel=1
 ```
 
 After formatting, mount the partition and check the encrypted second drive name in a file manager. In my case, the Gnome File Manager reports that my partition is named as `/dev/dm-2`.
@@ -60,6 +61,3 @@ After that, the system should unlock the encrypted LUKS secondary partition whil
 
 1. [The ultimate guide to Full Disk Encryption with TPM and Secure Boot (with hibernation support!)](https://blastrock.github.io/fde-tpm-sb.html)
 2. [dm-crypt/Device encryption](https://wiki.archlinux.org/title/Dm-crypt/Device_encryption)
-
-[Ubuntu 24.10 auto decrypt secondary drives workaround]: <Ubuntu 24.10 auto decrypt secondary drives workaround> "Ubuntu 24.10 auto decrypt secondary drives workaround"
-[Linux]: ../Linux "Linux"

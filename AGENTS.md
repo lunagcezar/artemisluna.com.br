@@ -61,7 +61,7 @@ Art entries use the following taxonomy fields:
 
 Art-specific components live in `src/components/features/art/_astro/`:
 
-- `AstroArtGallery.astro` — breadcrumbs, child-folder links, masonry grid, pagination
+- `AstroArtGallery.astro` — breadcrumbs, child-folder links, masonry grid, pagination. Accepts a `collection` prop so the breadcrumb root URL and label are derived dynamically (e.g. `/art/` / `Art`).
 - `AstroArtCard.astro` — mosaic tile built with shadcn `Card`, showing the first image, title, and all taxonomy badges
 - `AstroArtDetail.astro` — artwork detail page with metadata and image masonry
 
@@ -74,12 +74,10 @@ Both follow the same pattern as the art section:
 - `src/pages/blog/[...slug].astro` and `src/pages/wiki/[...slug].astro` handle the root index, directory indexes, and detail pages.
 - `src/pages/blog/[...slug]/page/[page].astro` and `src/pages/wiki/[...slug]/page/[page].astro` handle pagination with `/page/N/` URLs.
 - `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links for blog and wiki.
-- If a Markdown file has the same slug as a directory (e.g. `wiki/programming/cmake.md` alongside `wiki/programming/cmake/...`), it is treated as the directory's index page. The directory index renders that entry's content plus its children, and no separate detail page is generated for the index entry.
-- Wiki entries with the `index` tag are filtered out from the child-entry listing in directory indexes. They are only accessible through the `AstroRecursiveChildFolders` badge links. Their markdown content is rendered above the child-entry list on the directory index page.
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
-- `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree
+- `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree. Expects `baseUrl` to be the collection root (e.g. `/wiki/`) so the first breadcrumb item always points home; intermediate links are built relative to that root.
 - `AstroRecursiveChildFolders.astro` — badge links to immediate child folders
 
 Shared helpers are in `src/lib/collections.ts`:
@@ -91,8 +89,8 @@ Shared helpers are in `src/lib/collections.ts`:
 - `formatSegment` — turns URL segments into readable titles
 - `getIndexAndDetailPaths` — builds `getStaticPaths` for `[...slug].astro` routes; entries whose `id` matches a directory path skip detail path generation (they become directory indexes only)
 - `getPaginationPaths` — builds `getStaticPaths` for `[...slug]/page/[page].astro` routes
-- `findIndexEntry` — finds the entry serving as a directory's index page (matches `id === slug` and has the `index` tag)
-- `filterOutIndexEntries` — removes entries with the `index` tag from a listing
+- `findIndexEntry` — finds the entry serving as a directory's index page (matches `id === slug` and has `index: true`)
+- `filterOutIndexEntries` — removes entries with `index: true` from a listing
 
 Art-only helpers are in `src/lib/art.ts`:
 
@@ -108,8 +106,16 @@ Art-only helpers are in `src/lib/art.ts`:
 
 ## Foam (VSCode) configuration
 
-- `.vscode/settings.json` sets `foam.edit.linkReferenceDefinitions` to `"relative"` so that auto-generated link reference definitions use relative paths (sibling/parent files) instead of workspace-absolute paths that may resolve to child files.
-- Wiki index files (e.g. `programming/cmake.md`) use the `index` tag. Child entries should link to them with explicit relative wikilinks (e.g. `[[../cmake]]`) since Foam resolves `[[index]]` by filename, not by tag.
+- Foam is used as a note-taking helper in VSCode, but wiki pages are built as plain Markdown. Do not rely on Foam-generated link-reference definitions in `src/content/wiki/` files; they are not rewritten at build time.
+- Link to other wiki articles with standard Markdown links using root-relative URLs, e.g. `[CMakeLists](/wiki/programming/cmake/cmakelists/)`.
+
+## Wiki metadata convention
+
+- Folder structure is the source of categorization; do not add a `category` field to wiki frontmatter.
+- Allowed fields: `title`, `description`, `tags`, `date`, `image`, `author`, `status`.
+- Always provide a `description` for SEO. It is rendered in page meta tags and should summarize the article in one sentence.
+- Use `tags` for cross-cutting topics; they are rendered as badges on detail pages and included in the page keywords meta tag.
+- Wiki does not use `index: true` index pages; directory indexes are generated automatically from the folder structure.
 
 # For agents
 

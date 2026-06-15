@@ -1,17 +1,19 @@
 ---
 title: Move external DLL to the build folder
+description: How to copy external third-party DLLs into the CMake build folder on Windows.
 date: 2024-04-10 12:00 -03:00
 author: Luna G. Cezar
-category: programming
 tags:
   - cmake
+  - windows
+  - dll
 ---
 
 # Move external DLL to the build folder
 
 **Created:** 2024-04-10
 
-After adding your executable on [[CMakeLists]], you can do a file operation with [[cmake]]:
+After adding your executable on [CMakeLists](/wiki/programming/cmake/cmakelists/), you can do a file operation with CMake:
 
 ```cmake
 if(WIN32 AND (CMAKE_C_COMPILER_ID MATCHES Clang OR MSVC))
@@ -29,6 +31,3 @@ endif()
 **YOUR_DLL** is the name of the DLL that you want to copy
 
 **PATH_TO_DLL** is the path of the DLL provided by the third-party library
-
-[CMakeLists]: CMakeLists "CMakeLists"
-[cmake]: ../cmake "CMake"

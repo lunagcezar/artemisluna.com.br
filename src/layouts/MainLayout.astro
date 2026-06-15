@@ -4,9 +4,12 @@ import "@styles/global.css";
 
 export interface Props {
   title?: string;
+  description?: string;
+  keywords?: string[];
+  author?: string;
 }
 
-const { title } = Astro.props;
+const { title, description, keywords, author } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -14,6 +17,13 @@ const currentPath = Astro.url.pathname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    {description && <meta name="description" content={description} />}
+    {author && <meta name="author" content={author} />}
+    {
+      keywords && keywords.length > 0 && (
+        <meta name="keywords" content={keywords.join(", ")} />
+      )
+    }
     <title>{title ?? "Artemis Luna"}</title>
   </head>
   <body class="grid min-h-screen w-full">
