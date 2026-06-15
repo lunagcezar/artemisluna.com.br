@@ -3,6 +3,8 @@ import { NAV_ITEMS } from "@constants/navigation";
 import { getActiveSegment } from "@lib/url";
 import { cn } from "@lib/utils";
 import { ptLabels } from "@i18n/labels";
+import LocaleSwitcher from "@components/shared/locale-switcher";
+import ThemeSwitcher from "@components/shared/theme-switcher";
 
 type Props = {
   currentPath: string;
@@ -22,7 +24,7 @@ const items = NAV_ITEMS.map((item) => ({
 
 <nav
   class={cn(
-    "fixed flex w-full items-center justify-between gap-4 border-b",
+    "fixed inset-x-0 mx-auto flex h-12 w-1/2 items-center justify-between gap-4 border-b",
     className,
   )}
 >
@@ -44,12 +46,31 @@ const items = NAV_ITEMS.map((item) => ({
       })
     }
   </div>
+  <div class="flex items-center gap-1">
+    <LocaleSwitcher client:load />
+    <ThemeSwitcher client:load />
+  </div>
 </nav>
 
 <script>
-  if (navigator.language.startsWith("pt")) {
-    document.querySelectorAll("[data-pt]").forEach((el) => {
-      el.textContent = el.getAttribute("data-pt");
-    });
-  }
+  (function () {
+    var localeCookie = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+    var locale = localeCookie ? localeCookie[1] : null;
+    var isPt =
+      locale === "pt" || (!locale && navigator.language.startsWith("pt"));
+    if (isPt) {
+      document.querySelectorAll("[data-pt]").forEach(function (el) {
+        el.textContent = el.getAttribute("data-pt");
+      });
+    }
+
+    var themeCookie = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
+    var theme = themeCookie ? themeCookie[1] : null;
+    var isDark =
+      theme === "dark" ||
+      (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
 </script>
