@@ -108,6 +108,21 @@ index: true # only for directory index pages
 
 Allowed fields: `title`, `description`, `tags`, `date`, `image`, `author`, `status`, `index`.
 
+### Linking between wiki articles
+
+You can link to other wiki articles using two syntaxes:
+
+- **Foam wikilinks**: `[[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]]`
+- **Custom display text**: `[[target|Display text]]`
+
+Links render with the target page's title wrapped in brackets (`[Article Title]`). If the target doesn't exist yet, the text still shows `[target]` as a visual indicator of an unresolved backlink.
+
+You can also use standard markdown links: `[text](/wiki/linux/encryption/some-topic/)`.
+
+### Directory index pages
+
+A file like `linux.md` placed next to a `linux/` folder with `index: true` in its frontmatter becomes that directory's landing page. Its content renders at the top of the directory listing, and it is hidden from the article list and pagination.
+
 ## Naming conventions
 
 - **Folders**: `kebab-case` only (e.g. `oil-pastel`, `urban-sketching`, `fictional-cityscapes`).

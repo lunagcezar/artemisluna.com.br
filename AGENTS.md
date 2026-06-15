@@ -7,6 +7,7 @@
 
 - shadcn/ui
 - Phosphor icons
+- tailwind
 
 # Code quality
 
@@ -161,3 +162,5 @@ Client-side locale detection for UI strings. No server routing or content restru
 # For agents
 
 - When implementing relevant modifications in this project, please update the AGENTS.md file with documentation
+- If a complex feature was being implemented, add a documentation file in the docs/ folder.
+- If in doubt, check the documentation files in the docs/ folder.
