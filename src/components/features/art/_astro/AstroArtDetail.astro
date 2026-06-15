@@ -40,7 +40,10 @@ function resolveImage(src: string): string | ImageMetadata {
         data.tags.map((tag) => {
           const labels = translateLabel?.(tag);
           return (
-            <Badge variant="ghost" data-en={labels?.en} data-pt={labels?.pt}>
+            <Badge
+              variant="ghost"
+              data-locales={labels ? JSON.stringify(labels) : undefined}
+            >
               {labels?.en ?? tag}
             </Badge>
           );

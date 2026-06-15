@@ -16,6 +16,7 @@
 # Tooling
 
 - Always use pnpm instead of npm
+- After implementing features, always run pnpm astro check and, after that, build it (pnpm build).
 
 # Components
 

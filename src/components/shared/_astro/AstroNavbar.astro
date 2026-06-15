@@ -2,7 +2,7 @@
 import { NAV_ITEMS } from "@constants/navigation";
 import { getActiveSegment } from "@lib/url";
 import { cn } from "@lib/utils";
-import { ptLabels } from "@i18n/labels";
+import { ptLabels, SUPPORTED_LOCALES } from "@i18n/labels";
 import LocaleSwitcher from "@components/shared/locale-switcher";
 import ThemeSwitcher from "@components/shared/theme-switcher";
 
@@ -15,11 +15,14 @@ const { currentPath, className } = Astro.props;
 
 const activeSegment = getActiveSegment(currentPath);
 
-const items = NAV_ITEMS.map((item) => ({
-  href: item.href,
-  en: item.label,
-  pt: ptLabels[item.href.replace("/", "")] ?? item.label,
-}));
+const items = NAV_ITEMS.map((item) => {
+  const name = item.href.replace("/", "");
+  const labels: Record<string, string> = { en: item.label };
+  for (const locale of SUPPORTED_LOCALES) {
+    if (locale !== "en") labels[locale] = ptLabels[name] ?? item.label;
+  }
+  return { href: item.href, labels };
+});
 ---
 
 <nav
@@ -37,10 +40,9 @@ const items = NAV_ITEMS.map((item) => ({
           <a
             href={item.href}
             class={cn(isActive && "font-bold")}
-            data-en={item.en}
-            data-pt={item.pt}
+            data-locales={JSON.stringify(item.labels)}
           >
-            {item.en}
+            {item.labels.en}
           </a>
         );
       })
@@ -54,15 +56,17 @@ const items = NAV_ITEMS.map((item) => ({
 
 <script>
   (function () {
-    var localeCookie = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-    var locale = localeCookie ? localeCookie[1] : null;
-    var isPt =
-      locale === "pt" || (!locale && navigator.language.startsWith("pt"));
-    if (isPt) {
-      document.querySelectorAll("[data-pt]").forEach(function (el) {
-        el.textContent = el.getAttribute("data-pt");
-      });
-    }
+    var localeMatch = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+    var locale =
+      (localeMatch ? localeMatch[1] : "") ||
+      (navigator.language.startsWith("pt") ? "pt" : "en");
+
+    document.querySelectorAll("[data-locales]").forEach(function (el) {
+      try {
+        var labels = JSON.parse(el.getAttribute("data-locales") || "{}");
+        if (labels[locale]) el.textContent = labels[locale];
+      } catch (_) {}
+    });
 
     var themeCookie = document.cookie.match(/(?:^|;\s*)theme=([^;]*)/);
     var theme = themeCookie ? themeCookie[1] : null;

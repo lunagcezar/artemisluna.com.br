@@ -52,15 +52,14 @@ const isImageMetadata = typeof resolvedImage !== "string";
       <div class="mt-2 flex flex-wrap gap-1.5">
         {
           data.tags.map((tag) => {
-            const { en, pt } = translateLabel(tag);
+            const labels = translateLabel(tag);
             return (
               <Badge
                 variant="outline"
                 className="h-auto border-white/30 bg-white/10 px-1.5 py-0.5 text-[10px] text-white"
-                data-en={en}
-                data-pt={pt}
+                data-locales={JSON.stringify(labels)}
               >
-                {en}
+                {labels.en}
               </Badge>
             );
           })

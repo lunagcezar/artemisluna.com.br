@@ -31,23 +31,22 @@ const segments = slug ? slug.split("/") : [];
       segments.map((segment, index) => {
         const isLast = index === segments.length - 1;
         const path = segments.slice(0, index + 1).join("/");
-        const { en, pt } = translateLabel(segment);
+        const labels = translateLabel(segment);
 
         return (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               {isLast ? (
-                <BreadcrumbPage data-en={en} data-pt={pt}>
-                  {en}
+                <BreadcrumbPage data-locales={JSON.stringify(labels)}>
+                  {labels.en}
                 </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink
                   href={`${baseUrl}${path}/`}
-                  data-en={en}
-                  data-pt={pt}
+                  data-locales={JSON.stringify(labels)}
                 >
-                  {en}
+                  {labels.en}
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

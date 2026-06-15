@@ -6,28 +6,14 @@ import {
   DropdownMenuItem,
 } from "@components/core/dropdown-menu";
 import { cn } from "@lib/utils";
-import { getCookie, setCookie } from "@lib/cookie";
-
-type Locale = "en" | "pt";
-
-function detectLocale(): Locale {
-  const saved = getCookie("locale");
-  if (saved === "en" || saved === "pt") return saved;
-  return navigator.language.startsWith("pt") ? "pt" : "en";
-}
-
-function applyLocale(locale: Locale): void {
-  const attr = locale === "pt" ? "data-pt" : "data-en";
-  document.querySelectorAll(`[${attr}]`).forEach((el) => {
-    el.textContent = el.getAttribute(attr);
-  });
-}
+import { setCookie } from "@lib/cookie";
+import { applyLocale, getLocale, type Locale } from "@i18n/labels";
 
 export default function LocaleSwitcher() {
   const [locale, setLocale] = useState<Locale>("en");
 
   useEffect(() => {
-    const detected = detectLocale();
+    const detected = getLocale();
     setLocale(detected);
     applyLocale(detected);
   }, []);
