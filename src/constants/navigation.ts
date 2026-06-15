@@ -1,8 +1,9 @@
-import { PaintBrushBroadIcon, BookIcon } from "@phosphor-icons/react";
-import type { NavItem } from "../types/navigation";
+import { collections } from "../content.config";
+import { formatSegment } from "../lib/collections";
 
-export const NAV_ITEMS: NavItem[] = [
-  { href: "/art", label: "Arte", icon: PaintBrushBroadIcon },
-  { href: "/blog", label: "Blog", icon: BookIcon },
-  { href: "/wiki", label: "Wiki", icon: BookIcon },
-];
+export type { NavItem } from "../types/navigation";
+
+export const NAV_ITEMS: NavItem[] = Object.keys(collections).map((name) => ({
+  href: `/${name}`,
+  label: formatSegment(name),
+}));

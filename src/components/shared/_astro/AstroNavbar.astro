@@ -24,13 +24,8 @@ const activeSegment = getActiveSegment(currentPath);
     {
       NAV_ITEMS.map((item) => {
         const isActive = item.href.replace("/", "") === activeSegment;
-        const Icon = item.icon;
         return (
-          <a
-            href={item.href}
-            class={cn(isActive && "font-bold", "flex items-center gap-2")}
-          >
-            {Icon && <Icon weight="duotone" />}
+          <a href={item.href} class={cn(isActive && "font-bold")}>
             {item.label}
           </a>
         );
