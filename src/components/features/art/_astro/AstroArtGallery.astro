@@ -6,7 +6,6 @@ import { formatSegment } from "@lib/collections";
 import { resolveArtImage } from "@lib/art";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
 import { createTranslateLabel } from "@i18n/labels";
 
 type Props = {
@@ -45,12 +44,6 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>
-
-  <AstroRecursiveChildFolders
-    baseUrl={baseUrl}
-    childFolders={childFolders}
-    translateLabel={translateLabel}
-  />
 
   <section
     aria-label="Artworks"

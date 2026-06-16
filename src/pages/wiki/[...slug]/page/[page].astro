@@ -3,10 +3,9 @@ import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import {
-  filterEntriesByPrefix,
+  buildDirectoryIndex,
+  getRecursiveEntries,
   filterOutIndexEntries,
-  findIndexEntry,
-  getChildFolders,
   getPaginationPaths,
   paginateEntries,
 } from "@lib/collections";
@@ -18,11 +17,15 @@ export const getStaticPaths = (async () => {
 
 const { slug, page, entries } = Astro.props;
 
-const filtered = filterOutIndexEntries(filterEntriesByPrefix(entries, slug));
-const indexEntry = findIndexEntry(entries, slug);
-const childFolders = getChildFolders(entries, slug);
+const index = buildDirectoryIndex(entries);
+const dir = index[slug ?? ""];
+const allEntries = dir
+  ? filterOutIndexEntries(getRecursiveEntries(slug ?? "", index))
+  : [];
+const indexEntry = dir?.indexEntry;
+const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } = paginateEntries(
-  filtered,
+  allEntries,
   page,
   DEFAULT_PAGE_SIZE,
 );

@@ -7,6 +7,7 @@ export const translations: Record<string, Record<string, string>> = {
     dark: "Dark",
   },
   pt: {
+    home: "Início",
     art: "Arte",
     "art.traditional": "Tradicional",
     "art.digital": "Digital",

@@ -4,8 +4,8 @@ import MainLayout from "@layouts/MainLayout.astro";
 import AstroArtDetail from "@components/features/art/_astro/AstroArtDetail.astro";
 import AstroArtGallery from "@components/features/art/_astro/AstroArtGallery.astro";
 import {
-  filterEntriesByPrefix,
-  getChildFolders,
+  buildDirectoryIndex,
+  getRecursiveEntries,
   getIndexAndDetailPaths,
   paginateEntries,
 } from "@lib/collections";
@@ -19,11 +19,14 @@ export const getStaticPaths = (async () => {
 const { mode, entry, slug, entries } = Astro.props;
 const translateLabel = createTranslateLabel("art");
 
-const filtered = mode === "index" ? filterEntriesByPrefix(entries, slug) : [];
-const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
+const index = buildDirectoryIndex(entries ?? []);
+const dir = index[slug ?? ""];
+const allEntries =
+  mode === "index" ? getRecursiveEntries(slug ?? "", index) : [];
+const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } =
   mode === "index"
-    ? paginateEntries(filtered, 1, DEFAULT_PAGE_SIZE)
+    ? paginateEntries(allEntries, 1, DEFAULT_PAGE_SIZE)
     : { pageEntries: [], totalPages: 1, currentPage: 1 };
 const baseUrl = slug ? `/art/${slug}/` : "/art/";
 ---

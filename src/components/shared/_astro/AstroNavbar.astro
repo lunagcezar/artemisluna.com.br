@@ -1,10 +1,10 @@
 ---
-import { NAV_ITEMS } from "@constants/navigation";
-import { getActiveSegment } from "@lib/url";
 import { cn } from "@lib/utils";
-import { translations, SUPPORTED_LOCALES } from "@i18n/labels";
+import { buildFullSidebarTree } from "@lib/collections";
+import { createSidebarHelpers } from "@lib/sidebar";
 import LocaleSwitcher from "@components/shared/locale-switcher";
 import ThemeSwitcher from "@components/shared/theme-switcher";
+import AstroSidebarBranch from "./AstroSidebarBranch.astro";
 
 type Props = {
   currentPath: string;
@@ -13,44 +13,103 @@ type Props = {
 
 const { currentPath, className } = Astro.props;
 
-const activeSegment = getActiveSegment(currentPath);
-
-const items = NAV_ITEMS.map((item) => {
-  const name = item.href.replace("/", "");
-  const labels: Record<string, string> = { en: item.label };
-  for (const locale of SUPPORTED_LOCALES) {
-    if (locale !== "en")
-      labels[locale] = translations[locale]?.[name] ?? item.label;
-  }
-  return { href: item.href, labels };
-});
+const { tree, collectionNames } = await buildFullSidebarTree();
+const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
+  createSidebarHelpers(currentPath, collectionNames);
 ---
 
 <nav
   class={cn(
-    "fixed inset-x-0 mx-auto flex h-12 w-1/2 items-center justify-between gap-4 border-b z-50",
+    "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm",
     className,
   )}
 >
-  <a href="/" class="font-bold">Luna G. Cezar</a>
-  <div class="flex gap-4">
-    {
-      items.map((item) => {
-        const isActive = item.href.replace("/", "") === activeSegment;
-        return (
-          <a
-            href={item.href}
-            class={cn(isActive && "font-bold")}
-            data-locales={JSON.stringify(item.labels)}
-          >
-            {item.labels.en}
-          </a>
-        );
-      })
-    }
+  <div class="flex h-12 items-center justify-between px-4">
+    <button
+      id="nav-toggle"
+      class="hover:bg-accent flex size-8 items-center justify-center rounded-md"
+      aria-label="Toggle navigation"
+    >
+      <svg
+        id="nav-icon-open"
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <svg
+        id="nav-icon-close"
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="hidden"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <a href="/" class="font-semibold tracking-tight">Luna G. Cezar</a>
+
+    <div class="flex items-center gap-1">
+      <LocaleSwitcher client:load />
+      <ThemeSwitcher client:load />
+    </div>
   </div>
-  <div class="flex items-center gap-1">
-    <LocaleSwitcher client:load />
-    <ThemeSwitcher client:load />
+
+  <div
+    id="nav-drawer"
+    class="border-border bg-background hidden max-h-[calc(100dvh-3rem)] overflow-y-auto border-t px-2 pt-2 pb-6"
+  >
+    <ul class="space-y-0.5">
+      {
+        tree.map((node) => (
+          <AstroSidebarBranch
+            node={node}
+            getLabels={getNodeLabels}
+            isActive={nodeIsActive}
+            hasActiveDescendant={nodeHasActiveDescendant}
+          />
+        ))
+      }
+    </ul>
   </div>
 </nav>
+
+<script>
+  const toggle = document.getElementById("nav-toggle");
+  const drawer = document.getElementById("nav-drawer");
+  const iconOpen = document.getElementById("nav-icon-open");
+  const iconClose = document.getElementById("nav-icon-close");
+
+  if (toggle && drawer) {
+    toggle.addEventListener("click", () => {
+      const isOpen = drawer.classList.toggle("hidden");
+      iconOpen?.classList.toggle("hidden", !isOpen);
+      iconClose?.classList.toggle("hidden", isOpen);
+    });
+
+    drawer.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        drawer.classList.add("hidden");
+        iconOpen?.classList.remove("hidden");
+        iconClose?.classList.add("hidden");
+      });
+    });
+  }
+</script>

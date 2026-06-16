@@ -2,6 +2,7 @@
 import { TooltipProvider } from "@components/core/tooltip";
 import AstroNavbar from "./AstroNavbar.astro";
 import { cn } from "@lib/utils";
+import AstroSidebar from "./AstroSidebar.astro";
 
 type Props = {
   currentPath: string;
@@ -12,16 +13,16 @@ const { currentPath, className } = Astro.props;
 ---
 
 <TooltipProvider client:load>
-  <AstroNavbar
-    currentPath={currentPath}
-    className="inset-x-0 mx-auto h-12 w-3/4 lg:w-2/3 xl:w-1/2"
-  />
-  <main
+  <AstroNavbar currentPath={currentPath} className="lg:hidden" />
+  <div
     class={cn(
-      "mt-12 w-3/4 lg:w-2/3 xl:w-1/2 justify-self-center py-8",
+      "flex w-full pt-12 lg:w-3/4 xl:w-2/3 lg:pt-0 justify-self-center",
       className,
     )}
   >
-    <slot />
-  </main>
+    <AstroSidebar currentPath={currentPath} className="hidden lg:block" />
+    <main class="min-w-0 flex-1 px-4 py-8 lg:px-8">
+      <slot />
+    </main>
+  </div>
 </TooltipProvider>

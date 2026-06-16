@@ -1,0 +1,43 @@
+---
+import { cn } from "@lib/utils";
+import { buildFullSidebarTree } from "@lib/collections";
+import { createSidebarHelpers } from "@lib/sidebar";
+import AstroSidebarBranch from "./AstroSidebarBranch.astro";
+
+type Props = {
+  currentPath: string;
+  className?: string;
+};
+
+const { currentPath, className } = Astro.props;
+
+const { tree, collectionNames } = await buildFullSidebarTree();
+const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
+  createSidebarHelpers(currentPath, collectionNames);
+---
+
+<nav
+  class={cn(
+    "sticky top-0 h-screen w-48 shrink-0 overflow-y-auto border-r border-border py-8",
+    className,
+  )}
+>
+  <a href="/" class="mb-6 block px-4 font-semibold tracking-tight">
+    Luna G. Cezar
+  </a>
+  <ul class="space-y-0.5 px-2">
+    {
+      tree.map((node) => (
+        <AstroSidebarBranch
+          node={node}
+          getLabels={getNodeLabels}
+          isActive={nodeIsActive}
+          hasActiveDescendant={nodeHasActiveDescendant}
+        />
+      ))
+    }
+  </ul>
+  <div class="mt-6 flex gap-1 px-4">
+    <slot name="switchers" />
+  </div>
+</nav>

@@ -140,7 +140,7 @@ pt: {
 }
 ```
 
-The `AstroRecursiveBreadcrumb` and `AstroRecursiveChildFolders` components accept a `translateLabel` function that maps each segment to bilingual `data-locales` attributes. The client-side locale switcher swaps the visible text without a page reload.
+The `AstroRecursiveBreadcrumb` component accepts a `translateLabel` function that maps each segment to bilingual `data-locales` attributes. The client-side locale switcher swaps the visible text without a page reload.
 
 ## Render pipeline
 
@@ -155,7 +155,6 @@ For a wiki article visiting `/wiki/linux/encryption/`:
     ↓
 [index mode] AstroRecursiveCollectionIndex
     → AstroRecursiveBreadcrumb    (Wiki > Linux > Encryption)
-    → AstroRecursiveChildFolders  (badge links to sub-folders)
     → AstroEntryContent           (if indexEntry exists, renders its markdown)
     → Article list                (sorted by date, paginated)
     → AstroPagination             (page 2+ links)

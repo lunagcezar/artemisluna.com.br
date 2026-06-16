@@ -5,11 +5,10 @@ import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecurs
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { Badge } from "@components/core/badge";
 import {
-  filterEntriesByPrefix,
+  buildDirectoryIndex,
+  getRecursiveEntries,
   filterOutIndexEntries,
-  getChildFolders,
   getIndexAndDetailPaths,
-  findIndexEntry,
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
@@ -22,15 +21,17 @@ export const getStaticPaths = (async () => {
 const { mode, entry, slug, entries } = Astro.props;
 const translateLabel = createTranslateLabel("wiki");
 
-const indexEntry = mode === "index" ? findIndexEntry(entries, slug) : undefined;
-const filtered =
+const index = buildDirectoryIndex(entries ?? []);
+const dir = index[slug ?? ""];
+const indexEntry = dir?.indexEntry;
+const allEntries =
   mode === "index"
-    ? filterOutIndexEntries(filterEntriesByPrefix(entries, slug))
+    ? filterOutIndexEntries(getRecursiveEntries(slug ?? "", index))
     : [];
-const childFolders = mode === "index" ? getChildFolders(entries, slug) : [];
+const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } =
   mode === "index"
-    ? paginateEntries(filtered, 1, DEFAULT_PAGE_SIZE)
+    ? paginateEntries(allEntries, 1, DEFAULT_PAGE_SIZE)
     : { pageEntries: [], totalPages: 1, currentPage: 1 };
 const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
 ---

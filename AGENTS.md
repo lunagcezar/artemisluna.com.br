@@ -80,19 +80,33 @@ Both follow the same pattern as the art section:
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
 - `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree. Expects `baseUrl` to be the collection root (e.g. `/wiki/`) so the first breadcrumb item always points home; intermediate links are built relative to that root.
-- `AstroRecursiveChildFolders.astro` — badge links to immediate child folders
 
-Shared helpers are in `src/lib/collections.ts`:
+### Directory index (for route file queries)
 
-- `getDirectoryPaths` — generates all directory index slugs from entry ids
-- `filterEntriesByPrefix` — recursive filtering for directory indexes
-- `getChildFolders` — immediate child folders for navigation links
-- `paginateEntries` — pagination slicing
-- `formatSegment` — turns URL segments into readable titles
-- `getIndexAndDetailPaths` — builds `getStaticPaths` for `[...slug].astro` routes; entries whose `id` matches a directory path skip detail path generation (they become directory indexes only)
-- `getPaginationPaths` — builds `getStaticPaths` for `[...slug]/page/[page].astro` routes
-- `findIndexEntry` — finds the entry serving as a directory's index page (matches `id === slug` and has `index: true`)
-- `filterOutIndexEntries` — removes entries with `index: true` from a listing
+Route files no longer iterate flat entry lists. Instead they build a `DirectoryIndex` once via `buildDirectoryIndex(entries)`, then query it with O(1) lookups:
+
+- `DirectoryEntry<T>` — per-directory data: `children` (subfolder names), `entries` (direct entries, pre-sorted by date desc), `indexEntry` (optional index page)
+- `DirectoryIndex<T>` — `Record<string, DirectoryEntry<T>>`, keyed by directory path (`""` for root)
+- `buildDirectoryIndex(entries)` — single-pass index builder; sorts once, groups entries by directory, registers child folders, detects index entries
+- `getRecursiveEntries(key, index)` — tree-walks to collect all entries in a directory and its descendants
+
+Route files replace 3 old function calls with direct index lookups:
+
+| Before                                 | After                                    |
+| -------------------------------------- | ---------------------------------------- |
+| `filterEntriesByPrefix(entries, slug)` | `getRecursiveEntries(slug ?? "", index)` |
+| `getChildFolders(entries, slug)`       | `dir?.children ?? []`                    |
+| `findIndexEntry(entries, slug)`        | `dir?.indexEntry`                        |
+
+### Sidebar tree (navigation components)
+
+- `SidebarNode` — recursive tree node: `name`, `href`, `children`
+- `buildCollectionRoot(collection, entries)` — builds the directory tree for one collection from entry IDs
+- `buildFullSidebarTree()` — async; scans all collections via `content.config.ts`, returns the full tree (with a `home` root node) and collection names
+
+Sidebar and navbar components use `src/lib/sidebar.ts`:
+
+- `createSidebarHelpers(currentPath, collectionNames)` — factory returning `getNodeLabels`, `nodeIsActive`, `nodeHasActiveDescendant`; handles bilingual labels via `createTranslateLabel` and the translations map, highlights the active page via `currentPath.startsWith(node.href)`, and auto-expands ancestor branches via `nodeHasActiveDescendant`
 
 Art-only helpers are in `src/lib/art.ts`:
 
@@ -149,7 +163,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Bilingual rendering** — Nav item labels are embedded as `data-en`/`data-pt` attributes on the server-rendered HTML. A script or React component swaps textContent based on locale.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React, shadcn `DropdownMenu`). Reads cookie, swaps `[data-pt]`/`[data-en]` text, persists choice.
-- **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroRecursiveChildFolders`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
+- **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
 - See `docs/i18n.md` for the full pattern reference.
 
 # Theme / Dark Mode

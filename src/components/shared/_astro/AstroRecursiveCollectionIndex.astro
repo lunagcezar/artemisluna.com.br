@@ -2,7 +2,6 @@
 import type { CollectionEntry } from "astro:content";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import AstroRecursiveChildFolders from "@components/core/_astro/AstroRecursiveChildFolders.astro";
 import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
 import { formatSegment } from "@lib/collections";
 import { createTranslateLabel } from "@i18n/labels";
@@ -23,7 +22,6 @@ const {
   collection,
   entries,
   slug,
-  childFolders,
   page,
   totalPages,
   baseUrl,
@@ -48,12 +46,6 @@ const translateLabel = createTranslateLabel(collection);
 
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>
-
-  <AstroRecursiveChildFolders
-    baseUrl={baseUrl}
-    childFolders={childFolders}
-    translateLabel={translateLabel}
-  />
 
   {indexEntry && <AstroEntryContent entry={indexEntry} />}
 
