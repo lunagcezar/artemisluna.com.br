@@ -54,8 +54,7 @@ export async function getPaginationPaths<C extends keyof DataEntryMap>(
   const paths: PaginationPath<C>[] = [];
 
   for (const slug of Object.keys(index)) {
-    const allEntries = getRecursiveEntries(slug, index);
-    const filtered = filterOutIndexEntries(allEntries);
+    const filtered = filterOutIndexEntries(getRecursiveEntries(slug, index));
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const paramsSlug = slug || undefined;
 
@@ -264,52 +263,62 @@ export function buildDirectoryIndex<
     (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0),
   );
 
-  const index: DirectoryIndex<T> = {
-    "": { children: [], entries: [] },
-  };
-
+  // Build set of directory paths (same logic as getDirectoryPaths + index entries)
+  const directorySet = new Set<string>();
   for (const entry of sorted) {
     const parts = entry.id.split("/");
-    const dirPath = parts.slice(0, -1).join("/");
-
     let path = "";
     for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      const parentPath = path;
-      path = path ? `${path}/${part}` : part;
+      path = path ? `${path}/${parts[i]}` : parts[i];
+      directorySet.add(path);
+    }
+  }
+  for (const entry of sorted) {
+    if ((entry.data as any).index) {
+      directorySet.add(entry.id);
+    }
+  }
 
-      if (!index[path]) {
-        index[path] = { children: [], entries: [] };
-        const parent = index[parentPath];
-        if (parent && !parent.children.includes(part)) {
-          parent.children.push(part);
-        }
+  // Initialize directory nodes
+  const index: DirectoryIndex<T> = {};
+  for (const dirKey of directorySet) {
+    index[dirKey] = { children: [], entries: [] };
+  }
+  index[""] = { children: [], entries: [] };
+
+  // Build child-parent relationships
+  for (const dirKey of directorySet) {
+    const lastSlash = dirKey.lastIndexOf("/");
+    if (lastSlash >= 0) {
+      const parentKey = dirKey.slice(0, lastSlash);
+      const name = dirKey.slice(lastSlash + 1);
+      if (index[parentKey] && !index[parentKey].children.includes(name)) {
+        index[parentKey].children.push(name);
+      }
+    } else {
+      if (!index[""].children.includes(dirKey)) {
+        index[""].children.push(dirKey);
       }
     }
+  }
 
-    if (!index[dirPath]) {
-      index[dirPath] = { children: [], entries: [] };
-      if (parts.length > 1) {
-        const parentPath = parts.slice(0, -2).join("/");
-        const part = parts[parts.length - 2];
-        const parent = index[parentPath];
-        if (parent && !parent.children.includes(part)) {
-          parent.children.push(part);
-        }
+  // Place entries: if ID matches a directory path → indexEntry, otherwise → parent's entries
+  for (const entry of sorted) {
+    if (directorySet.has(entry.id)) {
+      (index[entry.id] as any).indexEntry = entry;
+    } else {
+      const parts = entry.id.split("/");
+      const dirPath = parts.slice(0, -1).join("/") || "";
+      if (index[dirPath]) {
+        index[dirPath].entries.push(entry);
       }
-    }
-
-    index[dirPath].entries.push(entry);
-
-    if (entry.data.index) {
-      (index[dirPath] as any).indexEntry = entry;
     }
   }
 
   return index;
 }
 
-export function getRecursiveEntries<T>(
+export function getRecursiveEntries<T extends { data: { date?: Date } }>(
   key: string,
   index: DirectoryIndex<T>,
 ): T[] {
@@ -321,5 +330,7 @@ export function getRecursiveEntries<T>(
     const childKey = key ? `${key}/${child}` : child;
     result.push(...getRecursiveEntries(childKey, index));
   }
-  return result;
+  return result.sort(
+    (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0),
+  );
 }

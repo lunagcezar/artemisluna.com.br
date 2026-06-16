@@ -2,6 +2,8 @@
 import { cn } from "@lib/utils";
 import { buildFullSidebarTree } from "@lib/collections";
 import { createSidebarHelpers } from "@lib/sidebar";
+import LocaleSwitcher from "@components/shared/locale-switcher";
+import ThemeSwitcher from "@components/shared/theme-switcher";
 import AstroSidebarBranch from "./AstroSidebarBranch.astro";
 
 type Props = {
@@ -22,9 +24,13 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
     className,
   )}
 >
-  <a href="/" class="mb-6 block px-4 font-semibold tracking-tight">
+  <a href="/" class="mb-4 block px-4 font-semibold tracking-tight">
     Luna G. Cezar
   </a>
+  <div class="mb-4 flex gap-1 px-4">
+    <LocaleSwitcher client:load />
+    <ThemeSwitcher client:load />
+  </div>
   <ul class="space-y-0.5 px-2">
     {
       tree.map((node) => (
@@ -37,7 +43,4 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
       ))
     }
   </ul>
-  <div class="mt-6 flex gap-1 px-4">
-    <slot name="switchers" />
-  </div>
 </nav>

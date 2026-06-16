@@ -34,7 +34,7 @@ const indexEntry = dir?.indexEntry;
 - `entries` — entries directly in this directory (pre-sorted by date desc)
 - `indexEntry` — optional `index: true` entry for the directory
 
-**`getRecursiveEntries(key, index)`** walks the tree from `key` downward, collecting all descendant entries.
+Directory indexes display all descendant entries (recursive), sorted globally by date descending. Child-folder links let users navigate deeper into the hierarchy. Entries whose `id` matches a directory path (e.g. `programming/cmake` when `programming/cmake/cmakelists` exists) are stored as that directory's `indexEntry` rather than appearing in the parent's `entries`.
 
 ### What replaced what
 

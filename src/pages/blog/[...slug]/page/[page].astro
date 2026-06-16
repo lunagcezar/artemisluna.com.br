@@ -18,7 +18,7 @@ const { slug, page, entries } = Astro.props;
 
 const index = buildDirectoryIndex(entries);
 const dir = index[slug ?? ""];
-const allEntries = dir ? getRecursiveEntries(slug ?? "", index) : [];
+const allEntries = getRecursiveEntries(slug ?? "", index);
 const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } = paginateEntries(
   allEntries,

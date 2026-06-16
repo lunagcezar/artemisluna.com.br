@@ -57,7 +57,7 @@ Art entries use the following taxonomy fields:
   - directory indexes (`/art/traditional/`, `/art/traditional/painting/gouache/`, etc.)
   - detail pages (`/art/traditional/drawing/urban-sketching/20250416-lagoa-das-almecegas/`)
 - `src/pages/art/[...slug]/page/[page].astro` handles pagination for any directory depth (`/art/traditional/page/2/`).
-- Directory indexes display entries recursively (all entries whose content `id` starts with that prefix).
+- Directory indexes display all descendant entries (recursive). Child-folder links let users navigate deeper into the hierarchy.
 
 ## Components
 
@@ -88,7 +88,7 @@ Route files no longer iterate flat entry lists. Instead they build a `DirectoryI
 - `DirectoryEntry<T>` — per-directory data: `children` (subfolder names), `entries` (direct entries, pre-sorted by date desc), `indexEntry` (optional index page)
 - `DirectoryIndex<T>` — `Record<string, DirectoryEntry<T>>`, keyed by directory path (`""` for root)
 - `buildDirectoryIndex(entries)` — single-pass index builder; sorts once, groups entries by directory, registers child folders, detects index entries
-- `getRecursiveEntries(key, index)` — tree-walks to collect all entries in a directory and its descendants
+- `getRecursiveEntries(key, index)` — tree-walks to collect all entries in a directory and its descendants, globally sorted by date descending
 
 Route files replace 3 old function calls with direct index lookups:
 
