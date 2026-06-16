@@ -20,10 +20,8 @@ const { mode, entry, slug, entries } = Astro.props;
 const translateLabel = createTranslateLabel("art");
 
 const index = buildDirectoryIndex(entries ?? []);
-const dir = index[slug ?? ""];
 const allEntries =
   mode === "index" ? getRecursiveEntries(slug ?? "", index) : [];
-const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } =
   mode === "index"
     ? paginateEntries(allEntries, 1, DEFAULT_PAGE_SIZE)
@@ -45,7 +43,6 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
         collection="art"
         entries={pageEntries}
         slug={slug}
-        childFolders={childFolders}
         page={currentPage}
         totalPages={totalPages}
         baseUrl={baseUrl}

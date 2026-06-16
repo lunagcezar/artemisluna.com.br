@@ -232,7 +232,7 @@ export const translations = {
 
    Keys use dot notation: `collection.segment`. If a key has no translation, `formatSegment()` is used for segments (English) or the raw key for UI strings.
 
-3. Add the locale option to `src/components/shared/locale-switcher.tsx`.
+3. Add the locale option to `src/i18n/labels.ts` `SUPPORTED_LOCALES` — the switcher (`src/components/shared/_astro/AstroLocaleSwitcher.astro`) auto-generates its options from this array.
 
 ### Translating segments / tags
 
@@ -259,7 +259,7 @@ pt: {
 }
 ```
 
-Use `t("light")` in React components (imported from `@i18n/labels`).
+Use `t("light")` in any component (imported from `@i18n/labels`). For static HTML that needs to react to locale changes, embed `data-locales='{"en":"Light","pt":"Claro"}'` on the element — the inline script and `applyLocale()` will swap the text content.
 
 ## Commands
 

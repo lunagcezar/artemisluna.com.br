@@ -8,12 +8,15 @@ The site uses a tree-based sidebar navigation built at build time from content c
 src/pages/             ← catch-all routes consume DirectoryIndex
 src/components/
   shared/_astro/
-    AstroSidebar.astro      ← desktop sticky tree sidebar
-    AstroNavbar.astro       ← mobile collapsible tree drawer
-    AstroSidebarBranch.astro  ← recursive tree node renderer
+    AstroSidebar.astro           ← desktop sticky tree sidebar
+    AstroNavbar.astro            ← mobile collapsible tree drawer
+    AstroSidebarBranch.astro     ← recursive tree node renderer
+    AstroLocaleSwitcher.astro    ← locale dropdown (auto-detects SUPPORTED_LOCALES)
+    AstroThemeSwitcher.astro     ← theme dropdown (CSS-controlled icons, no flash)
 src/lib/
   collections.ts  ← DirectoryIndex + Sidebar tree builders
   sidebar.ts      ← shared branch helpers (labels, active state)
+  dropdown.ts     ← shared dropdown menu logic (open/close, keyboard nav)
 ```
 
 ## DirectoryIndex (route file queries)
@@ -89,6 +92,20 @@ Ancestor expansion is automatic: nodes whose descendants are active always show 
 
 - **Desktop** (`lg:` and up): `AstroSidebar` is a sticky sidebar (`sticky top-0 h-screen overflow-y-auto`) beside the main content
 - **Mobile** (below `lg:`): `AstroNavbar` is a fixed top bar with a hamburger toggle that opens a drawer containing the same tree
+
+## Dropdown menus (`src/lib/dropdown.ts`)
+
+Locale and theme switchers use a shared vanilla JS dropdown via `initSelectMenus(config)`:
+
+| Config          | Purpose                                                  |
+| --------------- | -------------------------------------------------------- |
+| `rootSelector`  | CSS selector for the root element                        |
+| `optionAttr`    | Data attribute on each option (e.g. `data-theme-option`) |
+| `valueSelector` | Optional element whose text shows the selected value     |
+| `initialValue`  | Pre-selected option on page load                         |
+| `onSelect`      | Callback fired when an option is picked                  |
+
+The library handles: open/close positioning via `fixed`, keyboard navigation (ArrowDown/ArrowUp/Enter/Escape), ARIA attributes (`aria-expanded`, `role`), click-outside-to-close, and hover-to-highlight.
 
 ## Shared helpers (`src/lib/sidebar.ts`)
 

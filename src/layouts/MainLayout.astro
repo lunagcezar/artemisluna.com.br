@@ -56,6 +56,9 @@ const currentPath = Astro.url.pathname;
             if (labels[locale]) el.textContent = labels[locale];
           } catch (_) {}
         });
+        document.querySelectorAll("[data-locale-value]").forEach(function (el) {
+          el.textContent = locale.toUpperCase();
+        });
       })();
     </script>
   </body>

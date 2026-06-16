@@ -12,14 +12,12 @@ type Props = {
   collection: "art";
   entries: CollectionEntry<"art">[];
   slug?: string;
-  childFolders: string[];
   page: number;
   totalPages: number;
   baseUrl: string;
 };
 
-const { collection, entries, slug, childFolders, page, totalPages, baseUrl } =
-  Astro.props;
+const { collection, entries, slug, page, totalPages, baseUrl } = Astro.props;
 
 const segments = slug ? slug.split("/") : [];
 const baseLabel = formatSegment(collection);

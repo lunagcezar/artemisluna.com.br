@@ -54,15 +54,21 @@ export function createTranslateLabel(collection: string): TranslateLabel {
   };
 }
 
-export function getLocale(): Locale {
-  if (typeof document === "undefined") return "en";
+export function getCookieLocale(): string | undefined {
+  if (typeof document === "undefined") return undefined;
   const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-  const saved = match?.[1] as Locale | undefined;
-  if (saved === "en" || saved === "pt") return saved;
-  return navigator.language.startsWith("pt") ? "pt" : "en";
+  return match?.[1];
 }
 
-export function applyLocale(locale: Locale): void {
+export function getLocale(fallback: string = "en"): string {
+  const saved = getCookieLocale();
+  if (saved) return saved;
+  if (typeof navigator === "undefined") return fallback;
+  const lang = navigator.language.slice(0, 2);
+  return lang;
+}
+
+export function applyLocale(locale: string): void {
   document.querySelectorAll("[data-locales]").forEach((el) => {
     try {
       const labels = JSON.parse(el.getAttribute("data-locales") ?? "{}");

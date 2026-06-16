@@ -2,9 +2,11 @@
 import { cn } from "@lib/utils";
 import { buildFullSidebarTree } from "@lib/collections";
 import { createSidebarHelpers } from "@lib/sidebar";
-import LocaleSwitcher from "@components/shared/locale-switcher";
-import ThemeSwitcher from "@components/shared/theme-switcher";
+import AstroLocaleSwitcher from "./AstroLocaleSwitcher.astro";
+import AstroThemeSwitcher from "./AstroThemeSwitcher.astro";
 import AstroSidebarBranch from "./AstroSidebarBranch.astro";
+import { XIcon, ListIcon } from "@phosphor-icons/react";
+import { Button } from "@components/core/button";
 
 type Props = {
   currentPath: string;
@@ -25,50 +27,21 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
   )}
 >
   <div class="flex h-12 items-center justify-between px-4">
-    <button
+    <Button
       id="nav-toggle"
-      class="hover:bg-accent flex size-8 items-center justify-center rounded-md"
       aria-label="Toggle navigation"
+      variant="ghost"
+      size="icon"
     >
-      <svg
-        id="nav-icon-open"
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-      <svg
-        id="nav-icon-close"
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="hidden"
-      >
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
+      <ListIcon id="nav-icon-open" />
+      <XIcon id="nav-icon-close" className="hidden" />
+    </Button>
 
     <a href="/" class="font-semibold tracking-tight">Luna G. Cezar</a>
 
     <div class="flex items-center gap-1">
-      <LocaleSwitcher client:load />
-      <ThemeSwitcher client:load />
+      <AstroLocaleSwitcher />
+      <AstroThemeSwitcher />
     </div>
   </div>
 

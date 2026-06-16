@@ -2,8 +2,8 @@
 import { cn } from "@lib/utils";
 import { buildFullSidebarTree } from "@lib/collections";
 import { createSidebarHelpers } from "@lib/sidebar";
-import LocaleSwitcher from "@components/shared/locale-switcher";
-import ThemeSwitcher from "@components/shared/theme-switcher";
+import AstroLocaleSwitcher from "./AstroLocaleSwitcher.astro";
+import AstroThemeSwitcher from "./AstroThemeSwitcher.astro";
 import AstroSidebarBranch from "./AstroSidebarBranch.astro";
 
 type Props = {
@@ -28,8 +28,8 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
     Luna G. Cezar
   </a>
   <div class="mb-4 flex gap-1 px-4">
-    <LocaleSwitcher client:load />
-    <ThemeSwitcher client:load />
+    <AstroLocaleSwitcher />
+    <AstroThemeSwitcher />
   </div>
   <ul class="space-y-0.5 px-2">
     {

@@ -159,10 +159,10 @@ See `docs/remark-wiki-links.md` for full implementation details.
 
 Client-side locale detection for UI strings. No server routing or content restructuring.
 
-- **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key.
-- **Bilingual rendering** — Nav item labels are embedded as `data-en`/`data-pt` attributes on the server-rendered HTML. A script or React component swaps textContent based on locale.
+- **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key.
+- **Bilingual rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
-- **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React, shadcn `DropdownMenu`). Reads cookie, swaps `[data-pt]`/`[data-en]` text, persists choice.
+- **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
 - **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
 - See `docs/i18n.md` for the full pattern reference.
 
@@ -170,8 +170,8 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 - Dark mode uses the `.dark` CSS class on `<html>` (Tailwind v4 class-based variant: `@custom-variant dark (&:is(.dark *));`).
 - CSS variables for `.dark` are defined in `src/styles/global.css`.
-- **Theme Switcher** — `src/components/shared/theme-switcher.tsx` (React, shadcn `DropdownMenu`). Reads `theme` cookie (falls back to `prefers-color-scheme`), toggles `.dark` class, persists choice.
-- An inline `<script>` in `AstroNavbar.astro` runs before React hydrates, applying the saved locale and theme immediately to prevent flash.
+- **Theme Switcher** — `src/components/shared/_astro/AstroThemeSwitcher.astro` (Astro component with vanilla JS dropdown). Both Sun/Moon icons are always rendered; CSS `dark:hidden`/`hidden dark:block` controls visibility based on the `.dark` class (set by the inline `<head>` script). Reads `theme` cookie (falls back to `prefers-color-scheme`), toggles `.dark` class, persists choice.
+- An inline `<script>` in `MainLayout.astro` runs before any component JS, applying the saved locale and theme immediately to prevent flash.
 
 # For agents
 

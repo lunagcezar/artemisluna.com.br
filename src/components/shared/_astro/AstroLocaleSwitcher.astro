@@ -1,0 +1,60 @@
+---
+import { SUPPORTED_LOCALES } from "@i18n/labels";
+import { Button } from "@components/core/button";
+---
+
+<div
+  class="relative"
+  data-locale-switcher
+  data-supported-locales={JSON.stringify(SUPPORTED_LOCALES)}
+>
+  <Button variant="ghost" size="icon" aria-haspopup="menu" aria-expanded="false"
+    ><span class="text-sm font-medium" data-locale-value>EN</span></Button
+  >
+
+  <div
+    role="menu"
+    class="bg-popover text-popover-foreground ring-border fixed z-50 hidden rounded-lg p-1 shadow-md ring-1"
+  >
+    <div class="flex flex-col">
+      {
+        SUPPORTED_LOCALES.map((locale) => (
+          <Button
+            role="menuitem"
+            variant="ghost"
+            className="justify-start"
+            data-locale-option={locale}
+          >
+            {locale.toUpperCase()}
+          </Button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initSelectMenus } from "@lib/dropdown";
+  import { getCookieLocale, applyLocale } from "@i18n/labels";
+
+  const firstRoot = document.querySelector(
+    "[data-locale-switcher]",
+  ) as HTMLElement | null;
+  const supported: string[] = firstRoot
+    ? JSON.parse(firstRoot.getAttribute("data-supported-locales") || "[]")
+    : ["en"];
+  const current = getCookieLocale() || navigator.language.slice(0, 2);
+
+  initSelectMenus({
+    rootSelector: "[data-locale-switcher]",
+    optionAttr: "data-locale-option",
+    valueSelector: "[data-locale-value]",
+    initialValue: supported.includes(current) ? current : supported[0],
+    onSelect(locale: string) {
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie =
+        "locale=" + locale + "; expires=" + expires + "; path=/; SameSite=Lax";
+      applyLocale(locale);
+    },
+  });
+</script>

@@ -17,9 +17,7 @@ export const getStaticPaths = (async () => {
 const { slug, page, entries } = Astro.props;
 
 const index = buildDirectoryIndex(entries);
-const dir = index[slug ?? ""];
 const allEntries = getRecursiveEntries(slug ?? "", index);
-const childFolders = dir?.children ?? [];
 const { pageEntries, totalPages, currentPage } = paginateEntries(
   allEntries,
   page,
@@ -33,7 +31,6 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
     collection="art"
     entries={pageEntries}
     slug={slug}
-    childFolders={childFolders}
     page={currentPage}
     totalPages={totalPages}
     baseUrl={baseUrl}
