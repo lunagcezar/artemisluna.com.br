@@ -41,45 +41,43 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
 >
-  <div class="container mx-auto px-4 py-8">
-    {
-      mode === "detail" ? (
-        <article class="grid gap-4">
-          <div class="grid gap-2">
-            <h1 class="text-3xl font-semibold tracking-tight">
-              {entry.data.title}
-            </h1>
-            {entry.data.tags.length > 0 && (
-              <div class="flex flex-wrap gap-1.5">
-                {entry.data.tags.map((tag) => {
-                  const labels = translateLabel(tag);
-                  return (
-                    <Badge
-                      variant="secondary"
-                      data-locales={JSON.stringify(labels)}
-                    >
-                      {labels.en}
-                    </Badge>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-          <AstroEntryContent entry={entry} />
-        </article>
-      ) : (
-        <AstroRecursiveCollectionIndex
-          collection="wiki"
-          entries={pageEntries}
-          slug={slug}
-          childFolders={childFolders}
-          page={currentPage}
-          totalPages={totalPages}
-          baseUrl={baseUrl}
-          baseLabel="Wiki"
-          indexEntry={indexEntry}
-        />
-      )
-    }
-  </div>
+  {
+    mode === "detail" ? (
+      <article class="grid gap-4">
+        <div class="grid gap-2">
+          <h1 class="text-3xl font-semibold tracking-tight">
+            {entry.data.title}
+          </h1>
+          {entry.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-1.5">
+              {entry.data.tags.map((tag) => {
+                const labels = translateLabel(tag);
+                return (
+                  <Badge
+                    variant="secondary"
+                    data-locales={JSON.stringify(labels)}
+                  >
+                    {labels.en}
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <AstroEntryContent entry={entry} />
+      </article>
+    ) : (
+      <AstroRecursiveCollectionIndex
+        collection="wiki"
+        entries={pageEntries}
+        slug={slug}
+        childFolders={childFolders}
+        page={currentPage}
+        totalPages={totalPages}
+        baseUrl={baseUrl}
+        baseLabel="Wiki"
+        indexEntry={indexEntry}
+      />
+    )
+  }
 </MainLayout>

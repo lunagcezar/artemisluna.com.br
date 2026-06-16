@@ -27,15 +27,13 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
 ---
 
 <MainLayout>
-  <div class="container mx-auto px-4 py-8">
-    <AstroArtGallery
-      collection="art"
-      entries={pageEntries}
-      slug={slug}
-      childFolders={childFolders}
-      page={currentPage}
-      totalPages={totalPages}
-      baseUrl={baseUrl}
-    />
-  </div>
+  <AstroArtGallery
+    collection="art"
+    entries={pageEntries}
+    slug={slug}
+    childFolders={childFolders}
+    page={currentPage}
+    totalPages={totalPages}
+    baseUrl={baseUrl}
+  />
 </MainLayout>

@@ -14,9 +14,14 @@ const { currentPath, className } = Astro.props;
 <TooltipProvider client:load>
   <AstroNavbar
     currentPath={currentPath}
-    className="inset-x-0 mx-auto h-12 w-1/2"
+    className="inset-x-0 mx-auto h-12 w-3/4 lg:w-2/3 xl:w-1/2"
   />
-  <main class={cn("mt-12 w-1/2 justify-self-center", className)}>
+  <main
+    class={cn(
+      "mt-12 w-3/4 lg:w-2/3 xl:w-1/2 justify-self-center py-8",
+      className,
+    )}
+  >
     <slot />
   </main>
 </TooltipProvider>

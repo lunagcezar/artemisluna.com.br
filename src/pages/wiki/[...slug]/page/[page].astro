@@ -30,17 +30,15 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
 ---
 
 <MainLayout>
-  <div class="container mx-auto px-4 py-8">
-    <AstroRecursiveCollectionIndex
-      collection="wiki"
-      entries={pageEntries}
-      slug={slug}
-      childFolders={childFolders}
-      page={currentPage}
-      totalPages={totalPages}
-      baseUrl={baseUrl}
-      baseLabel="Wiki"
-      indexEntry={indexEntry}
-    />
-  </div>
+  <AstroRecursiveCollectionIndex
+    collection="wiki"
+    entries={pageEntries}
+    slug={slug}
+    childFolders={childFolders}
+    page={currentPage}
+    totalPages={totalPages}
+    baseUrl={baseUrl}
+    baseLabel="Wiki"
+    indexEntry={indexEntry}
+  />
 </MainLayout>
