@@ -123,6 +123,65 @@ You can also use standard markdown links: `[text](/wiki/linux/encryption/some-to
 
 A file like `linux.md` placed next to a `linux/` folder with `index: true` in its frontmatter becomes that directory's landing page. Its content renders at the top of the directory listing, and it is hidden from the article list and pagination.
 
+## Navigation
+
+The site uses a tree-based sidebar representing the full content hierarchy. No manual nav configuration is needed — the tree is built at build time from the actual folder structure.
+
+### Sidebar tree (desktop)
+
+On screens wide enough (`lg:` breakpoint and up), a sticky sidebar sits to the left of the main content:
+
+```
+Luna G. Cezar
+[🌐] [🌙]          ← locale + theme switchers
+|
+├── Home (/)
+├── ▼ Art (/art/)
+│   ├── Digital (/art/digital/)
+│   │   └── Painting (/art/digital/painting/)
+│   └── Traditional (/art/traditional/)
+│       ├── Drawing (/art/traditional/drawing/)
+│       │   ├── Urban-sketching
+│       │   └── Fictional-cityscapes
+│       └── Painting (/art/traditional/painting/)
+│           ├── Gouache
+│           └── Oil-pastel
+├── Blog (/blog/)
+└── ▼ Wiki (/wiki/)
+    ├── Linux (/wiki/linux/)
+    │   ├── Encryption
+    │   └── Networking
+    └── Programming (/wiki/programming/)
+        └── Cmake
+```
+
+- The currently active page is highlighted.
+- Ancestors of the active page auto-expand (children visible).
+- No client-side JS — expansion is determined at build time from the URL.
+- The tree scrolls independently if it overflows the viewport.
+
+### Mobile drawer
+
+Below `lg:`, the sidebar is replaced by a fixed top bar with a hamburger button. Tapping it opens a slide-down drawer containing the same tree. Locale/theme switchers are in the top bar.
+
+### Directory indexes
+
+Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/programming/`) renders:
+
+1. **Index page content** — if a markdown file with `index: true` exists (e.g. `programming.md` next to `programming/`), its content renders at the top of the page.
+2. **Child folder links** — immediate subdirectories show as navigation badges.
+3. **Article listing** — all descendant entries appear, sorted by date descending (newest first). Entries span multiple subdirectories — e.g. `/art/traditional/` lists both drawing and painting entries together.
+4. **Pagination** — when there are more entries than `DEFAULT_PAGE_SIZE` (defined in `src/constants/pagination.ts`), page links appear at the bottom.
+
+### Architecture
+
+The system has two key data structures:
+
+- **DirectoryIndex** — a flat `Record<string, DirectoryEntry>` built once from all entries. Each key is a directory path (`""` for root). Lookups are O(1): `children` (subfolder names), `entries` (articles in this directory), `indexEntry` (optional index page). The recursive listing function `getRecursiveEntries` walks the tree and returns all descendant entries globally sorted by date.
+- **SidebarNode** — a recursive tree of `{ name, href, children }` used by the sidebar and mobile drawer. Built by `buildFullSidebarTree()` which scans all collections from `content.config.ts`.
+
+Both are rebuilt automatically when content is added, moved, or removed — no manual navigation updates required.
+
 ## Naming conventions
 
 - **Folders**: `kebab-case` only (e.g. `oil-pastel`, `urban-sketching`, `fictional-cityscapes`).
