@@ -30,9 +30,11 @@ const {
 } = Astro.props;
 
 const segments = slug ? slug.split("/") : [];
-const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
+const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
+const title = lastSegment ? formatSegment(lastSegment) : baseLabel;
 const rootUrl = `/${collection}/`;
 const translateLabel = createTranslateLabel(collection);
+const titleLabels = lastSegment ? translateLabel(lastSegment) : undefined;
 ---
 
 <div class="grid gap-6">
@@ -44,7 +46,12 @@ const translateLabel = createTranslateLabel(collection);
       translateLabel={translateLabel}
     />
 
-    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+    <h1
+      class="text-3xl font-semibold tracking-tight"
+      data-locales={titleLabels ? JSON.stringify(titleLabels) : undefined}
+    >
+      {title}
+    </h1>
   </div>
 
   {indexEntry && <AstroArticleImageViewer entry={indexEntry} />}

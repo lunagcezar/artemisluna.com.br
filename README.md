@@ -252,6 +252,8 @@ pt: {
 
 The `createTranslateLabel(collection)` helper returns a function that generates the full label map for all locales. Every consumer renders via `data-locales='{"en":"Oil Pastel","pt":"Pastel de óleo"}'` which is swapped client-side based on the user's locale cookie.
 
+Directory index pages (e.g. `/wiki/encryption/`) use the same mechanism for their `<h1>` title — the URL segment is passed through `translateLabel()` and rendered with `data-locales`, so the heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
+
 ### Translating UI strings
 
 ```ts

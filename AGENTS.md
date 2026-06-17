@@ -215,6 +215,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
 - **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
+- **Directory index titles** — the `<h1>` on index pages (e.g. `/wiki/encryption/`) uses `translateLabel(lastSegment)` with `data-locales`, so the page heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
 - **Lang attribute** — `applyLocale()` sets `document.documentElement.lang`. Inline script in `MainLayout.astro` does the same on page load from the locale cookie.
 - See `docs/i18n.md` for the full pattern reference.
 
