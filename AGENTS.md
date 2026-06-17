@@ -238,7 +238,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 # SEO
 
-- **Canonical URLs** — `MainLayout.astro` emits `<link rel="canonical">` using `getCanonicalUrl(path)` from `src/lib/url.ts`, which reads `import.meta.env.SITE` (set via `SITE_URL` env var at build time or the default in `astro.config.mjs`). The `bin/astro.mjs` wrapper passes `--site` when `SITE_URL` is set. Falls back to relative path if no site URL is configured.
+- **Canonical URLs** — `MainLayout.astro` emits `<link rel="canonical">` using `getCanonicalUrl(path)` from `src/lib/url.ts`, which reads `import.meta.env.SITE` (configurable via `SITE_URL` env var). Falls back to relative path if no site URL is configured.
 - **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, and `og:image` (from frontmatter `image` field, resolved via `getOgImageUrl()`) are rendered in `<head>`.
 - **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time>` with `datetime`, breadcrumb `<nav aria-label="breadcrumb">`.
 - **`lang` attribute** — Set from entry's `lang` field for correct hyphenation and language hints.
