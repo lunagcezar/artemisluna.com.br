@@ -80,12 +80,17 @@ function ImageViewer({ images }: ImageViewerProps) {
           >
             <Card className="p-0">
               <figure className="break-inside-avoid overflow-hidden">
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  className="h-auto w-full"
-                  loading="lazy"
-                />
+                <div className="relative">
+                  <div className="bg-muted absolute inset-0 overflow-hidden rounded-lg">
+                    <div className="animate-shimmer via-foreground/[0.07] absolute inset-0 bg-gradient-to-r from-transparent to-transparent" />
+                  </div>
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    className="relative h-auto w-full"
+                    loading="lazy"
+                  />
+                </div>
                 {img.caption && (
                   <figcaption className="text-muted-foreground p-3 text-sm">
                     {img.caption}
