@@ -37,15 +37,6 @@ The art portfolio is built around Astro content collections and a directory-tree
 
 All collections (art, blog, wiki) share the `lang` field: `lang: z.enum(["en", "pt"]).default("en")`. Set `lang: pt` for Portuguese content to enable correct hyphenation via `<html lang>`.
 
-Art entries use the following taxonomy fields:
-
-- `type`: `"digital" | "traditional"`
-- `category`: `"drawing" | "illustration" | "mixed-media" | "other" | "painting" | "ui-design"`
-- `medium`: fixed enum including `gouache`, `oil-pastel`, `digital-painting`, `ink`, `pencil`, etc.
-- `series`: optional string for sub-folders like `urban-sketching` or `fictional-cityscapes`
-- `tags`: free-form array of strings
-- `images`: array of `{ src, alt, caption? }` for process shots
-
 ## Content organization
 
 - Markdown files live under `src/content/art/` in a folder tree that follows the taxonomy (e.g. `digital/painting/...`, `traditional/drawing/...`).
@@ -132,7 +123,7 @@ Art-only helpers are in `src/lib/art.ts`:
 - Images are resolved at build time with `import.meta.glob`, so assets are hashed and emitted to `/_astro/`.
 - The gallery uses a CSS-column masonry layout (`columns-1 sm:columns-2 lg:columns-3`) with `break-inside-avoid`.
 - Child-folder links are rendered as badge links under each index heading.
-- Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`, with bilingual labels via a `translateLabel` prop.
+- Cards display badges for every `tag`, with bilingual labels via a `translateLabel` prop.
 
 ## Image viewer (`image-viewer.tsx`)
 
@@ -243,6 +234,18 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time>` with `datetime`, breadcrumb `<nav aria-label="breadcrumb">`.
 - **`lang` attribute** — Set from entry's `lang` field for correct hyphenation and language hints.
 - **Client-side locale** — Single-URL pattern (no `/pt/` prefix). Content is swapped client-side via `data-locales` and `data-content-locale`. Search engines see the default (English) server-rendered version.
+
+# Foam templates
+
+Foam templates live in `.foam/templates/` and are used by the Foam VSCode extension to scaffold new content with proper frontmatter:
+
+| File              | Collection | When to use                               |
+| ----------------- | ---------- | ----------------------------------------- |
+| `art-entry.md`    | `art`      | New artwork post (digital or traditional) |
+| `blog-post.md`    | `blog`     | New blog article                          |
+| `wiki-article.md` | `wiki`     | New wiki article                          |
+
+Run **Foam: Create New Template** in VSCode to use them. Fill in the placeholders (`title`, `description`, `tags`, etc.) after creation.
 
 # For agents
 

@@ -296,4 +296,14 @@ The config in `astro.config.mjs` reads `SITE_URL` from `node:process` and falls 
 | `pnpm astro check`                        | Type-check all files                 |
 | `pnpm astro -- --help`                    | Astro CLI help                       |
 
-All commands run through `bin/astro.mjs`, which forwards `SITE_URL` as `--site` to the Astro CLI when present.
+## Foam templates
+
+The project includes [Foam](https://foambubble.github.io/foam) templates in `.foam/templates/` for scaffolding new content with correct frontmatter:
+
+| Template          | Run **Foam: Create New Template** and pick: | Creates                                                         |
+| ----------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| `art-entry.md`    | **Art Entry**                               | `src/content/art/$DATE-$SLUG.md` (move to correct subdirectory) |
+| `blog-post.md`    | **Blog Post**                               | `src/content/blog/$DATE-$SLUG.md`                               |
+| `wiki-article.md` | **Wiki Article**                            | `src/content/wiki/$SLUG.md`                                     |
+
+After creation, fill in the frontmatter fields (`tags`, etc.) and write the content. Art entries should be moved to the appropriate subdirectory under `src/content/art/` (e.g. `digital/painting/`).

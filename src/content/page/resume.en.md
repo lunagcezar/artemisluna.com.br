@@ -1,7 +1,6 @@
 ---
 title: "Resume — Luna G. Cezar"
 description: "Front-end Developer with experience in React, Vue.js, Astro and Ruby on Rails. Currently contributing to digital transformation initiatives for the Government of Ceará."
-image: "/src/assets/favicon.svg"
 tags:
   - front-end
   - react

@@ -27,7 +27,6 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     lang: z.enum(["en", "pt"]).default("en"),
-    category: z.string(),
     tags: z.array(z.string()),
     date: z.coerce.date(),
     author: z.string().optional(),
@@ -43,9 +42,7 @@ const wiki = defineCollection({
     lang: z.enum(["en", "pt"]).default("en"),
     tags: z.array(z.string()).default([]),
     date: z.coerce.date().optional(),
-    image: z.string().optional(),
     author: z.string().optional(),
-    status: z.enum(["draft", "published"]).optional(),
     index: z.boolean().optional(),
   }),
 });
@@ -55,7 +52,6 @@ const page = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    image: z.string().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(["en", "pt"]).default("en"),
     date: z.coerce.date().optional(),
