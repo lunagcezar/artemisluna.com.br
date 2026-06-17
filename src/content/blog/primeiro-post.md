@@ -1,6 +1,7 @@
 ---
 title: "Primeiro Post"
 description: "Bem-vindo ao blog"
+lang: pt
 category: "pessoal"
 tags: ["introdução"]
 date: 2026-06-10

@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { formatSegment } from "@lib/collections";
 import { createTranslateLabel } from "@i18n/labels";
 
@@ -47,7 +47,7 @@ const translateLabel = createTranslateLabel(collection);
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
   </div>
 
-  {indexEntry && <AstroEntryContent entry={indexEntry} />}
+  {indexEntry && <AstroArticleImageViewer entry={indexEntry} />}
 
   <ul class="grid gap-4">
     {
