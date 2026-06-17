@@ -146,6 +146,14 @@
     font-weight: 500;
   }
   .article-content {
+    & h1 {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      margin-block: 2.5rem 0.75rem;
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+    }
+
     & h2 {
       font-size: var(--text-xl);
       font-weight: 600;
