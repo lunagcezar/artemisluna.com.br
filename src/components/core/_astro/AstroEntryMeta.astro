@@ -14,8 +14,8 @@ const { data } = entry;
 
 const dateLocales: Record<string, string> | undefined = data.date
   ? {
-      en: data.date.toLocaleDateString("en-US"),
-      pt: data.date.toLocaleDateString("pt-BR"),
+      en: data.date.toLocaleDateString("en-US", { timeZone: "UTC" }),
+      pt: data.date.toLocaleDateString("pt-BR", { timeZone: "UTC" }),
     }
   : undefined;
 ---
