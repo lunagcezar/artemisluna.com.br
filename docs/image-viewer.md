@@ -6,11 +6,13 @@ A React-based interactive lightbox for art, blog, and wiki detail pages.
 
 | File                                                         | Purpose                                                    |
 | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| `src/components/shared/image-viewer.tsx`                     | React component: thumbnail grid + lightbox dialog          |
-| `src/components/shared/article-image-viewer.tsx`             | React component: scans DOM container for images + lightbox |
+| `src/components/shared/image-viewer.tsx`                     | `ImageViewer` (thumbnail grid) + `ImageLightbox` (dialog)  |
+| `src/components/shared/article-image-viewer.tsx`             | Scans DOM container for images, opens `ImageLightbox`      |
 | `src/components/shared/_astro/AstroArticleImageViewer.astro` | Astro wrapper: renders Content + mounts ArticleImageViewer |
 | `src/hooks/use-image-zoom.ts`                                | Hook + pure function for zoom/pan math                     |
 | `src/components/core/dialog.tsx`                             | shadcn Dialog primitive (radix-ui wrapper)                 |
+
+The `ImageLightbox` component is shared by both `ImageViewer` (art's explicit image list) and `ArticleImageViewer` (blog/wiki's DOM-scanned images). It handles the Dialog overlay, navigation arrows, zoom/pan, and keyboard interaction — all in one place.
 
 ## Usage
 

@@ -1,6 +1,9 @@
 import * as React from "react";
 
 const CLICK_ZOOM = 2;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 8;
+const SNAP_THRESHOLD = 0.9;
 
 function computeTranslate(
   clientX: number,
@@ -18,6 +21,19 @@ function computeTranslate(
   };
 }
 
+function getPinchDistance(touches: React.TouchList) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
+}
+
+function getPinchCenter(touches: React.TouchList) {
+  return {
+    x: (touches[0].clientX + touches[1].clientX) / 2,
+    y: (touches[0].clientY + touches[1].clientY) / 2,
+  };
+}
+
 function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
   const [scale, setScale] = React.useState(1);
   const [translate, setTranslate] = React.useState({ x: 0, y: 0 });
@@ -26,6 +42,11 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
   const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
+  const pinchRef = React.useRef({
+    startDist: 0,
+    startScale: 1,
+    isPinching: false,
+  });
 
   React.useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
@@ -66,6 +87,18 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
     [enabled, scale, startTransition],
   );
 
+  const snapIfOutOfBounds = React.useCallback(() => {
+    if (scale < 1) {
+      setScale(1);
+      setTranslate({ x: 0, y: 0 });
+      startTransition();
+    } else if (scale > 1 && scale < SNAP_THRESHOLD) {
+      setScale(1);
+      setTranslate({ x: 0, y: 0 });
+      startTransition();
+    }
+  }, [scale, startTransition]);
+
   const handleMouseMove = React.useCallback(
     (clientX: number, clientY: number) => {
       if (scale <= 1) return;
@@ -78,12 +111,62 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
     [scale],
   );
 
+  const handleTouchStart = React.useCallback(
+    (e: React.TouchEvent) => {
+      if (!enabled) return;
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
+
+      const startDist = getPinchDistance(e.touches);
+      pinchRef.current = {
+        startDist,
+        startScale: scale,
+        isPinching: true,
+      };
+    },
+    [enabled, scale],
+  );
+
+  const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
+    if (!pinchRef.current.isPinching) return;
+    if (e.touches.length !== 2) return;
+    e.preventDefault();
+
+    const dist = getPinchDistance(e.touches);
+    const ratio = dist / pinchRef.current.startDist;
+    const newScale = Math.min(
+      MAX_SCALE,
+      Math.max(MIN_SCALE, pinchRef.current.startScale * ratio),
+    );
+
+    const img = imgRef.current;
+    if (img) {
+      const center = getPinchCenter(e.touches);
+      const rect = img.getBoundingClientRect();
+      const t = computeTranslate(center.x, center.y, rect.width, rect.height);
+      setTranslate(t);
+    }
+
+    setScale(newScale);
+  }, []);
+
+  const handleTouchEnd = React.useCallback(() => {
+    if (!pinchRef.current.isPinching) return;
+    pinchRef.current.isPinching = false;
+
+    if (scale < SNAP_THRESHOLD) {
+      setScale(1);
+      setTranslate({ x: 0, y: 0 });
+      startTransition();
+    }
+  }, [scale, startTransition]);
+
   const imageStyle: React.CSSProperties = {
     transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
     transformOrigin: "center",
     transition,
     ...(scale > 1
-      ? { cursor: "default" }
+      ? { cursor: "default", touchAction: "none" }
       : {
           cursor: enabled ? "zoom-in" : "default",
           maxHeight: "85vh",
@@ -98,6 +181,10 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
     reset,
     toggleZoom,
     handleMouseMove,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    snapIfOutOfBounds,
     imageStyle,
     isZoomed: scale > 1,
   };

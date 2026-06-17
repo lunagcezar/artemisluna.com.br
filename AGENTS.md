@@ -69,8 +69,8 @@ Art-specific components live in `src/components/features/art/_astro/`:
 - `AstroArtGallery.astro` — breadcrumbs, child-folder links, masonry grid, pagination. Accepts a `collection` prop so the breadcrumb root URL and label are derived dynamically (e.g. `/art/` / `Art`).
 - `AstroArtCard.astro` — mosaic tile built with shadcn `Card`, showing the first image, title, and all taxonomy badges
 - `AstroArtDetail.astro` — artwork detail page with metadata and image masonry
-- `image-viewer.tsx` (React) — interactive lightbox with zoom/pan, arrow cycling between images, and close-on-outside-click. Used inside `AstroArtDetail.astro` via `client:load`. Lives at `src/components/shared/image-viewer.tsx`.
-- `article-image-viewer.tsx` (React) — same lightbox as above but scans a DOM container for `<img>` elements and opens the dialog on click. Used inside `AstroArticleImageViewer.astro` for blog/wiki content via `client:load`.
+- `image-viewer.tsx` (React) — exports `ImageViewer` (thumbnail grid + lightbox) and `ImageLightbox` (shared dialog component). Lives at `src/components/shared/image-viewer.tsx`.
+- `article-image-viewer.tsx` (React) — same lightbox as above but scans a DOM container for `<img>` elements and opens the dialog on click. Uses `ImageLightbox` from `image-viewer.tsx` internally. Used inside `AstroArticleImageViewer.astro` for blog/wiki content via `client:load`.
 - `AstroArticleImageViewer.astro` — Astro wrapper that renders markdown `Content` inside an ID'd container with `article-content` class, then mounts `ArticleImageViewer`. Used in all collection detail pages (replaces direct `AstroEntryContent` calls).
 
 Shared pagination is handled by `src/components/core/_astro/AstroPagination.astro`, which uses `getPageUrl(baseUrl, page)` from `src/lib/url.ts` to produce `/page/N/` URLs.

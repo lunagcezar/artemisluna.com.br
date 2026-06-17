@@ -95,6 +95,9 @@ function ImageLightbox({
           <figure
             className="flex flex-col items-center gap-2 px-4 select-none"
             onMouseMove={(e) => zoom.handleMouseMove(e.clientX, e.clientY)}
+            onTouchStart={zoom.handleTouchStart}
+            onTouchMove={zoom.handleTouchMove}
+            onTouchEnd={zoom.handleTouchEnd}
           >
             <img
               ref={zoom.imgRef}
