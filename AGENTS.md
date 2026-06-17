@@ -6,13 +6,14 @@
 # UI Libraries used
 
 - shadcn/ui
-- Phosphor icons
-- tailwind
+- Phosphor icons (always use phosphor instead of lucide)
+- Tailwind
 
 # Code quality
 
 - Always use SOLID and DRY;
 - Always check for skills already installed to improve the workflow;
+- Keep components as simple as possible. Any function that has complexity must belong in the lib/ folder
 
 # Tooling
 
