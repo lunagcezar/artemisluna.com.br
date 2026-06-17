@@ -12,26 +12,29 @@ import type {
   PhrasingContent,
 } from "mdast";
 
-const WIKI_DIR = path.resolve(
+const ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  "../content/wiki",
+  "../content",
 );
 
-interface WikiEntry {
+const CONTENT_DIRS = ["wiki", "blog", "art"] as const;
+
+interface ContentEntry {
+  collection: string;
   id: string;
   title: string;
 }
 
-function loadWikiEntries(): WikiEntry[] {
-  const entries: WikiEntry[] = [];
+function loadAllEntries(): ContentEntry[] {
+  const entries: ContentEntry[] = [];
 
-  function walk(dir: string, prefix: string): void {
+  function walk(dir: string, prefix: string, collection: string): void {
     for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
       const relativePath = prefix ? `${prefix}/${item.name}` : item.name;
       const fullPath = path.join(dir, item.name);
 
       if (item.isDirectory()) {
-        walk(fullPath, relativePath);
+        walk(fullPath, relativePath, collection);
         continue;
       }
 
@@ -41,24 +44,31 @@ function loadWikiEntries(): WikiEntry[] {
       const { data } = matter(content);
 
       entries.push({
+        collection,
         id: relativePath.replace(/\.md$/, ""),
         title: String(data.title ?? ""),
       });
     }
   }
 
-  walk(WIKI_DIR, "");
+  for (const collection of CONTENT_DIRS) {
+    const dirPath = path.join(ROOT, collection);
+    if (fs.existsSync(dirPath)) {
+      walk(dirPath, "", collection);
+    }
+  }
+
   return entries;
 }
 
-const entries = loadWikiEntries();
+const entries = loadAllEntries();
 
 const routeByFilename = new Map<string, string>();
 const routeByTitle = new Map<string, string>();
 const titleByFilename = new Map<string, string>();
 
 for (const entry of entries) {
-  const route = `/wiki/${entry.id}/`;
+  const route = `/${entry.collection}/${entry.id}/`;
   const filename = entry.id.split("/").pop()?.toLowerCase() ?? "";
 
   routeByFilename.set(filename, route);
@@ -70,32 +80,31 @@ for (const entry of entries) {
 
 function resolveRoute(text: string): string | undefined {
   const key = text.trim().toLowerCase();
-  return routeByFilename.get(key) ?? routeByTitle.get(key);
+  const result = routeByFilename.get(key) ?? routeByTitle.get(key);
+  if (result) return result;
+  const filename = key.split("/").pop() ?? key;
+  return routeByFilename.get(filename) ?? routeByFilename.get(`${filename}.md`);
 }
 
 function resolveTitle(text: string): string | undefined {
   const key = text.trim().toLowerCase();
-  return titleByFilename.get(key);
+  const result = titleByFilename.get(key);
+  if (result) return result;
+  const filename = key.split("/").pop() ?? key;
+  return titleByFilename.get(filename) ?? titleByFilename.get(`${filename}.md`);
 }
 
 /**
- * Resolves Foam-style wiki links in `src/content/wiki/` files.
+ * Resolves Foam-style wiki links across all content collections.
  *
  * Handles:
- * - Link-reference definitions: `[slug]: slug "Title"` → `[slug]: /wiki/path/slug/ "Title"`
- * - Link references: `[slug]` → `<a href="/wiki/path/slug/">[Title]</a>`
+ * - Link-reference definitions: `[slug]: relative-path "Title"` → `[slug]: /collection/path/slug/ "Title"`
+ * - Link references: `[slug]` → `<a href="/collection/path/slug/">[Title]</a>`
  * - Wikilink syntax: `[[slug]]` / `[[slug|alias]]` → standard markdown links
  */
 export default function remarkWikiLinks() {
-  return function (
-    tree: Root,
-    file: { history: string[]; path?: string; dirname?: string },
-  ) {
-    const rawPath = file.history?.[0] ?? file.path ?? file.dirname ?? "";
-    const filePath = path.normalize(rawPath).replace(/\\/g, "/");
-    if (!filePath.includes("/src/content/wiki/")) return;
-
-    // 1. Rewrite definition URLs that match a wiki filename.
+  return function (tree: Root) {
+    // 1. Rewrite definition URLs that match a known entry.
     visit(tree, "definition", (node: Definition) => {
       const route = resolveRoute(node.url);
       if (route) node.url = route;

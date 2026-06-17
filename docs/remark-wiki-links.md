@@ -1,35 +1,25 @@
 # Remark Wiki Links plugin
 
-Resolves Foam-style wiki internal links in `src/content/wiki/` markdown files at build time. Registered in `astro.config.mjs` via `markdown.processor` using `unified()` from `@astrojs/markdown-remark`.
+Resolves Foam-style wiki internal links (both `[[wikilinks]]` and markdown link references) across all content collections at build time. The routing table is built from all three content directories (`wiki`, `blog`, `art`), so any markdown file can link to any other page regardless of collection. Registered in `astro.config.mjs` via `markdown.processor` using `unified()` from `@astrojs/markdown-remark`.
 
 ## Module-level initialisation
 
 When `src/lib/remark-wiki-links.ts` is first imported, the module immediately:
 
-1. **Scans `src/content/wiki/`** — `loadWikiEntries()` (line 25) walks the directory tree recursively. For each `.md` file it reads frontmatter with `gray-matter` and produces `{ id, title }` pairs. The `id` is the path relative to `src/content/wiki/` with the `.md` extension stripped (e.g. `linux/encryption/encrypt-second-drive-when-the-first-is-encrypted-with-tpm`).
+1. **Scans all content directories** — `loadAllEntries()` (line 27) walks `src/content/wiki/`, `src/content/blog/`, and `src/content/art/` recursively. For each `.md` file it reads frontmatter with `gray-matter` and produces `{ collection, id, title }` tuples. The `id` is the entry path relative to its collection root with the `.md` extension stripped (e.g. `wiki` → `linux/encryption/...`, `blog` → `20230315-turborepo-monorepo`).
 
-2. **Builds three lookup maps** (lines 56–68):
-   - `routeByFilename` — filename slug (last path segment) → `/wiki/<id>/` URL. Both the bare slug and `slug.md` variants are stored so that `resolveRoute()` can match either form.
+2. **Builds three lookup maps** (lines 62–76):
+   - `routeByFilename` — filename slug (last path segment) → `/<collection>/<id>/` URL. Both the bare slug and `slug.md` variants are stored so that `resolveRoute()` can match either form.
    - `routeByTitle` — frontmatter `title` (lowercased) → URL. Allows linking by page title as an alternative to slug.
    - `titleByFilename` — filename slug → frontmatter `title`. Used to produce display text for resolved links.
 
-3. **Exposes two resolver functions**:
-   - `resolveRoute(text)` (line 71) — normalises the input (trim + lowercase), checks `routeByFilename` first, then falls back to `routeByTitle`.
-   - `resolveTitle(text)` (line 76) — same normalisation, checks `titleByFilename`.
+3. **Exposes two resolver functions** (lines 78–92):
+   - `resolveRoute(text)` — normalises the input (trim + lowercase), checks `routeByFilename` first, then falls back to `routeByTitle`. If no match is found, it extracts the filename from the last path segment (handles relative paths like `../wiki/linux`) and retries the lookup.
+   - `resolveTitle(text)` — same normalisation and fallback logic.
 
 ## Plugin function
 
-`remarkWikiLinks()` (line 89) is a [unified/remark plugin](https://github.com/remarkjs/remark) factory. It returns a transformer that runs on every markdown file processed by Astro's content pipeline, but it skips non-wiki files via an early-return guard (line 96).
-
-### Guard clause (line 94–96)
-
-```typescript
-const rawPath = file.history?.[0] ?? file.path ?? file.dirname ?? "";
-const filePath = path.normalize(rawPath).replace(/\\/g, "/");
-if (!filePath.includes("/src/content/wiki/")) return;
-```
-
-Tries several VFile path sources for cross-version compatibility. On Windows, backslashes are normalised to forward slashes so the substring check works correctly. Files outside `src/content/wiki/` return immediately with no transformations.
+`remarkWikiLinks()` (line 94) is a [unified/remark plugin](https://github.com/remarkjs/remark) factory. It returns a transformer that runs on every markdown file processed by Astro's content pipeline. There is no early-return guard — all collections (blog, wiki, art) can use cross-linking syntax.
 
 ---
 

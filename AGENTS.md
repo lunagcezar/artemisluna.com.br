@@ -176,7 +176,7 @@ Wiki internal links (both Foam-style `[[wikilinks]]` and markdown link reference
 
 ### Configuration
 
-The plugin is registered in `astro.config.mjs` via the `markdown.processor` key using `unified()` from `@astrojs/markdown-remark`. During build it scans `src/content/wiki/` to build a routing table of all wiki pages, then processes every `.md` file in that directory.
+The plugin is registered in `astro.config.mjs` via the `markdown.processor` key using `unified()` from `@astrojs/markdown-remark`. During build it scans `src/content/wiki/`, `src/content/blog/`, and `src/content/art/` to build a routing table of all pages, then processes every `.md` file across all collections (blog, wiki, art).
 
 ### Writing wiki links
 
@@ -191,7 +191,7 @@ Both resolve to the target page's canonical URL and render the link text as `[Pa
 
 The plugin performs three AST transformations:
 
-1. **Definition URL rewriting** — rewrites `[slug]: raw-path "Title"` definitions to point to the proper `/wiki/<id>/` route.
+1. **Definition URL rewriting** — rewrites `[slug]: raw-path "Title"` definitions to point to the proper `/<collection>/<id>/` route.
 2. **Link reference conversion** — converts Foam-generated `[slug]` link references into `<a>` tags with `[Title]` display text.
 3. **Raw wikilink syntax** — catches any `[[target]]` / `[[target|alias]]` patterns that weren't pre-processed by Foam.
 

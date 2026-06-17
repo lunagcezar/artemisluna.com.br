@@ -108,16 +108,18 @@ index: true # only for directory index pages
 
 Allowed fields: `title`, `description`, `tags`, `date`, `image`, `author`, `status`, `index`.
 
-### Linking between wiki articles
+### Cross-linking between pages
 
-You can link to other wiki articles using two syntaxes:
+You can link to any page across any collection using two syntaxes:
 
-- **Foam wikilinks**: `[[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]]`
+- **Foam wikilinks**: `[[primeiro-post]]` links to `/blog/primeiro-post/`, `[[encrypt-second-drive-...]]` links to the wiki article
 - **Custom display text**: `[[target|Display text]]`
 
-Links render with the target page's title wrapped in brackets (`[Article Title]`). If the target doesn't exist yet, the text still shows `[target]` as a visual indicator of an unresolved backlink.
+Links render with the target page's title wrapped in brackets (`[Article Title]`). If the target doesn't exist in any collection, the text still shows `[target]` as a visual indicator of an unresolved backlink.
 
-You can also use standard markdown links: `[text](/wiki/linux/encryption/some-topic/)`.
+You can also use standard markdown links: `[text](/wiki/linux/encryption/some-topic/)` or `[text](/blog/20230315-turborepo-monorepo/)`.
+
+The remark plugin scans `src/content/` across all three collections (`wiki`, `blog`, `art`) to build a unified routing table. A `[[slug]]` in any markdown file resolves to the correct `/<collection>/<id>/` URL regardless of which collection it lives in.
 
 ### Directory index pages
 
