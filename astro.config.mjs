@@ -5,10 +5,11 @@ import { unified } from "@astrojs/markdown-remark";
 
 import react from "@astrojs/react";
 import remarkWikiLinks from "./src/lib/remark-wiki-links.ts";
+import { env } from "node:process";
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE_URL || "https://artemisluna.com.br",
+  site: env.SITE_URL || "https://artemisluna.com.br",
   vite: {
     plugins: [tailwindcss()],
   },
