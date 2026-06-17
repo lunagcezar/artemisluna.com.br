@@ -7,6 +7,7 @@ import {
   buildDirectoryIndex,
   getRecursiveEntries,
   getIndexAndDetailPaths,
+  getPageTitleLabels,
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
@@ -29,16 +30,19 @@ const { pageEntries, totalPages, currentPage } =
 const baseUrl = slug ? `/art/${slug}/` : "/art/";
 const segments = slug ? slug.split("/") : [];
 const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
-const pageTitle =
-  mode === "detail"
-    ? entry.data.title
-    : lastSegment
-      ? `${translateLabel(lastSegment).en} - Art`
-      : "Art";
+const pageTitleLabels = getPageTitleLabels(
+  mode,
+  lastSegment,
+  "Art",
+  translateLabel,
+);
+const pageTitle = mode === "detail" ? entry.data.title : pageTitleLabels.en;
+const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
 ---
 
 <MainLayout
   title={pageTitle}
+  titleLabels={titleLabels}
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}

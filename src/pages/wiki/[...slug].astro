@@ -10,6 +10,7 @@ import {
   getRecursiveEntries,
   filterOutIndexEntries,
   getIndexAndDetailPaths,
+  getPageTitleLabels,
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
@@ -42,16 +43,20 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
 const segments = slug ? slug.split("/") : [];
 const parentSlug =
   mode === "detail" ? entry.id.split("/").slice(0, -1).join("/") : slug;
-const pageTitle =
-  mode === "detail"
-    ? entry.data.title
-    : segments.length > 0
-      ? `${translateLabel(segments.at(-1)!).en} - Wiki`
-      : "Wiki";
+const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
+const pageTitleLabels = getPageTitleLabels(
+  mode,
+  lastSegment,
+  "Wiki",
+  translateLabel,
+);
+const pageTitle = mode === "detail" ? entry.data.title : pageTitleLabels.en;
+const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
 ---
 
 <MainLayout
   title={pageTitle}
+  titleLabels={titleLabels}
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}

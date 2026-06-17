@@ -4,6 +4,7 @@ import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { formatSegment } from "@lib/collections";
+import { formatDateForLocales } from "@lib/date";
 import {
   createTranslateLabel,
   SUPPORTED_LOCALES,
@@ -78,8 +79,13 @@ const baseLabels = Object.fromEntries(
           >
             <h2 class="font-medium">{entry.data.title}</h2>
             {entry.data.date && (
-              <time class="text-muted-foreground text-sm">
-                {entry.data.date.toLocaleDateString("pt-BR")}
+              <time
+                class="text-muted-foreground text-sm"
+                data-locales={JSON.stringify(
+                  formatDateForLocales(entry.data.date),
+                )}
+              >
+                {formatDateForLocales(entry.data.date).en}
               </time>
             )}
           </a>

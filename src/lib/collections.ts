@@ -334,3 +334,27 @@ export function getRecursiveEntries<T extends { data: { date?: Date } }>(
     (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0),
   );
 }
+
+export function getPageTitleLabels(
+  mode: "detail" | "index",
+  lastSegment: string | undefined,
+  collectionLabel: string,
+  translateLabel: (segment: string) => Record<string, string>,
+): { en: string; labelsJson: string | undefined } {
+  const en =
+    mode === "detail" || !lastSegment
+      ? collectionLabel
+      : `${translateLabel(lastSegment).en} - ${collectionLabel}`;
+  const labelsJson =
+    mode === "detail" || !lastSegment
+      ? undefined
+      : JSON.stringify(
+          Object.fromEntries(
+            Object.entries(translateLabel(lastSegment)).map(([l, v]) => [
+              l,
+              `${v} - ${collectionLabel}`,
+            ]),
+          ),
+        );
+  return { en, labelsJson };
+}

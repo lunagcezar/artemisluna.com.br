@@ -8,9 +8,17 @@ export interface Props {
   keywords?: string[];
   author?: string;
   lang?: string;
+  titleLabels?: string;
 }
 
-const { title, description, keywords, author, lang = "pt" } = Astro.props;
+const {
+  title,
+  description,
+  keywords,
+  author,
+  lang = "en",
+  titleLabels,
+} = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -39,6 +47,7 @@ const currentPath = Astro.url.pathname;
       )
     }
     <title>{title ?? "Artemis Luna"}</title>
+    {titleLabels && <meta name="page-title-labels" content={titleLabels} />}
   </head>
   <body class="grid min-h-screen w-full">
     <AstroPageShell currentPath={currentPath}>
@@ -61,6 +70,17 @@ const currentPath = Astro.url.pathname;
         document.querySelectorAll("[data-locale-value]").forEach(function (el) {
           el.textContent = locale.toUpperCase();
         });
+        var titleMeta = document.querySelector(
+          'meta[name="page-title-labels"]',
+        );
+        if (titleMeta) {
+          try {
+            var titleLabels = JSON.parse(
+              titleMeta.getAttribute("content") || "{}",
+            );
+            if (titleLabels[locale]) document.title = titleLabels[locale];
+          } catch (_) {}
+        }
       })();
     </script>
   </body>
