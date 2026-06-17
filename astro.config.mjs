@@ -10,8 +10,7 @@ import remarkWikiLinks from "./src/lib/remark-wiki-links.ts";
 // https://astro.build/config
 export default defineConfig({
   site: env.SITE_URL || "https://artemisluna.com.br",
-  trailingSlash: "always",
-  compressHTML: true,
+  trailingSlash: "ignore",
   build: {
     format: "directory",
   },
