@@ -13,7 +13,7 @@ Create a file in the `/etc/NetworkManager/conf.d` directory
 
 **`wifi-powersave-off.conf`**
 
-```conf
+```ini
 [connection]
 wifi.powersave = 2
 ```
