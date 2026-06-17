@@ -7,13 +7,14 @@ export interface Props {
   description?: string;
   keywords?: string[];
   author?: string;
+  lang?: string;
 }
 
-const { title, description, keywords, author } = Astro.props;
+const { title, description, keywords, author, lang = "pt" } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
-<html lang="pt">
+<html lang={lang}>
   <head>
     <script is:inline>
       (function () {
@@ -50,6 +51,7 @@ const currentPath = Astro.url.pathname;
         var locale =
           (match ? match[1] : "") ||
           (navigator.language.startsWith("pt") ? "pt" : "en");
+        document.documentElement.lang = locale;
         document.querySelectorAll("[data-locales]").forEach(function (el) {
           try {
             var labels = JSON.parse(el.getAttribute("data-locales") || "{}");

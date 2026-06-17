@@ -34,6 +34,7 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
+  lang={mode === "detail" ? entry.data.lang : undefined}
 >
   {
     mode === "detail" ? (

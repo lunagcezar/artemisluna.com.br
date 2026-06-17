@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
-import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import {
   buildDirectoryIndex,
   getRecursiveEntries,
@@ -34,6 +34,7 @@ const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
+  lang={mode === "detail" ? entry.data.lang : undefined}
 >
   {
     mode === "detail" ? (
@@ -44,7 +45,7 @@ const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
         <time class="text-muted-foreground text-sm">
           {entry.data.date.toLocaleDateString("pt-BR")}
         </time>
-        <AstroEntryContent entry={entry} />
+        <AstroArticleImageViewer entry={entry} />
       </article>
     ) : (
       <AstroRecursiveCollectionIndex

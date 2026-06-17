@@ -69,6 +69,7 @@ export function getLocale(fallback: string = "en"): string {
 }
 
 export function applyLocale(locale: string): void {
+  document.documentElement.lang = locale;
   document.querySelectorAll("[data-locales]").forEach((el) => {
     try {
       const labels = JSON.parse(el.getAttribute("data-locales") ?? "{}");

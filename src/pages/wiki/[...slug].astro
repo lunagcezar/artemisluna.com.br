@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
-import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { Badge } from "@components/core/badge";
 import {
   buildDirectoryIndex,
@@ -41,6 +41,7 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
+  lang={mode === "detail" ? entry.data.lang : undefined}
 >
   {
     mode === "detail" ? (
@@ -65,7 +66,7 @@ const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
             </div>
           )}
         </div>
-        <AstroEntryContent entry={entry} />
+        <AstroArticleImageViewer entry={entry} />
       </article>
     ) : (
       <AstroRecursiveCollectionIndex

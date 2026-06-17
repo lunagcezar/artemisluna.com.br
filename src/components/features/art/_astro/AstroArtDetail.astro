@@ -1,9 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
-import AstroEntryContent from "@components/core/_astro/AstroEntryContent.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { Badge } from "@components/core/badge";
-import { ImageViewer } from "@components/features/art/image-viewer";
+import { ImageViewer } from "@components/shared/image-viewer";
 import type { TranslateLabel } from "@i18n/labels";
 
 type Props = {
@@ -62,5 +62,5 @@ const resolvedImages = (data.images ?? []).map((img) => {
 
   <ImageViewer images={resolvedImages} client:load />
 
-  <AstroEntryContent entry={entry} />
+  <AstroArticleImageViewer entry={entry} />
 </article>

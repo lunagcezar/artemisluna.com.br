@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import { ArticleImageViewer } from "../article-image-viewer";
+
+type Props = {
+  entry: CollectionEntry<"art" | "blog" | "wiki">;
+};
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const contentId = "article-content-" + entry.id.replace(/[/\\]/g, "-");
+---
+
+<div id={contentId} class="article-content">
+  <Content />
+</div>
+
+<ArticleImageViewer containerId={contentId} client:load />
