@@ -1,0 +1,45 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
+import { getCollection } from "astro:content";
+import { SUPPORTED_LOCALES } from "@i18n/labels";
+
+const pages = await getCollection("page");
+const resumePages = pages.filter((p) => p.id.startsWith("resume"));
+
+const titleLabels: Record<string, string> = {};
+const descLabels: Record<string, string> = {};
+for (const locale of SUPPORTED_LOCALES) {
+  const page = resumePages.find((p) => p.data.lang === locale);
+  titleLabels[locale] = page?.data.title ?? "Resume";
+  descLabels[locale] = page?.data.description ?? "";
+}
+const defaultTitle = titleLabels["en"] ?? "Resume";
+const defaultDesc = descLabels["en"] ?? undefined;
+const defaultEntry = resumePages.find((p) => p.data.lang === "en");
+const defaultImage = defaultEntry?.data.image;
+const defaultKeywords = defaultEntry?.data.tags;
+---
+
+<MainLayout
+  title={defaultTitle}
+  description={defaultDesc}
+  keywords={defaultKeywords}
+  image={defaultImage}
+  titleLabels={JSON.stringify(titleLabels)}
+>
+  <div class="grid gap-6">
+    {
+      SUPPORTED_LOCALES.map((locale) => {
+        const page = resumePages.find((p) => p.data.lang === locale);
+        return (
+          page && (
+            <div data-content-locale={locale}>
+              <AstroArticleImageViewer entry={page} />
+            </div>
+          )
+        );
+      })
+    }
+  </div>
+</MainLayout>

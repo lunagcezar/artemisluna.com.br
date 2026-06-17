@@ -21,31 +21,29 @@ export function createSidebarHelpers(
   }
 
   function getNodeLabels(node: SidebarNode): Record<string, string> {
-    if (node.href === "/") {
-      return { en: "Home", pt: translations.pt?.home ?? "Home" };
-    }
+    const labels: Record<string, string> = {};
 
-    const firstSegment = node.href.split("/")[1];
-    const isRoot =
-      firstSegment === node.name && collectionNames.includes(node.name);
+    for (const locale of SUPPORTED_LOCALES) {
+      if (node.href === "/") {
+        labels[locale] = translations[locale]?.home ?? "Home";
+      } else {
+        const firstSegment = node.href.split("/")[1];
+        const isRoot =
+          firstSegment === node.name && collectionNames.includes(node.name);
 
-    if (isRoot) {
-      const labels: Record<string, string> = {
-        en: formatSegment(node.name),
-      };
-      for (const locale of SUPPORTED_LOCALES) {
-        if (locale !== "en") {
+        if (isRoot) {
           labels[locale] =
             translations[locale]?.[node.name] ?? formatSegment(node.name);
+        } else {
+          const t = translate[firstSegment];
+          labels[locale] = t
+            ? t(node.name)[locale]
+            : (translations[locale]?.[node.name] ?? formatSegment(node.name));
         }
       }
-      return labels;
     }
 
-    const t = translate[firstSegment];
-    if (t) return t(node.name);
-
-    return { en: formatSegment(node.name), pt: formatSegment(node.name) };
+    return labels;
   }
 
   function nodeIsActive(node: SidebarNode): boolean {

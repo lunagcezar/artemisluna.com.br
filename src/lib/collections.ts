@@ -240,7 +240,10 @@ export async function buildFullSidebarTree(): Promise<{
     (name) => name !== "page",
   );
 
-  const tree: SidebarNode[] = [{ name: "home", href: "/", children: [] }];
+  const tree: SidebarNode[] = [
+    { name: "home", href: "/", children: [] },
+    { name: "resume", href: "/resume/", children: [] },
+  ];
 
   for (const name of collectionNames) {
     const entries = await getCollection(name as keyof DataEntryMap);

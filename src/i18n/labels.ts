@@ -3,6 +3,8 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 export const translations: Record<string, Record<string, string>> = {
   en: {
+    home: "Home",
+    resume: "Resume",
     light: "Light",
     dark: "Dark",
   },
@@ -27,6 +29,7 @@ export const translations: Record<string, Record<string, string>> = {
     "wiki.encryption": "Criptografia",
     "wiki.networking": "Redes",
     "wiki.programming": "Programação",
+    resume: "Currículo",
     light: "Claro",
     dark: "Escuro",
   },

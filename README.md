@@ -175,12 +175,18 @@ Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/progra
 3. **Article listing** — all descendant entries appear, sorted by date descending (newest first). Entries span multiple subdirectories — e.g. `/art/traditional/` lists both drawing and painting entries together.
 4. **Pagination** — when there are more entries than `DEFAULT_PAGE_SIZE` (defined in `src/constants/pagination.ts`), page links appear at the bottom.
 
+### Special pages
+
+Static pages (home, resume) live in `src/content/page/` as markdown files with a `lang` field. They are rendered via `AstroArticleImageViewer` on dedicated routes (`/` and `/resume/`). Multiple locale variants (e.g. `home.en.md`, `home.pt.md`) are show/hidden client-side using `data-content-locale`.
+
+These pages are excluded from the auto-generated sidebar tree in `buildFullSidebarTree()`, which also includes hardcoded `home` and `resume` root nodes.
+
 ### Architecture
 
 The system has two key data structures:
 
 - **DirectoryIndex** — a flat `Record<string, DirectoryEntry>` built once from all entries. Each key is a directory path (`""` for root). Lookups are O(1): `children` (subfolder names), `entries` (articles in this directory), `indexEntry` (optional index page). The recursive listing function `getRecursiveEntries` walks the tree and returns all descendant entries globally sorted by date.
-- **SidebarNode** — a recursive tree of `{ name, href, children }` used by the sidebar and mobile drawer. Built by `buildFullSidebarTree()` which scans all collections from `content.config.ts`.
+- **SidebarNode** — a recursive tree of `{ name, href, children }` used by the sidebar and mobile drawer. Built by `buildFullSidebarTree()` which scans all collections from `content.config.ts` and adds hardcoded `home` and `resume` nodes.
 
 Both are rebuilt automatically when content is added, moved, or removed — no manual navigation updates required.
 
@@ -272,8 +278,9 @@ If not set, absolute URLs are omitted and relative paths are used instead.
 
 ## SEO
 
-- **Canonical URLs** — set via `SITE_URL` env var, emitted as `<link rel="canonical">` on every page.
-- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image` rendered from frontmatter fields.
+- **Canonical URLs** — set via `SITE_URL` env var (`getCanonicalUrl()` in `src/lib/url.ts`), emitted as `<link rel="canonical">` on every page.
+- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image` rendered from frontmatter fields. Image resolved via `getOgImageUrl()`.
+- **Keywords** — `tags` frontmatter rendered as `<meta name="keywords">`.
 - **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time datetime>`, breadcrumb with `aria-label`.
 - **`lang` attribute** — set from entry's `lang` frontmatter for correct hyphenation and language hints.
 - **Single-URL client-side locale switching** — no `/pt/` URL prefix, search engines see the English version server-rendered.

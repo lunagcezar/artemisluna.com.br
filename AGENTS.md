@@ -116,11 +116,11 @@ Route files replace 3 old function calls with direct index lookups:
 
 - `SidebarNode` — recursive tree node: `name`, `href`, `children`
 - `buildCollectionRoot(collection, entries)` — builds the directory tree for one collection from entry IDs
-- `buildFullSidebarTree()` — async; scans all collections via `content.config.ts`, returns the full tree (with a `home` root node) and collection names
+- `buildFullSidebarTree()` — async; scans all collections via `content.config.ts`, returns the full tree (with `home` and `resume` root nodes) and collection names
 
 Sidebar and navbar components use `src/lib/sidebar.ts`:
 
-- `createSidebarHelpers(currentPath, collectionNames)` — factory returning `getNodeLabels`, `nodeIsActive`, `nodeHasActiveDescendant`; handles bilingual labels via `createTranslateLabel` and the translations map, highlights the active page via `currentPath.startsWith(node.href)`, and auto-expands ancestor branches via `nodeHasActiveDescendant`
+- `createSidebarHelpers(currentPath, collectionNames)` — factory returning `getNodeLabels`, `nodeIsActive`, `nodeHasActiveDescendant`; handles bilingual labels via `createTranslateLabel` and the translations map, iterates `SUPPORTED_LOCALES` for all label generation. Highlights the active page via `currentPath.startsWith(node.href)`, and auto-expands ancestor branches via `nodeHasActiveDescendant`
 
 Art-only helpers are in `src/lib/art.ts`:
 
@@ -218,7 +218,7 @@ See `docs/remark-wiki-links.md` for full implementation details.
 
 Client-side locale detection for UI strings. No server routing or content restructuring. The system is designed to be **locale-agnostic** — every UI string, segment label, breadcrumb item, and date formatter iterates over `SUPPORTED_LOCALES` to produce labels for all configured locales. Adding a new locale to `SUPPORTED_LOCALES` automatically extends all i18n features.
 
-- **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key.
+- **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key. UI-level keys include `home`, `resume`, `light`, `dark`.
 - **Locale-agnostic rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML, containing entries for every locale in `SUPPORTED_LOCALES`. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
