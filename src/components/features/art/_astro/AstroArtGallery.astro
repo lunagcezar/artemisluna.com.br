@@ -6,7 +6,11 @@ import { formatSegment } from "@lib/collections";
 import { resolveArtImage } from "@lib/art";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import { createTranslateLabel } from "@i18n/labels";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
 
 type Props = {
   collection: "art";
@@ -22,8 +26,16 @@ const { collection, entries, slug, page, totalPages, baseUrl } = Astro.props;
 const segments = slug ? slug.split("/") : [];
 const baseLabel = formatSegment(collection);
 const rootUrl = `/${collection}/`;
-const title = segments.length > 0 ? formatSegment(segments.at(-1)!) : baseLabel;
+const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
+const title = lastSegment ? formatSegment(lastSegment) : baseLabel;
 const translateLabel = createTranslateLabel(collection);
+const titleLabels = lastSegment ? translateLabel(lastSegment) : undefined;
+const baseLabels = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    translations[locale]?.[collection] ?? baseLabel,
+  ]),
+);
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/art/**/*.{jpg,jpeg,png,webp,gif}",
@@ -35,12 +47,19 @@ const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   <div class="grid gap-2">
     <AstroRecursiveBreadcrumb
       baseUrl={rootUrl}
-      baseLabel={baseLabel}
+      baseLabels={baseLabels}
       slug={slug}
       translateLabel={translateLabel}
     />
 
-    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+    <h1
+      class="text-3xl font-semibold tracking-tight"
+      data-locales={titleLabels
+        ? JSON.stringify(titleLabels)
+        : JSON.stringify(baseLabels)}
+    >
+      {title}
+    </h1>
   </div>
 
   <section

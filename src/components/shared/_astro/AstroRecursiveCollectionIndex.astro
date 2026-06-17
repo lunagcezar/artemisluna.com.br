@@ -4,7 +4,11 @@ import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { formatSegment } from "@lib/collections";
-import { createTranslateLabel } from "@i18n/labels";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
 
 type Props = {
   collection: "blog" | "wiki";
@@ -35,20 +39,28 @@ const title = lastSegment ? formatSegment(lastSegment) : baseLabel;
 const rootUrl = `/${collection}/`;
 const translateLabel = createTranslateLabel(collection);
 const titleLabels = lastSegment ? translateLabel(lastSegment) : undefined;
+const baseLabels = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    translations[locale]?.[collection] ?? baseLabel,
+  ]),
+);
 ---
 
 <div class="grid gap-6">
   <div class="grid gap-2">
     <AstroRecursiveBreadcrumb
       baseUrl={rootUrl}
-      baseLabel={baseLabel}
+      baseLabels={baseLabels}
       slug={slug}
       translateLabel={translateLabel}
     />
 
     <h1
       class="text-3xl font-semibold tracking-tight"
-      data-locales={titleLabels ? JSON.stringify(titleLabels) : undefined}
+      data-locales={titleLabels
+        ? JSON.stringify(titleLabels)
+        : JSON.stringify(baseLabels)}
     >
       {title}
     </h1>

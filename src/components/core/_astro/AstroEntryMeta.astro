@@ -1,0 +1,57 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Badge } from "@components/core/badge";
+import type { TranslateLabel } from "@i18n/labels";
+import { CalendarBlankIcon, TagIcon } from "@phosphor-icons/react";
+
+type Props = {
+  entry: CollectionEntry<"art" | "blog" | "wiki">;
+  translateLabel?: TranslateLabel;
+};
+
+const { entry, translateLabel } = Astro.props;
+const { data } = entry;
+
+const dateLocales: Record<string, string> | undefined = data.date
+  ? {
+      en: data.date.toLocaleDateString("en-US"),
+      pt: data.date.toLocaleDateString("pt-BR"),
+    }
+  : undefined;
+---
+
+<div class="flex flex-col flex-wrap gap-2">
+  {
+    data.date && dateLocales && (
+      <div class="text-muted-foreground flex items-center gap-2 text-sm">
+        <CalendarBlankIcon size={16} className="shrink-0" />
+        <time
+          datetime={data.date.toISOString()}
+          data-locales={JSON.stringify(dateLocales)}
+        >
+          {dateLocales.en}
+        </time>
+      </div>
+    )
+  }
+
+  {
+    data.tags && data.tags.length > 0 && translateLabel && (
+      <div class="flex flex-wrap items-center gap-2">
+        <TagIcon size={16} className="shrink-0 text-muted-foreground" />
+        {data.tags.map((tag) => {
+          const labels = translateLabel(tag);
+          return (
+            <Badge
+              variant="outline"
+              className="text-muted-foreground border-muted-foreground"
+              data-locales={labels ? JSON.stringify(labels) : undefined}
+            >
+              {labels?.en ?? tag}
+            </Badge>
+          );
+        })}
+      </div>
+    )
+  }
+</div>

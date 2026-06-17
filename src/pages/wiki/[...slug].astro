@@ -1,9 +1,10 @@
 ---
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
-import { Badge } from "@components/core/badge";
+import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
 import {
   buildDirectoryIndex,
   getRecursiveEntries,
@@ -12,7 +13,11 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
-import { createTranslateLabel } from "@i18n/labels";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   return await getIndexAndDetailPaths("wiki");
@@ -35,6 +40,8 @@ const { pageEntries, totalPages, currentPage } =
     : { pageEntries: [], totalPages: 1, currentPage: 1 };
 const baseUrl = slug ? `/wiki/${slug}/` : "/wiki/";
 const segments = slug ? slug.split("/") : [];
+const parentSlug =
+  mode === "detail" ? entry.id.split("/").slice(0, -1).join("/") : slug;
 const pageTitle =
   mode === "detail"
     ? entry.data.title
@@ -54,24 +61,21 @@ const pageTitle =
     mode === "detail" ? (
       <article class="grid gap-4">
         <div class="grid gap-2">
+          <AstroRecursiveBreadcrumb
+            baseUrl="/wiki/"
+            baseLabels={Object.fromEntries(
+              SUPPORTED_LOCALES.map((l) => [
+                l,
+                translations[l]?.["wiki"] ?? "Wiki",
+              ]),
+            )}
+            slug={parentSlug}
+            translateLabel={translateLabel}
+          />
           <h1 class="text-3xl font-semibold tracking-tight">
             {entry.data.title}
           </h1>
-          {entry.data.tags.length > 0 && (
-            <div class="flex flex-wrap gap-1.5">
-              {entry.data.tags.map((tag) => {
-                const labels = translateLabel(tag);
-                return (
-                  <Badge
-                    variant="secondary"
-                    data-locales={JSON.stringify(labels)}
-                  >
-                    {labels.en}
-                  </Badge>
-                );
-              })}
-            </div>
-          )}
+          <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
         </div>
         <AstroArticleImageViewer entry={entry} />
       </article>

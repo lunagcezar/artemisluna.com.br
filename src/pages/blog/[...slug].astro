@@ -1,8 +1,10 @@
 ---
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
+import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
 import {
   buildDirectoryIndex,
   getRecursiveEntries,
@@ -10,7 +12,11 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
-import { createTranslateLabel } from "@i18n/labels";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   return await getIndexAndDetailPaths("blog");
@@ -30,6 +36,8 @@ const { pageEntries, totalPages, currentPage } =
     : { pageEntries: [], totalPages: 1, currentPage: 1 };
 const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
 const segments = slug ? slug.split("/") : [];
+const parentSlug =
+  mode === "detail" ? entry.id.split("/").slice(0, -1).join("/") : slug;
 const pageTitle =
   mode === "detail"
     ? entry.data.title
@@ -48,12 +56,21 @@ const pageTitle =
   {
     mode === "detail" ? (
       <article class="grid gap-4">
+        <AstroRecursiveBreadcrumb
+          baseUrl="/blog/"
+          baseLabels={Object.fromEntries(
+            SUPPORTED_LOCALES.map((l) => [
+              l,
+              translations[l]?.["blog"] ?? "Blog",
+            ]),
+          )}
+          slug={parentSlug}
+          translateLabel={translateLabel}
+        />
         <h1 class="text-3xl font-semibold tracking-tight">
           {entry.data.title}
         </h1>
-        <time class="text-muted-foreground text-sm">
-          {entry.data.date.toLocaleDateString("pt-BR")}
-        </time>
+        <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
         <AstroArticleImageViewer entry={entry} />
       </article>
     ) : (

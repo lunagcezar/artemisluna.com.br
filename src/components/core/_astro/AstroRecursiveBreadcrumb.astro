@@ -12,19 +12,21 @@ import type { TranslateLabel } from "@i18n/labels";
 type Props = {
   slug?: string;
   baseUrl: string;
-  baseLabel: string;
+  baseLabels: Record<string, string>;
   translateLabel: TranslateLabel;
 };
 
-const { baseUrl, baseLabel, slug, translateLabel } = Astro.props;
-
+const { baseUrl, baseLabels, slug, translateLabel } = Astro.props;
+const fallbackLabel = baseLabels["en"] ?? "Home";
 const segments = slug ? slug.split("/") : [];
 ---
 
 <Breadcrumb>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href={baseUrl}>{baseLabel}</BreadcrumbLink>
+      <BreadcrumbLink href={baseUrl} data-locales={JSON.stringify(baseLabels)}>
+        {fallbackLabel}
+      </BreadcrumbLink>
     </BreadcrumbItem>
 
     {

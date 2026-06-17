@@ -85,7 +85,9 @@ Both follow the same pattern as the art section:
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
-- `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree. Expects `baseUrl` to be the collection root (e.g. `/wiki/`) so the first breadcrumb item always points home; intermediate links are built relative to that root.
+- `AstroRecursiveBreadcrumb.astro` — breadcrumb trail for any directory tree. Accepts `baseUrl` (collection root, e.g. `/wiki/`), `baseLabels` (bilingual `Record<string, string>` for the root item), `slug` (directory path for sub-levels), and `translateLabel` (for segment translation). The first breadcrumb item renders `data-locales` for bilingual switching.
+- `AstroEntryMeta.astro` — metadata bar for detail pages showing date (with `CalendarBlankIcon` + bilingual locale formatting via `data-locales`) and tags (with `TagIcon` + bilingual `Badge` list). Hidden entirely when the entry has no tags or no date. Used in all three collection detail pages (art, blog, wiki).
+- Detail pages compute `parentSlug` from `entry.id` by removing the last path segment, then pass it to `AstroRecursiveBreadcrumb` so sub-directory levels appear in the breadcrumb trail.
 
 ### Directory index (for route file queries)
 
@@ -216,6 +218,8 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
 - **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
 - **Directory index titles** — the `<h1>` on index pages (e.g. `/wiki/encryption/`) uses `translateLabel(lastSegment)` with `data-locales`, so the page heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
+- **Breadcrumb root translation** — the first breadcrumb item uses `baseLabels` (`Record<string, string>`) instead of a plain string, so collection names (Art, Blog, Wiki) switch with the UI locale.
+- **Locale-aware dates** — `AstroEntryMeta` formats dates for both `en-US` and `pt-BR` via `data-locales` on `<time>`, switching with the locale cookie.
 - **Lang attribute** — `applyLocale()` sets `document.documentElement.lang`. Inline script in `MainLayout.astro` does the same on page load from the locale cookie.
 - See `docs/i18n.md` for the full pattern reference.
 

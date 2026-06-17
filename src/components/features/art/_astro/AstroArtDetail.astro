@@ -1,18 +1,31 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
-import { Badge } from "@components/core/badge";
+import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
 import { ImageViewer } from "@components/shared/image-viewer";
-import type { TranslateLabel } from "@i18n/labels";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
 
 type Props = {
   entry: CollectionEntry<"art">;
-  translateLabel?: TranslateLabel;
+  slug?: string;
 };
 
-const { entry, translateLabel } = Astro.props;
+const { entry, slug } = Astro.props;
 const { data } = entry;
+const translateLabel = createTranslateLabel("art");
+const breadcrumbSlug = (slug ?? entry.id).split("/").slice(0, -1).join("/");
+const baseLabels = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    translations[locale]?.["art"] ?? "Art",
+  ]),
+);
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/art/**/*.{jpg,jpeg,png,webp,gif}",
@@ -37,27 +50,16 @@ const resolvedImages = (data.images ?? []).map((img) => {
 
 <article class="grid gap-6">
   <div class="grid gap-2">
+    <AstroRecursiveBreadcrumb
+      baseUrl="/art/"
+      baseLabels={baseLabels}
+      slug={breadcrumbSlug}
+      translateLabel={translateLabel}
+    />
+
     <h1 class="text-3xl font-semibold tracking-tight">{data.title}</h1>
 
-    <p class="text-muted-foreground text-sm">
-      {data.date.toLocaleDateString("pt-BR")}
-    </p>
-
-    <div class="flex flex-wrap gap-1.5">
-      {
-        data.tags.map((tag) => {
-          const labels = translateLabel?.(tag);
-          return (
-            <Badge
-              variant="ghost"
-              data-locales={labels ? JSON.stringify(labels) : undefined}
-            >
-              {labels?.en ?? tag}
-            </Badge>
-          );
-        })
-      }
-    </div>
+    <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
   </div>
 
   <ImageViewer images={resolvedImages} client:load />

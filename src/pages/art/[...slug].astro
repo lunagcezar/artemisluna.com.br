@@ -27,10 +27,18 @@ const { pageEntries, totalPages, currentPage } =
     ? paginateEntries(allEntries, 1, DEFAULT_PAGE_SIZE)
     : { pageEntries: [], totalPages: 1, currentPage: 1 };
 const baseUrl = slug ? `/art/${slug}/` : "/art/";
+const segments = slug ? slug.split("/") : [];
+const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
+const pageTitle =
+  mode === "detail"
+    ? entry.data.title
+    : lastSegment
+      ? `${translateLabel(lastSegment).en} - Art`
+      : "Art";
 ---
 
 <MainLayout
-  title={mode === "detail" ? entry.data.title : undefined}
+  title={pageTitle}
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
@@ -38,7 +46,7 @@ const baseUrl = slug ? `/art/${slug}/` : "/art/";
 >
   {
     mode === "detail" ? (
-      <AstroArtDetail entry={entry} translateLabel={translateLabel} />
+      <AstroArtDetail entry={entry} slug={slug} />
     ) : (
       <AstroArtGallery
         collection="art"
