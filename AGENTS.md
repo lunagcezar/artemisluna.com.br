@@ -67,6 +67,7 @@ Art-specific components live in `src/components/features/art/_astro/`:
 - `AstroArtGallery.astro` — breadcrumbs, child-folder links, masonry grid, pagination. Accepts a `collection` prop so the breadcrumb root URL and label are derived dynamically (e.g. `/art/` / `Art`).
 - `AstroArtCard.astro` — mosaic tile built with shadcn `Card`, showing the first image, title, and all taxonomy badges
 - `AstroArtDetail.astro` — artwork detail page with metadata and image masonry
+- `image-viewer.tsx` (React) — interactive lightbox with zoom/pan, arrow cycling between process shots, and close-on-outside-click. Used inside `AstroArtDetail.astro` via `client:load`.
 
 Shared pagination is handled by `src/components/core/_astro/AstroPagination.astro`, which uses `getPageUrl(baseUrl, page)` from `src/lib/url.ts` to produce `/page/N/` URLs.
 
@@ -120,6 +121,18 @@ Art-only helpers are in `src/lib/art.ts`:
 - The gallery uses a CSS-column masonry layout (`columns-1 sm:columns-2 lg:columns-3`) with `break-inside-avoid`.
 - Child-folder links are rendered as badge links under each index heading.
 - Cards display badges for `type`, `category`, `medium`, `series`, and every `tag`, with bilingual labels via a `translateLabel` prop.
+
+## Image viewer (`image-viewer.tsx`)
+
+The React lightbox used on art detail pages. Lives at `src/components/features/art/image-viewer.tsx`.
+
+- Renders a clickable thumbnail grid; clicking opens a full-screen `Dialog` overlay.
+- Arrow buttons (or ← → keys) cycle between process shots; hidden while zoomed.
+- **Zoom**: click the image to toggle 2x zoom centered on the click point.
+- **Pan**: while zoomed, moving the mouse pans the image naturally (no click-drag needed).
+- **Animation**: zoom in/out has a 200ms CSS transition; mouse panning is instantaneous.
+- **Close**: click outside the image (on the backdrop) or press Escape.
+- Zoom/pan logic is extracted to `src/hooks/use-image-zoom.ts`. The `computeTranslate` pure function maps mouse position to image translation based on the excess of the scaled image beyond the viewport dimensions.
 
 ## Remark Wiki Links plugin
 
