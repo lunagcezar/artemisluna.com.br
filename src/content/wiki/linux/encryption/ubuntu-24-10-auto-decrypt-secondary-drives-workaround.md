@@ -9,10 +9,6 @@ tags:
   - ubuntu
 ---
 
-# Ubuntu 24.10 auto decrypt secondary drives workaround
-
-**Created:** 2024-10-12
-
 If you are upgrading Ubuntu from version 24.04 to 24.10 and used the [[encrypt-second-drive-when-the-first-is-encrypted-with-tpm]] guide, you'll probably notice that the boot process is much slower and the auto mount for secondary encrypted drives doesn't work, entering in the emergency mode.
 
 To solve this problem, you need to comment or exclude the references to the encrypted secondary drives listed in the `/etc/crypttab` and `/etc/fstab` files.

@@ -9,8 +9,6 @@ tags:
   - wifi
 ---
 
-# Disable NetworkManager powersave to avoid RTW89 jittery ping
-
 Create a file in the `/etc/NetworkManager/conf.d` directory
 
 **`wifi-powersave-off.conf`**

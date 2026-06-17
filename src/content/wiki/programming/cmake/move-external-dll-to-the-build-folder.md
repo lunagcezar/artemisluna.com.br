@@ -9,10 +9,6 @@ tags:
   - dll
 ---
 
-# Move external DLL to the build folder
-
-**Created:** 2024-04-10
-
 After adding your executable on [[cmakelists]], you can do a file operation with [[cmake]]:
 
 ```cmake

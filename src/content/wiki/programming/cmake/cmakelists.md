@@ -8,10 +8,6 @@ tags:
   - build-system
 ---
 
-# CMakeLists
-
-**Created:** 2024-04-10
-
 Build file for [[cmake]]
 
 [cmake]: ../cmake "CMake"

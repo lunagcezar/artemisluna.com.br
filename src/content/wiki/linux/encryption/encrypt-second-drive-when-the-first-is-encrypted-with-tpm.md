@@ -9,10 +9,6 @@ tags:
   - tpm
 ---
 
-# Encrypt second drive when the first is encrypted with TPM
-
-**Created:** 2024-07-31
-
 **DISCLAIMER**: This solution doesn't work on Ubuntu 24.10, please see [[ubuntu-24-10-auto-decrypt-secondary-drives-workaround]]
 
 After installing a [[linux]] distro using TPM as an option, the secondary partitions isn't encrypted because the usual installers, like the Ubuntu installer, only encrypt the main partition, needing a workaround to protect the other drives.
