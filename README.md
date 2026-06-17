@@ -274,7 +274,7 @@ Set the `SITE_URL` environment variable at build time for correct canonical URLs
 SITE_URL=https://example.com pnpm build
 ```
 
-If not set, absolute URLs are omitted and relative paths are used instead.
+The config in `astro.config.mjs` reads `SITE_URL` from `node:process` and falls back to the default URL when unset.
 
 ## SEO
 
@@ -287,10 +287,13 @@ If not set, absolute URLs are omitted and relative paths are used instead.
 
 ## Commands
 
-| Command                | Action                               |
-| ---------------------- | ------------------------------------ |
-| `pnpm dev`             | Start dev server at `localhost:4321` |
-| `pnpm build`           | Build to `dist/`                     |
-| `pnpm preview`         | Preview build locally                |
-| `pnpm astro check`     | Type-check all files                 |
-| `pnpm astro -- --help` | Astro CLI help                       |
+| Command                                   | Action                               |
+| ----------------------------------------- | ------------------------------------ |
+| `pnpm dev`                                | Start dev server at `localhost:4321` |
+| `SITE_URL=https://example.com pnpm build` | Build with custom canonical URL      |
+| `pnpm build`                              | Build to `dist/` (uses default URL)  |
+| `pnpm preview`                            | Preview build locally                |
+| `pnpm astro check`                        | Type-check all files                 |
+| `pnpm astro -- --help`                    | Astro CLI help                       |
+
+All commands run through `bin/astro.mjs`, which forwards `SITE_URL` as `--site` to the Astro CLI when present.
