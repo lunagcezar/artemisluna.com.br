@@ -149,9 +149,11 @@ export function initSelectMenus(config: SelectMenuConfig): void {
     });
 
     document.addEventListener("click", (e: MouseEvent) => {
+      if (content.classList.contains("hidden")) return;
       const target = e.target as Node | null;
       if (target && !root.contains(target)) {
-        closeMenu(trigger, content);
+        content.classList.add("hidden");
+        trigger.setAttribute("aria-expanded", "false");
       }
     });
 
