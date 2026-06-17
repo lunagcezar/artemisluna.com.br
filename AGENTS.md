@@ -35,6 +35,8 @@ The art portfolio is built around Astro content collections and a directory-tree
 
 ## Collection schema (`src/content.config.ts`)
 
+All collections (art, blog, wiki) share the `lang` field: `lang: z.enum(["en", "pt"]).default("en")`. Set `lang: pt` for Portuguese content to enable correct hyphenation via `<html lang>`.
+
 Art entries use the following taxonomy fields:
 
 - `type`: `"digital" | "traditional"`
@@ -67,7 +69,9 @@ Art-specific components live in `src/components/features/art/_astro/`:
 - `AstroArtGallery.astro` — breadcrumbs, child-folder links, masonry grid, pagination. Accepts a `collection` prop so the breadcrumb root URL and label are derived dynamically (e.g. `/art/` / `Art`).
 - `AstroArtCard.astro` — mosaic tile built with shadcn `Card`, showing the first image, title, and all taxonomy badges
 - `AstroArtDetail.astro` — artwork detail page with metadata and image masonry
-- `image-viewer.tsx` (React) — interactive lightbox with zoom/pan, arrow cycling between process shots, and close-on-outside-click. Used inside `AstroArtDetail.astro` via `client:load`.
+- `image-viewer.tsx` (React) — interactive lightbox with zoom/pan, arrow cycling between images, and close-on-outside-click. Used inside `AstroArtDetail.astro` via `client:load`. Lives at `src/components/shared/image-viewer.tsx`.
+- `article-image-viewer.tsx` (React) — same lightbox as above but scans a DOM container for `<img>` elements and opens the dialog on click. Used inside `AstroArticleImageViewer.astro` for blog/wiki content via `client:load`.
+- `AstroArticleImageViewer.astro` — Astro wrapper that renders markdown `Content` inside an ID'd container with `article-content` class, then mounts `ArticleImageViewer`. Used in all collection detail pages (replaces direct `AstroEntryContent` calls).
 
 Shared pagination is handled by `src/components/core/_astro/AstroPagination.astro`, which uses `getPageUrl(baseUrl, page)` from `src/lib/url.ts` to produce `/page/N/` URLs.
 
@@ -124,7 +128,7 @@ Art-only helpers are in `src/lib/art.ts`:
 
 ## Image viewer (`image-viewer.tsx`)
 
-The React lightbox used on art detail pages. Lives at `src/components/features/art/image-viewer.tsx`.
+The React lightbox used on art detail pages. Lives at `src/components/shared/image-viewer.tsx`.
 
 - Renders a clickable thumbnail grid; clicking opens a full-screen `Dialog` overlay.
 - Arrow buttons (or ← → keys) cycle between process shots; hidden while zoomed.
@@ -133,6 +137,38 @@ The React lightbox used on art detail pages. Lives at `src/components/features/a
 - **Animation**: zoom in/out has a 200ms CSS transition; mouse panning is instantaneous.
 - **Close**: click outside the image (on the backdrop) or press Escape.
 - Zoom/pan logic is extracted to `src/hooks/use-image-zoom.ts`. The `computeTranslate` pure function maps mouse position to image translation based on the excess of the scaled image beyond the viewport dimensions.
+
+## Article content typography (`src/styles/global.css`)
+
+Markdown-rendered content inside `.article-content` gets proper typography:
+
+- **Headings**: `h2` is `text-xl font-semibold`, `h3` is `text-lg font-semibold`, with spacing.
+- **Paragraphs**: justified `text-align`, `hyphens: auto`, line-height 1.75, bottom margin.
+- **Lists**: disc/decimal with 1.5rem padding-left.
+- **Links**: primary color underline.
+- **Blockquotes**: left border, italic, muted text.
+- **Images**: max-width 100%, rounded, `cursor: zoom-in`.
+- **Tables**: bordered cells, header background, full width.
+- **Inline code**: `--font-monospace` (Cascadia Code Variable), muted background.
+- **Content language**: `lang` in frontmatter (`en` default, `pt` for Portuguese) sets `<html lang>` for correct hyphenation.
+
+## Code blocks (Shiki terminal decoration)
+
+Code blocks rendered by Shiki (Astro's syntax highlighter) get a terminal-style decoration in `.article-content`:
+
+- **Scroll model**: `overflow-x: auto` lives on `<code>` (not `<pre>`), so the terminal titlebar stays fixed while code scrolls.
+- **Titlebar**: a dark 2rem bar at the top with macOS-style dots (red `#ff5f57`, yellow `#febc2e`, green `#28c840`) via `::before`/`::after` pseudo-elements.
+- **Line numbers**: each `.line` span gets a numbered `::before` with a separator border; non-selectable.
+- **Wrapping**: `white-space: pre` prevents wrapping; `width: 0` on `<code>` forces overflow for scroll triggering.
+- **Font**: Cascadia Code Variable via `--font-monospace`.
+
+## Article image viewer (`article-image-viewer.tsx`)
+
+Same lightbox as above but scans a DOM container for `<img>` elements. Used in blog/wiki pages where images are embedded in markdown rather than listed in frontmatter. Lives at `src/components/shared/article-image-viewer.tsx`.
+
+- Mounted via `AstroArticleImageViewer.astro` with `client:load`.
+- On mount, queries `document.getElementById(containerId)` and indexes all `<img>` elements.
+- Clicking any image opens the dialog with arrow navigation and zoom/pan.
 
 ## Remark Wiki Links plugin
 
@@ -168,6 +204,7 @@ See `docs/remark-wiki-links.md` for full implementation details.
 - Always provide a `description` for SEO. It is rendered in page meta tags and should summarize the article in one sentence.
 - Use `tags` for cross-cutting topics; they are rendered as badges on detail pages and included in the page keywords meta tag.
 - Wiki supports `index: true` index pages. Place a markdown file with the same name as a folder (e.g. `linux.md` next to `linux/`) and set `index: true` in its frontmatter. The plugin will treat it as a directory index — its content is rendered at the top of the directory listing, and it is filtered out from the article listing and pagination.
+- All collections support `lang: pt` to set Portuguese hyphenation (defaults to `en`). Passed through routes to `<html lang>`.
 
 # i18n
 
@@ -178,6 +215,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
 - **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
+- **Lang attribute** — `applyLocale()` sets `document.documentElement.lang`. Inline script in `MainLayout.astro` does the same on page load from the locale cookie.
 - See `docs/i18n.md` for the full pattern reference.
 
 # Theme / Dark Mode

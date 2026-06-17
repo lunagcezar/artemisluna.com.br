@@ -1,33 +1,32 @@
 # Image Viewer (lightbox)
 
-A React-based interactive lightbox for the art section's detail pages.
+A React-based interactive lightbox for art, blog, and wiki detail pages.
 
 ## Files
 
-| File                                           | Purpose                                           |
-| ---------------------------------------------- | ------------------------------------------------- |
-| `src/components/features/art/image-viewer.tsx` | React component: thumbnail grid + lightbox dialog |
-| `src/hooks/use-image-zoom.ts`                  | Hook + pure function for zoom/pan math            |
-| `src/components/core/dialog.tsx`               | shadcn Dialog primitive (radix-ui wrapper)        |
+| File                                                         | Purpose                                                    |
+| ------------------------------------------------------------ | ---------------------------------------------------------- |
+| `src/components/shared/image-viewer.tsx`                     | React component: thumbnail grid + lightbox dialog          |
+| `src/components/shared/article-image-viewer.tsx`             | React component: scans DOM container for images + lightbox |
+| `src/components/shared/_astro/AstroArticleImageViewer.astro` | Astro wrapper: renders Content + mounts ArticleImageViewer |
+| `src/hooks/use-image-zoom.ts`                                | Hook + pure function for zoom/pan math                     |
+| `src/components/core/dialog.tsx`                             | shadcn Dialog primitive (radix-ui wrapper)                 |
 
 ## Usage
 
-In an Astro component, resolve images to their hashed URLs, then mount with `client:load`:
+### Explicit image list (art)
 
 ```astro
----
-const resolvedImages = (data.images ?? []).map((img) => {
-  const resolved = resolveImage(img.src);
-  return {
-    src: typeof resolved !== "string" ? resolved.src : resolved,
-    alt: img.alt,
-    caption: img.caption,
-  };
-});
----
-
 <ImageViewer images={resolvedImages} client:load />
 ```
+
+### Images inside markdown body (blog/wiki)
+
+```astro
+<AstroArticleImageViewer entry={entry} />
+```
+
+This renders the markdown `Content` inside a uniquely ID'd container with `article-content` class, then mounts `ArticleImageViewer` which scans the container for `<img>` elements and enables the lightbox on click.
 
 ## Zoom & Pan
 

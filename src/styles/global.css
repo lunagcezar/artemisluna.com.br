@@ -255,22 +255,24 @@
       border-radius: var(--radius-lg);
       margin: 1.5rem 0;
       max-width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: visible;
       white-space: pre;
       word-break: normal;
       overflow-wrap: normal;
       hyphens: none;
     }
 
-    & pre code {
+    & pre > code {
       counter-reset: line;
       display: block;
       padding: 0 1rem 1rem;
       width: 0;
+      min-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
 
-    & pre code .line::before {
+    & pre > code .line::before {
       counter-increment: line;
       content: counter(line);
       display: inline-block;
@@ -294,6 +296,7 @@
       height: 2rem;
       background: #1e1e1e;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      pointer-events: none;
     }
 
     & pre::after {
@@ -308,6 +311,7 @@
       box-shadow:
         0.9rem 0 #febc2e,
         1.8rem 0 #28c840;
+      pointer-events: none;
     }
   }
 }
