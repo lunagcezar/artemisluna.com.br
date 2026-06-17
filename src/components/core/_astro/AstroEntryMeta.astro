@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { Badge } from "@components/core/badge";
 import type { TranslateLabel } from "@i18n/labels";
 import { CalendarBlankIcon, TagIcon } from "@phosphor-icons/react";
+import { formatDateForLocales } from "@lib/date";
 
 type Props = {
   entry: CollectionEntry<"art" | "blog" | "wiki">;
@@ -12,12 +13,7 @@ type Props = {
 const { entry, translateLabel } = Astro.props;
 const { data } = entry;
 
-const dateLocales: Record<string, string> | undefined = data.date
-  ? {
-      en: data.date.toLocaleDateString("en-US", { timeZone: "UTC" }),
-      pt: data.date.toLocaleDateString("pt-BR", { timeZone: "UTC" }),
-    }
-  : undefined;
+const dateLocales = data.date ? formatDateForLocales(data.date) : undefined;
 ---
 
 <div class="flex flex-col flex-wrap gap-2">

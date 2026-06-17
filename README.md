@@ -195,22 +195,7 @@ These folder and tag values in kebab-case are used as URL segments. They also se
 
 ## Adding translations
 
-All UI strings, taxonomy labels, and segment names are centralized in `src/i18n/labels.ts` in a single `translations` object.
-
-### Adding a new translation for an existing locale (e.g. English)
-
-```ts
-export const translations = {
-  en: {
-    light: "Light",
-    dark: "Dark",
-    // no need to add art/wiki segments — English falls back to formatSegment()
-  },
-  pt: {
-    /* ... */
-  },
-};
-```
+All UI strings, taxonomy labels, and segment names are centralized in `src/i18n/labels.ts` in a single `translations` object. The system is **locale-agnostic** — every consumer iterates over `SUPPORTED_LOCALES` to produce labels for all configured locales. Adding a new locale to `SUPPORTED_LOCALES` automatically extends every i18n feature.
 
 ### Adding a new locale (e.g. Esperanto)
 
@@ -234,7 +219,17 @@ export const translations = {
 
    Keys use dot notation: `collection.segment`. If a key has no translation, `formatSegment()` is used for segments (English) or the raw key for UI strings.
 
-3. Add the locale option to `src/i18n/labels.ts` `SUPPORTED_LOCALES` — the switcher (`src/components/shared/_astro/AstroLocaleSwitcher.astro`) auto-generates its options from this array.
+3. Add the locale mapping to `src/lib/date.ts` `LOCALE_MAP` if the locale uses a different `Intl.DateTimeFormat` string (e.g. `eo` → `"eo"`):
+
+   ```ts
+   const LOCALE_MAP: Record<string, string> = {
+     en: "en-US",
+     pt: "pt-BR",
+     eo: "eo",
+   };
+   ```
+
+4. The switcher (`src/components/shared/_astro/AstroLocaleSwitcher.astro`) auto-generates its options from `SUPPORTED_LOCALES` — no manual UI changes needed.
 
 ### Translating segments / tags
 

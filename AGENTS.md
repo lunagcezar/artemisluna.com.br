@@ -210,16 +210,16 @@ See `docs/remark-wiki-links.md` for full implementation details.
 
 # i18n
 
-Client-side locale detection for UI strings. No server routing or content restructuring.
+Client-side locale detection for UI strings. No server routing or content restructuring. The system is designed to be **locale-agnostic** — every UI string, segment label, breadcrumb item, and date formatter iterates over `SUPPORTED_LOCALES` to produce labels for all configured locales. Adding a new locale to `SUPPORTED_LOCALES` automatically extends all i18n features.
 
 - **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key.
-- **Bilingual rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
+- **Locale-agnostic rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML, containing entries for every locale in `SUPPORTED_LOCALES`. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
 - **Locale Switcher** — `src/components/shared/_astro/AstroLocaleSwitcher.astro` (Astro component with vanilla JS dropdown). Reads cookie, swaps `[data-locales]` and `[data-locale-value]` text, persists choice. Options are auto-generated from `SUPPORTED_LOCALES` in `@i18n/labels`.
-- **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
+- **Segment / tag translations** — `createTranslateLabel(collection)` returns a `TranslateLabel = (segment) => Record<string, string>` function that produces labels for every locale in `SUPPORTED_LOCALES`. Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). Translations are in `translations[locale]["collection.segment"]`.
 - **Directory index titles** — the `<h1>` on index pages (e.g. `/wiki/encryption/`) uses `translateLabel(lastSegment)` with `data-locales`, so the page heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
 - **Breadcrumb root translation** — the first breadcrumb item uses `baseLabels` (`Record<string, string>`) instead of a plain string, so collection names (Art, Blog, Wiki) switch with the UI locale.
-- **Locale-aware dates** — `AstroEntryMeta` formats dates for both `en-US` and `pt-BR` via `data-locales` on `<time>`, switching with the locale cookie.
+- **Locale-aware dates** — `AstroEntryMeta` uses `formatDateForLocales()` from `src/lib/date.ts`, which formats the date for every locale in `SUPPORTED_LOCALES` via `data-locales` on `<time>`, switching with the locale cookie.
 - **Lang attribute** — `applyLocale()` sets `document.documentElement.lang`. Inline script in `MainLayout.astro` does the same on page load from the locale cookie.
 - See `docs/i18n.md` for the full pattern reference.
 
