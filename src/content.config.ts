@@ -50,4 +50,14 @@ const wiki = defineCollection({
   }),
 });
 
-export const collections = { art, blog, wiki };
+const page = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/page" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    lang: z.enum(["en", "pt"]).default("en"),
+    date: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = { art, blog, wiki, page };

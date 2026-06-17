@@ -4,7 +4,7 @@ import { render } from "astro:content";
 import { ArticleImageViewer } from "../article-image-viewer";
 
 type Props = {
-  entry: CollectionEntry<"art" | "blog" | "wiki">;
+  entry: CollectionEntry<"art" | "blog" | "wiki" | "page">;
 };
 
 const { entry } = Astro.props;

@@ -14,9 +14,10 @@ type Props = {
   baseUrl: string;
   baseLabels: Record<string, string>;
   translateLabel: TranslateLabel;
+  isDetail?: boolean;
 };
 
-const { baseUrl, baseLabels, slug, translateLabel } = Astro.props;
+const { baseUrl, baseLabels, slug, translateLabel, isDetail } = Astro.props;
 const fallbackLabel = baseLabels["en"] ?? "Home";
 const segments = slug ? slug.split("/") : [];
 ---
@@ -39,7 +40,7 @@ const segments = slug ? slug.split("/") : [];
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              {isLast ? (
+              {isLast && !isDetail ? (
                 <BreadcrumbPage data-locales={JSON.stringify(labels)}>
                   {labels.en}
                 </BreadcrumbPage>
@@ -47,6 +48,7 @@ const segments = slug ? slug.split("/") : [];
                 <BreadcrumbLink
                   href={`${baseUrl}${path}/`}
                   data-locales={JSON.stringify(labels)}
+                  className={isLast ? "text-muted-foreground" : undefined}
                 >
                   {labels.en}
                 </BreadcrumbLink>

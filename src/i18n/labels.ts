@@ -78,6 +78,16 @@ export function applyLocale(locale: string): void {
       /* ignore parse errors */
     }
   });
+  document.querySelectorAll("[data-locale-value]").forEach((el) => {
+    el.textContent = locale.toUpperCase();
+  });
+  document.querySelectorAll("[data-content-locale]").forEach((el) => {
+    if (el.getAttribute("data-content-locale") !== locale) {
+      el.setAttribute("hidden", "");
+    } else {
+      el.removeAttribute("hidden");
+    }
+  });
 }
 
 export function t(key: string): string {

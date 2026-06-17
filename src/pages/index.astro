@@ -1,5 +1,25 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
+import { getCollection } from "astro:content";
+import { SUPPORTED_LOCALES } from "@i18n/labels";
+
+const pages = await getCollection("page");
 ---
 
-<MainLayout />
+<MainLayout>
+  <div class="grid gap-6">
+    {
+      SUPPORTED_LOCALES.map((locale) => {
+        const page = pages.find((p) => p.data.lang === locale);
+        return (
+          page && (
+            <div data-content-locale={locale}>
+              <AstroArticleImageViewer entry={page} />
+            </div>
+          )
+        );
+      })
+    }
+  </div>
+</MainLayout>

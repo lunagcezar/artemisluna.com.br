@@ -75,6 +75,12 @@ Art-specific components live in `src/components/features/art/_astro/`:
 
 Shared pagination is handled by `src/components/core/_astro/AstroPagination.astro`, which uses `getPageUrl(baseUrl, page)` from `src/lib/url.ts` to produce `/page/N/` URLs.
 
+SEO URL helpers live in `src/lib/url.ts`:
+
+- `getCanonicalUrl(path)` — builds the canonical URL from `import.meta.env.SITE` + path
+- `getOgImageUrl(image)` — resolves frontmatter image paths to absolute URLs for Open Graph
+- `getSiteRoot()` — returns the site root from `SITE_URL` env var or empty string
+
 ## Blog & Wiki routing
 
 Both follow the same pattern as the art section:
@@ -229,6 +235,14 @@ Client-side locale detection for UI strings. No server routing or content restru
 - CSS variables for `.dark` are defined in `src/styles/global.css`.
 - **Theme Switcher** — `src/components/shared/_astro/AstroThemeSwitcher.astro` (Astro component with vanilla JS dropdown). Both Sun/Moon icons are always rendered; CSS `dark:hidden`/`hidden dark:block` controls visibility based on the `.dark` class (set by the inline `<head>` script). Reads `theme` cookie (falls back to `prefers-color-scheme`), toggles `.dark` class, persists choice.
 - An inline `<script>` in `MainLayout.astro` runs before any component JS, applying the saved locale and theme immediately to prevent flash.
+
+# SEO
+
+- **Canonical URLs** — `MainLayout.astro` emits `<link rel="canonical">` using `getCanonicalUrl(path)` from `src/lib/url.ts`, which reads `import.meta.env.SITE` (configurable via `SITE_URL` env var). Falls back to relative path if no site URL is configured.
+- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, and `og:image` (from frontmatter `image` field, resolved via `getOgImageUrl()`) are rendered in `<head>`.
+- **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time>` with `datetime`, breadcrumb `<nav aria-label="breadcrumb">`.
+- **`lang` attribute** — Set from entry's `lang` field for correct hyphenation and language hints.
+- **Client-side locale** — Single-URL pattern (no `/pt/` prefix). Content is swapped client-side via `data-locales` and `data-content-locale`. Search engines see the default (English) server-rendered version.
 
 # For agents
 

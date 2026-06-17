@@ -236,7 +236,9 @@ export async function buildFullSidebarTree(): Promise<{
   tree: SidebarNode[];
   collectionNames: string[];
 }> {
-  const collectionNames = Object.keys(collections);
+  const collectionNames = Object.keys(collections).filter(
+    (name) => name !== "page",
+  );
 
   const tree: SidebarNode[] = [{ name: "home", href: "/", children: [] }];
 

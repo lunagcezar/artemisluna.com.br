@@ -260,6 +260,24 @@ pt: {
 
 Use `t("light")` in any component (imported from `@i18n/labels`). For static HTML that needs to react to locale changes, embed `data-locales='{"en":"Light","pt":"Claro"}'` on the element — the inline script and `applyLocale()` will swap the text content.
 
+## Deployment
+
+Set the `SITE_URL` environment variable at build time for correct canonical URLs and Open Graph image paths:
+
+```bash
+SITE_URL=https://example.com pnpm build
+```
+
+If not set, absolute URLs are omitted and relative paths are used instead.
+
+## SEO
+
+- **Canonical URLs** — set via `SITE_URL` env var, emitted as `<link rel="canonical">` on every page.
+- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image` rendered from frontmatter fields.
+- **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time datetime>`, breadcrumb with `aria-label`.
+- **`lang` attribute** — set from entry's `lang` frontmatter for correct hyphenation and language hints.
+- **Single-URL client-side locale switching** — no `/pt/` URL prefix, search engines see the English version server-rendered.
+
 ## Commands
 
 | Command                | Action                               |
