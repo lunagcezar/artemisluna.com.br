@@ -16,9 +16,12 @@ importers:
       "@astrojs/react":
         specifier: ^5.0.7
         version: 5.0.7(@types/node@25.9.3)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(yaml@2.9.0)
-      "@fontsource-variable/geist":
-        specifier: ^5.2.9
-        version: 5.2.9
+      "@fontsource-variable/bitter":
+        specifier: ^5.2.10
+        version: 5.2.10
+      "@fontsource-variable/cascadia-code":
+        specifier: ^5.2.2
+        version: 5.2.2
       "@phosphor-icons/react":
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -879,10 +882,16 @@ packages:
         integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==,
       }
 
-  "@fontsource-variable/geist@5.2.9":
+  "@fontsource-variable/bitter@5.2.10":
     resolution:
       {
-        integrity: sha512-TP+QSBG3wxKGPE33CbMy/L0Nu3qvJ6Fy81Yc4LnQ95xH+i+cfEp8fyU8/kfV14YwszxIFPhnoMTbjL71waVpyQ==,
+        integrity: sha512-OGvp+KEyqOq+4/20Y9vifBxSBnfxGiL/9qiSl9rOMZSRhEEbgAYBn+DKVPXIWSQQdawcYc975qE13ppRIcPI2Q==,
+      }
+
+  "@fontsource-variable/cascadia-code@5.2.2":
+    resolution:
+      {
+        integrity: sha512-5Sn7CySADZaPggdZ9wXnC0CKdLfca+7G7ipaSWSOXFQvAxnH+zKnflktVAVj5A3loP8ZAs72w7+v/RCwOnPpaQ==,
       }
 
   "@hono/node-server@1.19.14":
@@ -9109,7 +9118,9 @@ snapshots:
 
   "@floating-ui/utils@0.2.11": {}
 
-  "@fontsource-variable/geist@5.2.9": {}
+  "@fontsource-variable/bitter@5.2.10": {}
+
+  "@fontsource-variable/cascadia-code@5.2.2": {}
 
   "@hono/node-server@1.19.14(hono@4.12.25)":
     dependencies:
