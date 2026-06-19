@@ -47,6 +47,13 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
     startScale: 1,
     isPinching: false,
   });
+  const panRef = React.useRef({
+    startX: 0,
+    startY: 0,
+    startTranslateX: 0,
+    startTranslateY: 0,
+    isPanning: false,
+  });
 
   React.useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
@@ -114,50 +121,75 @@ function useImageZoom({ enabled = true }: { enabled?: boolean } = {}) {
   const handleTouchStart = React.useCallback(
     (e: React.TouchEvent) => {
       if (!enabled) return;
-      if (e.touches.length !== 2) return;
-      e.preventDefault();
 
-      const startDist = getPinchDistance(e.touches);
-      pinchRef.current = {
-        startDist,
-        startScale: scale,
-        isPinching: true,
-      };
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const startDist = getPinchDistance(e.touches);
+        pinchRef.current = {
+          startDist,
+          startScale: scale,
+          isPinching: true,
+        };
+        panRef.current.isPanning = false;
+      } else if (e.touches.length === 1 && scale > 1) {
+        e.preventDefault();
+        panRef.current = {
+          startX: e.touches[0].clientX,
+          startY: e.touches[0].clientY,
+          startTranslateX: translate.x,
+          startTranslateY: translate.y,
+          isPanning: true,
+        };
+        pinchRef.current.isPinching = false;
+      }
     },
-    [enabled, scale],
+    [enabled, scale, translate.x, translate.y],
   );
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!pinchRef.current.isPinching) return;
-    if (e.touches.length !== 2) return;
-    e.preventDefault();
+    if (pinchRef.current.isPinching) {
+      if (e.touches.length !== 2) return;
+      e.preventDefault();
 
-    const dist = getPinchDistance(e.touches);
-    const ratio = dist / pinchRef.current.startDist;
-    const newScale = Math.min(
-      MAX_SCALE,
-      Math.max(MIN_SCALE, pinchRef.current.startScale * ratio),
-    );
+      const dist = getPinchDistance(e.touches);
+      const ratio = dist / pinchRef.current.startDist;
+      const newScale = Math.min(
+        MAX_SCALE,
+        Math.max(MIN_SCALE, pinchRef.current.startScale * ratio),
+      );
 
-    const img = imgRef.current;
-    if (img) {
-      const center = getPinchCenter(e.touches);
-      const rect = img.getBoundingClientRect();
-      const t = computeTranslate(center.x, center.y, rect.width, rect.height);
-      setTranslate(t);
+      const img = imgRef.current;
+      if (img) {
+        const center = getPinchCenter(e.touches);
+        const rect = img.getBoundingClientRect();
+        const t = computeTranslate(center.x, center.y, rect.width, rect.height);
+        setTranslate(t);
+      }
+
+      setScale(newScale);
+    } else if (panRef.current.isPanning && e.touches.length === 1) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - panRef.current.startX;
+      const dy = e.touches[0].clientY - panRef.current.startY;
+      setTranslate({
+        x: panRef.current.startTranslateX + dx,
+        y: panRef.current.startTranslateY + dy,
+      });
     }
-
-    setScale(newScale);
   }, []);
 
   const handleTouchEnd = React.useCallback(() => {
-    if (!pinchRef.current.isPinching) return;
-    pinchRef.current.isPinching = false;
+    if (pinchRef.current.isPinching) {
+      pinchRef.current.isPinching = false;
 
-    if (scale < SNAP_THRESHOLD) {
-      setScale(1);
-      setTranslate({ x: 0, y: 0 });
-      startTransition();
+      if (scale < SNAP_THRESHOLD) {
+        setScale(1);
+        setTranslate({ x: 0, y: 0 });
+        startTransition();
+      }
+    }
+    if (panRef.current.isPanning) {
+      panRef.current.isPanning = false;
     }
   }, [scale, startTransition]);
 

@@ -60,6 +60,17 @@ tx = (0.5 - mx) * excessX
 - Arrow keys cycle between images only when not zoomed.
 - Clicking the backdrop (the `Dialog.Content` element itself, not its children) closes the dialog.
 
+### Touch / Mobile
+
+Two touch modes are supported when zoomed:
+
+- **Pinch-to-zoom** (2 fingers): scales the image and centers on the pinch midpoint.
+- **Single-finger pan** (1 finger): drags the image around. Uses `panRef` to track the starting position and applies the delta to the current translate.
+
+A `didPanRef` in `ImageLightbox` prevents the `onClick` zoom-toggle from firing after a pan gesture — without it, lifting the finger after panning would immediately zoom back out.
+
+When not zoomed, `touchAction: none` is not applied, so the browser handles scroll normally. When zoomed, `touchAction: none` is set on the image to prevent page scroll from interfering with pan.
+
 ## Dependencies
 
 - `radix-ui` — Dialog primitives

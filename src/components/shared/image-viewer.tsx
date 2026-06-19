@@ -38,6 +38,7 @@ function ImageLightbox({
 }: ImageLightboxProps) {
   const current = images[currentIndex];
   const hasMultiple = images.length > 1;
+  const didPanRef = React.useRef(false);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,9 +96,21 @@ function ImageLightbox({
           <figure
             className="flex flex-col items-center gap-2 px-4 select-none"
             onMouseMove={(e) => zoom.handleMouseMove(e.clientX, e.clientY)}
-            onTouchStart={zoom.handleTouchStart}
-            onTouchMove={zoom.handleTouchMove}
-            onTouchEnd={zoom.handleTouchEnd}
+            onTouchStart={(e) => {
+              zoom.handleTouchStart(e);
+              if (zoom.isZoomed && e.touches.length === 1) {
+                didPanRef.current = false;
+              }
+            }}
+            onTouchMove={(e) => {
+              zoom.handleTouchMove(e);
+              if (zoom.isZoomed && e.touches.length === 1) {
+                didPanRef.current = true;
+              }
+            }}
+            onTouchEnd={(e) => {
+              zoom.handleTouchEnd(e);
+            }}
           >
             <img
               ref={zoom.imgRef}
@@ -106,7 +119,13 @@ function ImageLightbox({
               className="rounded-lg"
               draggable={false}
               style={zoom.imageStyle}
-              onClick={(e) => zoom.toggleZoom(e.clientX, e.clientY)}
+              onClick={(e) => {
+                if (didPanRef.current) {
+                  didPanRef.current = false;
+                  return;
+                }
+                zoom.toggleZoom(e.clientX, e.clientY);
+              }}
             />
             {current?.caption && (
               <figcaption className="text-center text-sm text-white/70">

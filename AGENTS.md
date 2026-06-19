@@ -133,10 +133,11 @@ The React lightbox used on art detail pages. Lives at `src/components/shared/ima
 - Renders a clickable thumbnail grid; clicking opens a full-screen `Dialog` overlay.
 - Arrow buttons (or ← → keys) cycle between process shots; hidden while zoomed.
 - **Zoom**: click the image to toggle 2x zoom centered on the click point.
-- **Pan**: while zoomed, moving the mouse pans the image naturally (no click-drag needed).
+- **Pan**: while zoomed, moving the mouse pans the image naturally (no click-drag needed). On mobile, single-finger drag pans the zoomed image.
 - **Animation**: zoom in/out has a 200ms CSS transition; mouse panning is instantaneous.
 - **Close**: click outside the image (on the backdrop) or press Escape.
 - Zoom/pan logic is extracted to `src/hooks/use-image-zoom.ts`. The `computeTranslate` pure function maps mouse position to image translation based on the excess of the scaled image beyond the viewport dimensions.
+- **Touch**: pinch-to-zoom (2 fingers) and single-finger pan (1 finger) when zoomed. A `didPanRef` in `ImageLightbox` prevents the `onClick` zoom-toggle from firing after a pan gesture. `touchAction: none` is applied when zoomed to prevent page scroll interference.
 
 ## Article content typography (`src/styles/global.css`)
 
@@ -207,6 +208,7 @@ The site uses client-side full-text search powered by [Lunr.js](https://lunrjs.c
 - **Locale-aware badges** — Result badges (Art, Wiki, Page) use `translations[locale]?.[collection]` to display in the user's current language, updating reactively via the `localechange` event.
 - **No locale filter** — Search results are not filtered by the entry's `lang` field, so switching to PT/EO mode still shows English content.
 - **Search component** — `src/components/shared/search.tsx` (React) with `client:load`. The input is embedded in `AstroNavbar.astro`. Results appear in a dropdown below the input.
+- **Dropdown click handling** — The document-level `mousedown` handler that clears the query on outside-click must exclude Radix's dropdown portal (`[data-radix-popper-content-wrapper]`), otherwise clicking a result clears the query before `onSelect` fires.
 - **Relevance strategy** — `searchIndex()` in `src/lib/search.ts` uses required prefix wildcards (`+term1* +term2*`), so every typed term must appear as a word prefix across all fields. Adding words narrows results (AND logic). Single-word queries also fall back to boosted exact and fuzzy matching. Results are sorted by Lunr score (relevance) first, then by date descending for entries with similar scores.
 - **Lunr stop words and stemmer removed** — `lunr.stopWordFilter` and `lunr.stemmer` are removed from both pipelines, ensuring common words (about, me, the) and partial prefixes (everythi → everything) work correctly.
 - **Shared types** in `src/types/search.ts` (`SearchDoc`). Search utilities in `src/lib/search.ts`.
