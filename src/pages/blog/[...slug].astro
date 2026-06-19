@@ -24,7 +24,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
-const translateLabel = createTranslateLabel("blog");
+const translateLabel = createTranslateLabel();
 
 const index = buildDirectoryIndex(entries ?? []);
 const dir = index[slug ?? ""];
@@ -56,7 +56,6 @@ const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   author={mode === "detail" ? entry.data.author : undefined}
-  image={mode === "detail" ? entry.data.image : undefined}
   lang={mode === "detail" ? entry.data.lang : undefined}
 >
   {

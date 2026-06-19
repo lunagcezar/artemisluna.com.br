@@ -18,7 +18,7 @@ type Props = {
 
 const { entry, slug } = Astro.props;
 const { data } = entry;
-const translateLabel = createTranslateLabel("art");
+const translateLabel = createTranslateLabel();
 const breadcrumbSlug = (slug ?? entry.id).split("/").slice(0, -1).join("/");
 const baseLabels = Object.fromEntries(
   SUPPORTED_LOCALES.map((locale) => [
