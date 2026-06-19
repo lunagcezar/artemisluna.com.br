@@ -11,6 +11,9 @@ export const translations: Record<string, Record<string, string>> = {
     previous: "Previous",
     next: "Next",
     more: "More",
+    art: "Art",
+    wiki: "Wiki",
+    page: "Page",
   },
   pt: {
     home: "Início",
@@ -83,6 +86,7 @@ export const translations: Record<string, Record<string, string>> = {
     dll: "DLL",
     wifi: "Wi-Fi",
     tpm: "TPM",
+    page: "Página",
     resume: "Currículo",
     light: "Claro",
     dark: "Escuro",
@@ -95,6 +99,7 @@ export const translations: Record<string, Record<string, string>> = {
     more: "Pli",
     blog: "Blog",
     wiki: "Vikio",
+    page: "Paĝo",
     art: "Arto",
     traditional: "Tradicia",
     digital: "Cifereca",
@@ -164,10 +169,10 @@ export const translations: Record<string, Record<string, string>> = {
   },
 };
 
-function formatSegment(segment: string): string {
+export function formatSegment(segment: string): string {
   return segment
     .replace(/-/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .replace(/\b[a-zA-Z]/g, (char) => char.toUpperCase());
 }
 
 export type TranslateLabel = (segment: string) => Record<string, string>;

@@ -12,7 +12,7 @@ import { Badge } from "@components/core/badge";
 import { Kbd } from "@components/core/kbd";
 import { cn } from "@lib/utils";
 import type { SearchDoc } from "../../types/search";
-import { translations } from "@i18n/labels";
+import { translations, formatSegment } from "@i18n/labels";
 import { searchIndex } from "@lib/search";
 
 function Search() {
@@ -224,7 +224,8 @@ function Search() {
                     {doc.title}
                   </span>
                   <Badge variant="outline" className="shrink-0 text-[10px]">
-                    {translations[locale]?.[doc.collection] ?? doc.collection}
+                    {translations[locale]?.[doc.collection] ??
+                      formatSegment(doc.collection)}
                   </Badge>
                 </div>
                 {doc.description && (
