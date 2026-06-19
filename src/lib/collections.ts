@@ -17,7 +17,7 @@ export async function getIndexAndDetailPaths<C extends keyof DataEntryMap>(
   const directoryPaths = getDirectoryPaths(entries);
 
   for (const entry of entries) {
-    if ((entry.data as any).index === true) {
+    if ("index" in entry.data && entry.data.index === true) {
       directoryPaths.push(entry.id);
     }
   }
@@ -280,7 +280,10 @@ export function buildDirectoryIndex<
     }
   }
   for (const entry of sorted) {
-    if ((entry.data as any).index) {
+    if (
+      "index" in entry.data &&
+      (entry.data as Record<string, unknown>).index
+    ) {
       directorySet.add(entry.id);
     }
   }
@@ -311,7 +314,11 @@ export function buildDirectoryIndex<
   // Place entries: if ID matches a directory path → indexEntry, otherwise → parent's entries
   for (const entry of sorted) {
     if (directorySet.has(entry.id)) {
-      (index[entry.id] as any).indexEntry = entry;
+      (
+        index[entry.id] as DirectoryEntry<T> & {
+          indexEntry: T & { data: { index: boolean } };
+        }
+      ).indexEntry = entry as T & { data: { index: boolean } };
     } else {
       const parts = entry.id.split("/");
       const dirPath = parts.slice(0, -1).join("/") || "";

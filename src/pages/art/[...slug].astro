@@ -22,7 +22,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;
-const translateLabel = createTranslateLabel("art");
+const translateLabel = createTranslateLabel();
 
 const index = buildDirectoryIndex(entries ?? []);
 const allEntries =

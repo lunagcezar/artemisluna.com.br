@@ -17,7 +17,7 @@ export function createSidebarHelpers(
 ): SidebarHelpers {
   const translate: Record<string, ReturnType<typeof createTranslateLabel>> = {};
   for (const name of collectionNames) {
-    translate[name] = createTranslateLabel(name);
+    translate[name] = createTranslateLabel();
   }
 
   function getNodeLabels(node: SidebarNode): Record<string, string> {

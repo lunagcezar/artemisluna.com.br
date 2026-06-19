@@ -10,7 +10,14 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint": "pnpm lint:prettier && pnpm lint:es",
+    "lint:fix": "prettier --write --ignore-unknown . && eslint --fix .",
+    "lint:prettier": "prettier --check --ignore-unknown .",
+    "lint:es": "eslint .",
+    "check": "astro check",
+    "tsc": "tsc --noEmit",
+    "ci": "pnpm lint && pnpm check && pnpm build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",

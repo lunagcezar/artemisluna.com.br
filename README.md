@@ -1,10 +1,10 @@
 # Artemis Luna
 
-Personal portfolio and knowledge base built with [Astro](https://astro.build), using content collections for art, blog, and wiki content.
+Personal portfolio and knowledge base built with [Astro](https://astro.build), using content collections for art, wiki, and page content.
 
 ## Content organization
 
-Content lives under `src/content/` in three collections — `art`, `blog`, and `wiki`. Directories _are_ the taxonomy: their names become URL path segments and are used for filtering and breadcrumbs.
+Content lives under `src/content/` in four collections — `art`, `wiki`, `page`, and (optionally) `blog`. Directories _are_ the taxonomy: their names become URL path segments and are used for filtering and breadcrumbs.
 
 ### Art
 
@@ -52,12 +52,19 @@ images:
 
 Image `src` paths are root-relative and must live under `src/assets/art/`.
 
-### Blog
+### Blog (optional)
+
+Blog entries are currently disabled. To enable, uncomment the `blog` collection in `src/content.config.ts` and follow the guide in `docs/collections.md`. Blog entries are flat (no sub-folders):
 
 ```
 src/content/blog/
 └── 20260511-my-post.md
 ```
+
+src/content/blog/
+└── 20260511-my-post.md
+
+````
 
 Blog entries are flat (no sub-folders). Frontmatter:
 
@@ -71,7 +78,7 @@ date: 2026-05-11
 author: Your Name
 image: "/src/assets/blog/hero.jpg"
 ---
-```
+````
 
 ### Wiki
 
@@ -119,7 +126,7 @@ Links render with the target page's title wrapped in brackets (`[Article Title]`
 
 You can also use standard markdown links: `[text](/wiki/linux/encryption/some-topic/)` or `[text](/blog/20230315-turborepo-monorepo/)`.
 
-The remark plugin scans `src/content/` across all three collections (`wiki`, `blog`, `art`) to build a unified routing table. A `[[slug]]` in any markdown file resolves to the correct `/<collection>/<id>/` URL regardless of which collection it lives in.
+The remark plugin scans `src/content/` across all collections to build a unified routing table. A `[[slug]]` in any markdown file resolves to the correct `/<collection>/<id>/` URL regardless of which collection it lives in.
 
 ### Directory index pages
 
@@ -148,7 +155,7 @@ Luna G. Cezar         [Search...]
 │       └── Painting (/art/traditional/painting/)
 │           ├── Gouache
 │           └── Oil-pastel
-├── Blog (/blog/)
+├── Blog (/blog/)  ← commented out in content.config.ts; add posts + uncomment to enable
 └── ▼ Wiki (/wiki/)
     ├── Linux (/wiki/linux/)
     │   ├── Encryption
@@ -177,7 +184,13 @@ Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/progra
 
 ### Adding a new content collection
 
-New collections (e.g., a `photography` section) require creating five files: a content directory, a schema entry in `src/content.config.ts`, a catch-all route, a pagination route, and translations. See `docs/collections.md` for the complete walkthrough.
+New collections (e.g., re-adding `blog` or adding a `photography` section) require creating a content directory, a schema entry in `src/content.config.ts`, catch-all and pagination route files, and translations. See `docs/collections.md` for the complete walkthrough.
+
+To re-enable the blog section:
+
+1. Uncomment the `blog` definition in `src/content.config.ts`
+2. Restore the route files from `docs/collections.md` template
+3. Add `blog` to `contentNames` in `src/pages/search.json.ts`
 
 ### Special pages
 
@@ -273,7 +286,7 @@ Use `t("light")` in any component (imported from `@i18n/labels`). For static HTM
 
 ## Search
 
-The site has a built-in search bar in the navbar powered by [Lunr.js](https://lunrjs.com). All content (art, blog, wiki, and the home/resume pages) is indexed at build time into a static `search.json` file.
+The site has a built-in search bar in the navbar powered by [Lunr.js](https://lunrjs.com). All content (art, wiki, and the home/resume pages) is indexed at build time into a static `search.json` file. The `blog` collection is indexed when it has entries.
 
 - **How it works**: `src/pages/search.json.ts` generates the index during `astro build`. On the client, the `Search` React component fetches `search.json` and builds a Lunr index.
 - **What's indexed**: title (boosted), headings (h1/h2 from markdown, boosted), description, tags (including translated labels for cross-locale queries), and body content.

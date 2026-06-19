@@ -20,15 +20,15 @@ import {
 import { Separator } from "@components/core/separator";
 
 type Props = {
-  collection: "blog" | "wiki";
-  entries: CollectionEntry<"blog" | "wiki">[];
+  collection: "wiki";
+  entries: CollectionEntry<"wiki">[];
   slug?: string;
   childFolders: string[];
   page: number;
   totalPages: number;
   baseUrl: string;
   baseLabel: string;
-  indexEntry?: CollectionEntry<"blog" | "wiki">;
+  indexEntry?: CollectionEntry<"wiki">;
 };
 
 const {
