@@ -175,6 +175,10 @@ Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/progra
 3. **Article listing** — all descendant entries appear, sorted by date descending (newest first). Entries span multiple subdirectories — e.g. `/art/traditional/` lists both drawing and painting entries together.
 4. **Pagination** — when there are more entries than `DEFAULT_PAGE_SIZE` (defined in `src/constants/pagination.ts`), page links appear at the bottom.
 
+### Adding a new content collection
+
+New collections (e.g., a `photography` section) require creating five files: a content directory, a schema entry in `src/content.config.ts`, a catch-all route, a pagination route, and translations. See `docs/collections.md` for the complete walkthrough.
+
 ### Special pages
 
 Static pages (home, resume) live in `src/content/page/` as markdown files named `{name}.{locale}.md` (e.g., `home.en.md`, `home.pt.md`, `home.eo.md`). Each file's frontmatter sets `lang` to its locale. The page route (`/` for home, `/resume/` for resume) iterates `SUPPORTED_LOCALES` and renders each matching file, showing/hiding them client-side via `data-content-locale`. Adding a new locale means creating the corresponding page file (e.g., `resume.eo.md`). New page types can be added by creating a route file (e.g., `src/pages/about.astro`) and locale files (`about.en.md`, etc.). See `docs/special-pages.md` for the full breakdown.

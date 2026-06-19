@@ -1,6 +1,6 @@
 # Navigation system
 
-The site uses a tree-based sidebar navigation built at build time from content collections.
+The site uses a tree-based sidebar navigation built at build time from content collections. No manual nav configuration is needed — the tree is automatically generated from the folder structure.
 
 ## Architecture
 
@@ -23,9 +23,119 @@ src/types/
   search.ts       ← SearchDoc type
 ```
 
+## Sidebar tree generation
+
+### 1. Root entry point — `buildFullSidebarTree()`
+
+`AstroSidebar.astro` and `AstroNavbar.astro` both call `buildFullSidebarTree()` from `src/lib/collections.ts`. This function:
+
+```ts
+export async function buildFullSidebarTree(): Promise<{
+  tree: SidebarNode[];
+  collectionNames: string[];
+}> {
+  // Exclude "page" — special pages (home/resume) are added as hardcoded nodes
+  const collectionNames = Object.keys(collections).filter(
+    (name) => name !== "page",
+  );
+
+  // Hardcoded root nodes
+  const tree: SidebarNode[] = [
+    { name: "home", href: "/", children: [] },
+    { name: "resume", href: "/resume/", children: [] },
+  ];
+
+  // For each content collection, build a tree from its entry IDs
+  for (const name of collectionNames) {
+    const entries = await getCollection(name as keyof DataEntryMap);
+    tree.push(buildCollectionRoot(name, entries));
+  }
+
+  return { tree, collectionNames };
+}
+```
+
+1. Reads all collection names from `src/content.config.ts` (art, blog, wiki)
+2. Excludes the `page` collection (home/resume are handled separately)
+3. Prepends hardcoded `Home` and `Resume` nodes
+4. For each content collection, calls `buildCollectionRoot()` to generate the folder tree
+
+### 2. Per-collection tree — `buildCollectionRoot(name, entries)`
+
+This function takes a collection name and all its entries, then extracts directory segments from each entry's `id` to build a recursive tree:
+
+```ts
+export function buildCollectionRoot(
+  collection: string,
+  entries: Array<{ id: string }>,
+): SidebarNode {
+  const root: SidebarNode = {
+    name: collection, // e.g. "wiki"
+    href: `/${collection}/`, // e.g. "/wiki/"
+    children: [],
+  };
+
+  // For each entry like "linux/encryption/some-topic.md", extract path segments
+  for (const entry of entries) {
+    const parts = entry.id.split("/"); // ["linux", "encryption", "some-topic.md"]
+    if (parts.length < 2) continue;
+
+    // Walk the directory path: "linux", "linux/encryption"
+    for (let i = 0; i < parts.length - 1; i++) {
+      const fullPath = parts.slice(0, i + 1).join("/");
+      // Create node or reuse existing one
+      if (!dirMap.has(fullPath)) {
+        const node = {
+          name: parts[i], // e.g. "linux"
+          href: `/${collection}/${fullPath}/`, // e.g. "/wiki/linux/"
+          children: [],
+        };
+        dirMap.set(fullPath, node);
+        // Attach to root or parent node
+        if (i === 0) {
+          root.children.push(node);
+        } else {
+          const parentPath = parts.slice(0, i).join("/");
+          dirMap.get(parentPath)?.children.push(node);
+        }
+      }
+    }
+  }
+  // Sort children alphabetically
+  sortSidebarChildren(root);
+  return root;
+}
+```
+
+Example: for a wiki entry `linux/encryption/some-topic.md`, the function:
+
+- Creates node `linux` → `/wiki/linux/`
+- Creates node `encryption` → `/wiki/linux/encryption/`
+- Attaches `encryption` as child of `linux`
+
+### 3. Rendering — recursive `AstroSiteBranch.astro`
+
+`AstroSiteBranch` uses `Astro.self` for recursion. Each node receives:
+
+```ts
+- getLabels(node)   → bilingual labels for data-locales
+- isActive(node)    → true if currentPath starts with node.href
+- hasActiveDescendant(node) → auto-expands ancestor branches
+```
+
+Active page detection is done at build time via `currentPath.startsWith(node.href)`. No client-side JS is needed — ancestor branches of the active page are always pre-expanded in the SSR HTML.
+
+### 4. Bilingual labels
+
+`createSidebarHelpers()` in `src/lib/sidebar.ts` provides the label resolution for each node:
+
+- Root nodes (`/`, `/resume/`): look up `home` and `resume` from translations
+- Collection root nodes (`/art/`, `/blog/`, `/wiki/`): look up the collection name as a bare key in translations
+- Subdirectory nodes: use `createTranslateLabel()` which falls through to `formatSegment()` if no translation exists
+
 ## DirectoryIndex (route file queries)
 
-All 6 route files (`[...slug].astro` and `[...slug]/page/[page].astro` for art, blog, wiki) build a `DirectoryIndex` once from the collection entries they receive via `Astro.props`, then query it instead of calling separate passes:
+Route files (`[...slug].astro` and `[...slug]/page/[page].astro` for art, blog, wiki) build a `DirectoryIndex` once from the entries, then query it instead of iterating flat lists:
 
 ```ts
 const index = buildDirectoryIndex(entries);
@@ -41,58 +151,9 @@ const indexEntry = dir?.indexEntry;
 - `entries` — entries directly in this directory (pre-sorted by date desc)
 - `indexEntry` — optional `index: true` entry for the directory
 
-Directory indexes display all descendant entries (recursive), sorted globally by date descending. Child-folder links let users navigate deeper into the hierarchy. Entries whose `id` matches a directory path (e.g. `programming/cmake` when `programming/cmake/cmakelists` exists) are stored as that directory's `indexEntry` rather than appearing in the parent's `entries`.
+`getRecursiveEntries` walks the tree and returns all descendant entries globally sorted by date descending. Directory indexes display all descendant entries. Entries whose `id` matches a directory path (e.g. `programming/cmake` when `programming/cmake/cmakelists` exists) are stored as that directory's `indexEntry` rather than appearing in the parent's `entries`.
 
-### What replaced what
-
-| Old (flat iteration)                   | New (index lookup)                       |
-| -------------------------------------- | ---------------------------------------- |
-| `filterEntriesByPrefix(entries, slug)` | `getRecursiveEntries(slug ?? "", index)` |
-| `getChildFolders(entries, slug)`       | `dir?.children ?? []`                    |
-| `findIndexEntry(entries, slug)`        | `dir?.indexEntry`                        |
-
-## Sidebar tree
-
-The sidebar shows a folder tree for all collections, auto-discovered from `content.config.ts`:
-
-```
-Home (/)
-Art (/art/)
-├── Digital (/art/digital/)
-│   └── Painting (/art/digital/painting/)
-└── Traditional (/art/traditional/)
-    ├── Drawing (/art/traditional/drawing/)
-    │   ├── Urban-sketching
-    │   └── Fictional-cityscapes
-    └── Painting (/art/traditional/painting/)
-        ├── Gouache
-        └── Oil-pastel
-Blog (/blog/)
-Wiki (/wiki/)
-├── Linux (/wiki/linux/)
-│   ├── Encryption
-│   └── Networking
-└── Programming (/wiki/programming/)
-    └── Cmake
-```
-
-### Build
-
-`buildFullSidebarTree()` in `src/lib/collections.ts` reads collection names from `content.config.ts`, calls `getCollection()` for each, and builds a `SidebarNode` tree via `buildCollectionRoot()`.
-
-`buildCollectionRoot(collection, entries)` extracts directory segments from entry IDs and assembles them into a recursive `SidebarNode` tree.
-
-### Rendering
-
-`AstroSiteBranch.astro` is a recursive component (using `Astro.self`) that renders a single tree node. It receives helper functions as props:
-
-- `getLabels(node)` — returns bilingual labels (`{ en, pt }`) for `data-locales` embedding
-- `isActive(node)` — whether the node matches `currentPath`
-- `hasActiveDescendant(node)` — whether any descendant is active (controls expand/collapse)
-
-Ancestor expansion is automatic: nodes whose descendants are active always show their children. No client-side JS is needed.
-
-### Responsive
+## Responsive
 
 - **Desktop** (`lg:` and up): `AstroSidebar` is a sticky sidebar (`sticky top-0 h-screen overflow-y-auto`) beside the main content
 - **Mobile** (below `lg:`): `AstroNavbar` is a fixed top bar with a hamburger toggle that opens a drawer containing the same tree. The drawer closes when a link is clicked, the viewport reaches `lg+`, or the user clicks outside the navbar. A search input is always visible in the top bar.
@@ -112,8 +173,8 @@ Both are rendered via `client:load` directly in `AstroNavbar.astro`.
 
 `createSidebarHelpers(currentPath, collectionNames)` returns three functions used by both sidebar and navbar:
 
-| Function                        | Purpose                                                                                    |
-| ------------------------------- | ------------------------------------------------------------------------------------------ |
-| `getNodeLabels(node)`           | Resolves bilingual labels from `createTranslateLabel(collection)` and the translations map |
-| `nodeIsActive(node)`            | True if `currentPath` starts with `node.href` (exact match for home)                       |
-| `nodeHasActiveDescendant(node)` | True if the node or any of its descendants is active                                       |
+| Function                        | Purpose                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------- |
+| `getNodeLabels(node)`           | Resolves bilingual labels from `createTranslateLabel()` and the translations map |
+| `nodeIsActive(node)`            | True if `currentPath` starts with `node.href` (exact match for home)             |
+| `nodeHasActiveDescendant(node)` | True if the node or any of its descendants is active                             |
