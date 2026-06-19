@@ -1,7 +1,7 @@
 ---
 import AstroPageShell from "@components/shared/_astro/AstroPageShell.astro";
 import "@styles/global.css";
-import { getCanonicalUrl } from "@lib/url";
+import { getCanonicalUrl, getSiteRoot } from "@lib/url";
 
 export interface Props {
   title?: string;
@@ -11,6 +11,8 @@ export interface Props {
   image?: string;
   lang?: string;
   titleLabels?: string;
+  date?: string;
+  type?: "website" | "article";
 }
 
 const {
@@ -21,9 +23,29 @@ const {
   image,
   lang = "en",
   titleLabels,
+  date,
+  type = "website",
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const canonicalUrl = getCanonicalUrl(currentPath);
+const siteRoot = getSiteRoot();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": type === "article" ? "Article" : "WebSite",
+  headline: title ?? "Artemis Luna",
+  description: description ?? "Art portfolio and wiki by Luna G. Cezar",
+  url: canonicalUrl,
+  ...(type === "article" && date && { datePublished: date }),
+  ...(author && { author: { "@type": "Person", name: author } }),
+  ...(image && {
+    image: image.startsWith("http") ? image : `${siteRoot}${image}`,
+  }),
+  publisher: {
+    "@type": "Person",
+    name: "Luna G. Cezar",
+  },
+};
 ---
 
 <html lang={lang}>
@@ -47,8 +69,10 @@ const canonicalUrl = getCanonicalUrl(currentPath);
     </script>
 
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     {description && <meta name="description" content={description} />}
     {author && <meta name="author" content={author} />}
     {
@@ -58,11 +82,45 @@ const canonicalUrl = getCanonicalUrl(currentPath);
     }
     <title>{title ?? "Artemis Luna"}</title>
     {titleLabels && <meta name="page-title-labels" content={titleLabels} />}
+
     <meta property="og:title" content={title ?? "Artemis Luna"} />
     {description && <meta property="og:description" content={description} />}
-    <meta property="og:type" content="website" />
+    <meta
+      property="og:type"
+      content={type === "article" ? "article" : "website"}
+    />
     <meta property="og:url" content={canonicalUrl} />
-    {image && <meta property="og:image" content={image} />}
+    {
+      image && (
+        <meta
+          property="og:image"
+          content={image.startsWith("http") ? image : `${siteRoot}${image}`}
+        />
+      )
+    }
+    {
+      type === "article" && date && (
+        <meta property="article:published_time" content={date} />
+      )
+    }
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? "Artemis Luna"} />
+    {description && <meta name="twitter:description" content={description} />}
+    {
+      image && (
+        <meta
+          name="twitter:image"
+          content={image.startsWith("http") ? image : `${siteRoot}${image}`}
+        />
+      )
+    }
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(jsonLd)}
+    />
   </head>
   <body class="grid min-h-screen w-full">
     <AstroPageShell currentPath={currentPath}>

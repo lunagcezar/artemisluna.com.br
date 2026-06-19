@@ -76,13 +76,13 @@ function ImageViewer({ images }: ImageViewerProps) {
             key={index}
             type="button"
             onClick={() => openAt(index)}
-            className="w-full cursor-pointer text-left [&:not(:focus-visible)]:outline-hidden"
+            className="w-full cursor-pointer text-left not-focus-visible:outline-hidden"
           >
             <Card className="p-0">
               <figure className="break-inside-avoid overflow-hidden">
                 <div className="relative">
                   <div className="bg-muted absolute inset-0 overflow-hidden rounded-lg">
-                    <div className="animate-shimmer via-foreground/[0.07] absolute inset-0 bg-gradient-to-r from-transparent to-transparent" />
+                    <div className="animate-shimmer via-foreground/[0.07] absolute inset-0 bg-linear-to-r from-transparent to-transparent" />
                   </div>
                   <img
                     src={img.src}

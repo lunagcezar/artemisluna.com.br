@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import { unified } from "@astrojs/markdown-remark";
+import sitemap from "@astrojs/sitemap";
 
 import react from "@astrojs/react";
 import remarkWikiLinks from "./src/lib/remark-wiki-links.ts";
@@ -14,7 +15,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [react()],
+  integrations: [react(), sitemap()],
 
   markdown: {
     processor: unified({

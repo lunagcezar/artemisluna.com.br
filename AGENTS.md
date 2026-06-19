@@ -61,7 +61,7 @@ Art-specific components live in `src/components/features/art/_astro/`:
 - `AstroArtCard.astro` — mosaic tile built with shadcn `Card`, showing the first image, title, and all taxonomy badges
 - `AstroArtDetail.astro` — artwork detail page with metadata and image masonry
 - `image-viewer.tsx` (React) — exports `ImageViewer` (thumbnail grid + lightbox) and `ImageLightbox` (shared dialog component). Lives at `src/components/shared/image-viewer.tsx`.
-- `article-image-viewer.tsx` (React) — same lightbox as above but scans a DOM container for `<img>` elements and opens the dialog on click. Uses `ImageLightbox` from `image-viewer.tsx` internally. Used inside `AstroArticleImageViewer.astro` for blog/wiki content via `client:load`.
+- `article-image-viewer.tsx` (React) — same lightbox as above but scans a DOM container for `<img>` elements and opens the dialog on click. Uses `ImageLightbox` from `image-viewer.tsx` internally. Used inside `AstroArticleImageViewer.astro` for blog/wiki content via `client:visible`.
 - `AstroArticleImageViewer.astro` — Astro wrapper that renders markdown `Content` inside an ID'd container with `article-content` class, then mounts `ArticleImageViewer`. Used in all collection detail pages (replaces direct `AstroEntryContent` calls).
 
 Shared pagination is handled by `src/components/core/_astro/AstroPagination.astro`, which uses `getPageUrl(baseUrl, page)` from `src/lib/url.ts` to produce `/page/N/` URLs.
@@ -227,7 +227,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel()`, and `applyLocale(locale)`. Add new strings under the appropriate locale key. UI-level keys include `home`, `resume`, `light`, `dark`.
 - **Locale-agnostic rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML, containing entries for every locale in `SUPPORTED_LOCALES`. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
-- **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React component using shadcn `DropdownMenu`), mounted as an Astro island with `client:load`. Reads cookie, calls `applyLocale()`. Shows shimmer animation before locale is resolved.
+- **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React component using shadcn `DropdownMenu`), mounted as an Astro island with `client:visible`. Reads cookie, calls `applyLocale()`. Shows shimmer animation before locale is resolved.
 - **Segment / tag translations** — `createTranslateLabel(collection?)` returns a `TranslateLabel = (segment) => Record<string, string>` function that produces labels for every locale in `SUPPORTED_LOCALES`. The `collection` parameter is accepted for backwards compatibility but all translations use bare keys (no `collection.segment` prefix). Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). See `docs/i18n.md` for the translation key pattern.
 - **Directory index titles** — the `<h1>` on index pages (e.g. `/wiki/encryption/`) uses `translateLabel(lastSegment)` with `data-locales`, so the page heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
 - **Breadcrumb root translation** — the first breadcrumb item uses `baseLabels` (`Record<string, string>`) instead of a plain string, so collection names (Art, Blog, Wiki) switch with the UI locale.
@@ -239,16 +239,27 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 - Dark mode uses the `.dark` CSS class on `<html>` (Tailwind v4 class-based variant: `@custom-variant dark (&:is(.dark *));`).
 - CSS variables for `.dark` are defined in `src/styles/global.css`.
-- **Theme Switcher** — `src/components/shared/theme-switcher.tsx` (React component using shadcn `DropdownMenu`) with `client:load`. Sun/Moon icons controlled by CSS (`dark:hidden`/`hidden dark:block`) based on the `.dark` class from the inline `<head>` script. Shows shimmer animation before hydration.
+- **Theme Switcher** — `src/components/shared/theme-switcher.tsx` (React component using shadcn `DropdownMenu`) with `client:visible`. Sun/Moon icons controlled by CSS (`dark:hidden`/`hidden dark:block`) based on the `.dark` class from the inline `<head>` script. Shows shimmer animation before hydration.
 - An inline `<script>` in `MainLayout.astro` runs before any component JS, applying the saved locale and theme immediately to prevent flash.
 
 # SEO
 
 - **Canonical URLs** — `MainLayout.astro` emits `<link rel="canonical">` using `getCanonicalUrl(path)` from `src/lib/url.ts`, which reads `import.meta.env.SITE` (configurable via `SITE_URL` env var). Falls back to relative path if no site URL is configured.
-- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, and `og:image` (from frontmatter `image` field, resolved via `getOgImageUrl()`) are rendered in `<head>`.
+- **Sitemap** — `@astrojs/sitemap` integration generates `sitemap-index.xml` at build time. Configured in `astro.config.mjs`.
+- **Robots.txt** — `public/robots.txt` allows all crawlers and points to the sitemap.
+- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image`, and `article:published_time` (for articles) are rendered in `<head>`.
+- **Twitter Cards** — `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image` mirror Open Graph tags.
+- **JSON-LD Structured Data** — `MainLayout.astro` emits `<script type="application/ld+json">` with schema.org `Article` or `WebSite` type, including headline, description, url, datePublished (for articles), author, image, and publisher.
 - **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time>` with `datetime`, breadcrumb `<nav aria-label="breadcrumb">`.
 - **`lang` attribute** — Set from entry's `lang` field for correct hyphenation and language hints.
 - **Client-side locale** — Single-URL pattern (no `/pt/` prefix). Content is swapped client-side via `data-locales` and `data-content-locale`. Search engines see the default (English) server-rendered version.
+
+## Performance
+
+- **Resource hints** — `<link rel="preconnect">` for Google Fonts in `MainLayout.astro` to reduce font loading latency.
+- **Font display** — `font-display: swap` applied to web fonts in `global.css` to prevent FOIT.
+- **Lazy hydration** — React islands use `client:visible` instead of `client:load` where appropriate (LocaleSwitcher, ThemeSwitcher, ImageViewer, ArticleImageViewer) to defer hydration until components enter viewport.
+- **Tailwind v4 classes** — Use canonical Tailwind v4 classes: `bg-linear-to-r` instead of `bg-gradient-to-r`, `not-focus-visible:` instead of `[&:not(:focus-visible)]:`.
 
 # Foam templates
 

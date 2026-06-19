@@ -63,7 +63,7 @@ const resolvedImages = (data.images ?? []).map((img) => {
     <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
   </div>
 
-  <ImageViewer images={resolvedImages} client:load />
+  <ImageViewer images={resolvedImages} client:visible />
 
   <AstroArticleImageViewer entry={entry} />
 </article>

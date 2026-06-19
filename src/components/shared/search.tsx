@@ -12,7 +12,6 @@ import { Badge } from "@components/core/badge";
 import { Kbd } from "@components/core/kbd";
 import { cn } from "@lib/utils";
 import type { SearchDoc } from "../../types/search";
-import { COLLECTION_LABEL } from "@constants/collection";
 import { translations } from "@i18n/labels";
 import { searchIndex } from "@lib/search";
 

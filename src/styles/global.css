@@ -1,8 +1,19 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/bitter";
-@import "@fontsource-variable/cascadia-code";
+@import "@fontsource-variable/bitter" layer(fonts);
+@import "@fontsource-variable/cascadia-code" layer(fonts);
+
+@layer fonts {
+  @font-face {
+    font-family: "Bitter Variable";
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Cascadia Code Variable";
+    font-display: swap;
+  }
+}
 
 @custom-variant dark (&:is(.dark *));
 
