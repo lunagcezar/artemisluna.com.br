@@ -7,7 +7,7 @@ const art = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    lang: z.enum(["en", "pt"]).default("en"),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
     tags: z.array(z.string()),
     date: z.coerce.date(),
     author: z.string().optional(),
@@ -26,7 +26,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    lang: z.enum(["en", "pt"]).default("en"),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
     tags: z.array(z.string()),
     date: z.coerce.date(),
     author: z.string().optional(),
@@ -39,7 +39,7 @@ const wiki = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    lang: z.enum(["en", "pt"]).default("en"),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
     tags: z.array(z.string()).default([]),
     date: z.coerce.date().optional(),
     author: z.string().optional(),
@@ -53,7 +53,7 @@ const page = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    lang: z.enum(["en", "pt"]).default("en"),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
     date: z.coerce.date().optional(),
   }),
 });

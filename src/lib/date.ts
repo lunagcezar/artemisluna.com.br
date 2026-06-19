@@ -3,6 +3,7 @@ import { SUPPORTED_LOCALES } from "@i18n/labels";
 const LOCALE_MAP: Record<string, string> = {
   en: "en-US",
   pt: "pt-BR",
+  eo: "eo",
 };
 
 function isTimeZero(date: Date): boolean {

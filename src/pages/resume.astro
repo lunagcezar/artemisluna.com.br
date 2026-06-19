@@ -17,7 +17,6 @@ for (const locale of SUPPORTED_LOCALES) {
 const defaultTitle = titleLabels["en"] ?? "Resume";
 const defaultDesc = descLabels["en"] ?? undefined;
 const defaultEntry = resumePages.find((p) => p.data.lang === "en");
-const defaultImage = defaultEntry?.data.image;
 const defaultKeywords = defaultEntry?.data.tags;
 ---
 
@@ -25,7 +24,6 @@ const defaultKeywords = defaultEntry?.data.tags;
   title={defaultTitle}
   description={defaultDesc}
   keywords={defaultKeywords}
-  image={defaultImage}
   titleLabels={JSON.stringify(titleLabels)}
 >
   <div class="grid gap-6">

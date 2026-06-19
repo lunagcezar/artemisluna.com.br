@@ -177,7 +177,7 @@ Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/progra
 
 ### Special pages
 
-Static pages (home, resume) live in `src/content/page/` as markdown files with a `lang` field. They are rendered via `AstroArticleImageViewer` on dedicated routes (`/` and `/resume/`). Multiple locale variants (e.g. `home.en.md`, `home.pt.md`) are show/hidden client-side using `data-content-locale`.
+Static pages (home, resume) live in `src/content/page/` as markdown files named `{name}.{locale}.md` (e.g., `home.en.md`, `home.pt.md`, `home.eo.md`). Each file's frontmatter sets `lang` to its locale. The page route (`/` for home, `/resume/` for resume) iterates `SUPPORTED_LOCALES` and renders each matching file, showing/hiding them client-side via `data-content-locale`. Adding a new locale means creating the corresponding page file (e.g., `resume.eo.md`). New page types can be added by creating a route file (e.g., `src/pages/about.astro`) and locale files (`about.en.md`, etc.). See `docs/special-pages.md` for the full breakdown.
 
 These pages are excluded from the auto-generated sidebar tree in `buildFullSidebarTree()`, which also includes hardcoded `home` and `resume` root nodes.
 

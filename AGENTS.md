@@ -35,7 +35,7 @@ The art portfolio is built around Astro content collections and a directory-tree
 
 ## Collection schema (`src/content.config.ts`)
 
-All collections (art, blog, wiki) share the `lang` field: `lang: z.enum(["en", "pt"]).default("en")`. Set `lang: pt` for Portuguese content to enable correct hyphenation via `<html lang>`.
+All collections (art, blog, wiki) share the `lang` field: `lang: z.enum(["en", "pt", "eo"]).default("en")`. Set `lang: pt` for Portuguese content or `lang: eo` for Esperanto content to enable correct hyphenation via `<html lang>`.
 
 ## Content organization
 
