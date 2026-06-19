@@ -134,7 +134,7 @@ The site uses a tree-based sidebar representing the full content hierarchy. No m
 On screens wide enough (`lg:` breakpoint and up), a sticky sidebar sits to the left of the main content:
 
 ```
-Luna G. Cezar
+Luna G. Cezar         [Search...]
 [🌐] [🌙]          ← locale + theme switchers
 |
 ├── Home (/)
@@ -266,6 +266,15 @@ pt: {
 ```
 
 Use `t("light")` in any component (imported from `@i18n/labels`). For static HTML that needs to react to locale changes, embed `data-locales='{"en":"Light","pt":"Claro"}'` on the element — the inline script and `applyLocale()` will swap the text content.
+
+## Search
+
+The site has a built-in search bar in the navbar powered by [Lunr.js](https://lunrjs.com). All content (art, blog, wiki, and the home/resume pages) is indexed at build time into a static `search.json` file.
+
+- **How it works**: `src/pages/search.json.ts` generates the index during `astro build`. On the client, the `Search` React component fetches `search.json` and builds a Lunr index.
+- **What's indexed**: title (boosted), headings (h1/h2 from markdown, boosted), description, tags (including translated labels for cross-locale queries), and body content.
+- **Relevance**: Multi-word queries first require ALL terms to be present in restricted fields (title, headings, description). Only if that returns nothing does it fall back to broad fuzzy matching.
+- **Cross-language**: Tag translations from `src/i18n/labels.ts` are appended to the `tags` field, so searching in Portuguese finds English-tagged documents.
 
 ## Deployment
 

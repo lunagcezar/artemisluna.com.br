@@ -197,6 +197,17 @@ The plugin performs three AST transformations:
 
 See `docs/remark-wiki-links.md` for full implementation details.
 
+# Search
+
+The site uses client-side full-text search powered by [Lunr.js](https://lunrjs.com), indexing all collections (art, blog, wiki, page).
+
+- **Search index** — `src/pages/search.json.ts` generates a static `search.json` at build time, containing every entry's `title`, `description`, `tags`, `headings` (h1/h2 text extracted from markdown), and `content` (markdown stripped to plain text). Home/resume routes are mapped to `/` and `/resume/` instead of `/home.en/`.
+- **Cross-locale indexing** — `getTagLabels()` from `src/lib/search.ts` appends translated tag labels (from `@i18n/labels`) to the `tags` field, so Portuguese queries like "pastel de óleo" find English-tagged docs.
+- **Search component** — `src/components/shared/search.tsx` (React) with `client:load`. The input is embedded in `AstroNavbar.astro`. Results appear in a dropdown below the input.
+- **Relevance strategy** — `searchIndex()` in `src/lib/search.ts` first searches with `+term1 +term2` (all terms required) across only `title`, `headings`, and `description`, then filters via `matchData.metadata` to exclude content-only hits. Falls back to broad fuzzy matching if the restricted search returns nothing.
+- **Lunr stop words removed** — `this.pipeline.remove(lunr.stopWordFilter)` ensures common words (about, me, the) are indexed, enabling proper phrase matching.
+- **Shared types** in `src/types/search.ts` (`SearchDoc`). Search utilities in `src/lib/search.ts`.
+
 ## Wiki metadata convention
 
 - Folder structure is the source of categorization; do not add a `category` field to wiki frontmatter.
@@ -213,7 +224,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 - **Translation map** — `src/i18n/labels.ts` exports a unified `translations` object keyed by locale (`en`, `pt`), covering collection names, taxonomy segments, and UI strings. Also exports `getCookieLocale()`, `getLocale()`, `t(key)`, `createTranslateLabel(collection)`, and `applyLocale(locale)`. Add new strings under the appropriate locale key. UI-level keys include `home`, `resume`, `light`, `dark`.
 - **Locale-agnostic rendering** — Labels are embedded as `data-locales` JSON attributes on server-rendered HTML, containing entries for every locale in `SUPPORTED_LOCALES`. An inline `<script>` in `MainLayout.astro` and the locale switcher's `applyLocale()` swap textContent based on the locale cookie.
 - **Persistence** — `src/lib/cookie.ts` provides `getCookie`/`setCookie` helpers. The `locale` and `theme` cookies are set on user interaction and checked on page load.
-- **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React component using shadcn `DropdownMenu`) mounted as an Astro island with `client:load`. Reads cookie, calls `applyLocale()`, dispatches `localechange` event for cross-component reactivity.
+- **Locale Switcher** — `src/components/shared/locale-switcher.tsx` (React component using shadcn `DropdownMenu`), mounted as an Astro island with `client:load`. Reads cookie, calls `applyLocale()`. Shows shimmer animation before locale is resolved.
 - **Segment / tag translations** — `createTranslateLabel(collection?)` returns a `TranslateLabel = (segment) => Record<string, string>` function that produces labels for every locale in `SUPPORTED_LOCALES`. The `collection` parameter is accepted for backwards compatibility but all translations use bare keys (no `collection.segment` prefix). Passed down through parent components (`AstroRecursiveCollectionIndex`, `AstroArtGallery`) to child components (`AstroRecursiveBreadcrumb`, `AstroArtCard`). See `docs/i18n.md` for the translation key pattern.
 - **Directory index titles** — the `<h1>` on index pages (e.g. `/wiki/encryption/`) uses `translateLabel(lastSegment)` with `data-locales`, so the page heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
 - **Breadcrumb root translation** — the first breadcrumb item uses `baseLabels` (`Record<string, string>`) instead of a plain string, so collection names (Art, Blog, Wiki) switch with the UI locale.
@@ -225,7 +236,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 - Dark mode uses the `.dark` CSS class on `<html>` (Tailwind v4 class-based variant: `@custom-variant dark (&:is(.dark *));`).
 - CSS variables for `.dark` are defined in `src/styles/global.css`.
-- **Theme Switcher** — `src/components/shared/theme-switcher.tsx` (React component using shadcn `DropdownMenu`) with `client:load`. Both Sun/Moon icons are always rendered; CSS `dark:hidden`/`hidden dark:block` controls visibility based on the `.dark` class (set by the inline `<head>` script). Reads `theme` cookie (falls back to `prefers-color-scheme`), toggles `.dark` class, persists choice.
+- **Theme Switcher** — `src/components/shared/theme-switcher.tsx` (React component using shadcn `DropdownMenu`) with `client:load`. Sun/Moon icons controlled by CSS (`dark:hidden`/`hidden dark:block`) based on the `.dark` class from the inline `<head>` script. Shows shimmer animation before hydration.
 - An inline `<script>` in `MainLayout.astro` runs before any component JS, applying the saved locale and theme immediately to prevent flash.
 
 # SEO

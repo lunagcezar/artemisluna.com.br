@@ -9,14 +9,18 @@ src/pages/             ← catch-all routes consume DirectoryIndex
 src/components/
   shared/_astro/
     AstroSidebar.astro           ← desktop sticky tree sidebar
-    AstroNavbar.astro            ← mobile collapsible tree drawer
-    AstroSiteBranch.astro     ← recursive tree node renderer
-    AstroLocaleSwitcher.astro    ← locale dropdown (auto-detects SUPPORTED_LOCALES)
-    AstroThemeSwitcher.astro     ← theme dropdown (CSS-controlled icons, no flash)
+    AstroNavbar.astro            ← mobile collapsible tree drawer + search input
+    AstroSiteBranch.astro        ← recursive tree node renderer
+  shared/
+    search.tsx                   ← React Lunr search (client:load island)
+    locale-switcher.tsx          ← React shadcn DropdownMenu (client:load)
+    theme-switcher.tsx           ← React shadcn DropdownMenu (client:load)
 src/lib/
   collections.ts  ← DirectoryIndex + Sidebar tree builders
   sidebar.ts      ← shared branch helpers (labels, active state)
-  dropdown.ts     ← shared dropdown menu logic (open/close, keyboard nav)
+  search.ts       ← searchIndex, getLocale, stripMarkdown, extractHeadings
+src/types/
+  search.ts       ← SearchDoc type
 ```
 
 ## DirectoryIndex (route file queries)
@@ -91,7 +95,7 @@ Ancestor expansion is automatic: nodes whose descendants are active always show 
 ### Responsive
 
 - **Desktop** (`lg:` and up): `AstroSidebar` is a sticky sidebar (`sticky top-0 h-screen overflow-y-auto`) beside the main content
-- **Mobile** (below `lg:`): `AstroNavbar` is a fixed top bar with a hamburger toggle that opens a drawer containing the same tree
+- **Mobile** (below `lg:`): `AstroNavbar` is a fixed top bar with a hamburger toggle that opens a drawer containing the same tree. The drawer closes when a link is clicked, the viewport reaches `lg+`, or the user clicks outside the navbar. A search input is always visible in the top bar.
 
 ## Dropdown menus
 

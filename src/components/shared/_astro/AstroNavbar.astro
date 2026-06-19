@@ -7,6 +7,7 @@ import { XIcon, ListIcon } from "@phosphor-icons/react";
 import { Button } from "@components/core/button";
 import { LocaleSwitcher } from "../locale-switcher";
 import { ThemeSwitcher } from "../theme-switcher";
+import { Search } from "../search";
 
 type Props = {
   currentPath: string;
@@ -26,21 +27,24 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
     className,
   )}
 >
-  <div class="flex h-12 items-center justify-between px-4">
-    <Button
-      id="nav-toggle"
-      aria-label="Toggle navigation"
-      variant="ghost"
-      size="icon"
-      className="lg:hidden"
-    >
-      <ListIcon id="nav-icon-open" />
-      <XIcon id="nav-icon-close" className="hidden" />
-    </Button>
+  <div class="flex h-12 items-center justify-between gap-2 px-4">
+    <div class="flex items-center gap-2">
+      <Button
+        id="nav-toggle"
+        aria-label="Toggle navigation"
+        variant="ghost"
+        size="icon"
+        className="shrink-0 lg:hidden"
+      >
+        <ListIcon id="nav-icon-open" />
+        <XIcon id="nav-icon-close" className="hidden" />
+      </Button>
+      <a href="/" class="shrink-0 font-semibold tracking-tight">Luna G. Cezar</a
+      >
+    </div>
 
-    <a href="/" class="font-semibold tracking-tight">Luna G. Cezar</a>
-
-    <div class="flex items-center gap-1">
+    <div class="flex shrink-0 items-center gap-1">
+      <Search client:load />
       <LocaleSwitcher client:load />
       <ThemeSwitcher client:load />
     </div>

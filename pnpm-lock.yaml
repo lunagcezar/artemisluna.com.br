@@ -46,6 +46,9 @@ importers:
       lucide-react:
         specifier: ^1.18.0
         version: 1.18.0(react@19.2.7)
+      lunr:
+        specifier: ^2.3.9
+        version: 2.3.9
       radix-ui:
         specifier: ^1.6.0
         version: 1.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -83,6 +86,9 @@ importers:
       "@eslint/markdown":
         specifier: ^8.0.2
         version: 8.0.2
+      "@types/lunr":
+        specifier: ^2.3.7
+        version: 2.3.7
       "@types/mdast":
         specifier: ^4.0.4
         version: 4.0.4
@@ -2904,6 +2910,12 @@ packages:
     resolution:
       {
         integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==,
+      }
+
+  "@types/lunr@2.3.7":
+    resolution:
+      {
+        integrity: sha512-Tb/kUm38e8gmjahQzdCKhbdsvQ9/ppzHFfsJ0dMs3ckqQsRj+P5IkSAwFTBrBxdyr3E/LoMUUrZngjDYAjiE3A==,
       }
 
   "@types/mdast@4.0.4":
@@ -5930,6 +5942,12 @@ packages:
       }
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lunr@2.3.9:
+    resolution:
+      {
+        integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==,
+      }
 
   magic-string@0.30.21:
     resolution:
@@ -10575,6 +10593,8 @@ snapshots:
 
   "@types/katex@0.16.8": {}
 
+  "@types/lunr@2.3.7": {}
+
   "@types/mdast@4.0.4":
     dependencies:
       "@types/unist": 3.0.3
@@ -12624,6 +12644,8 @@ snapshots:
   lucide-react@1.18.0(react@19.2.7):
     dependencies:
       react: 19.2.7
+
+  lunr@2.3.9: {}
 
   magic-string@0.30.21:
     dependencies:
