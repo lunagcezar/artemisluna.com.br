@@ -66,6 +66,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 </nav>
 
 <script>
+  const nav = document.querySelector("nav");
   const toggle = document.getElementById("nav-toggle");
   const drawer = document.getElementById("nav-drawer");
   const iconOpen = document.getElementById("nav-icon-open");
@@ -90,6 +91,12 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
     window.matchMedia("(min-width: 1024px)").addEventListener("change", (e) => {
       if (e.matches) closeDrawer();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (drawer.classList.contains("hidden")) return;
+      if (nav?.contains(e.target)) return;
+      closeDrawer();
     });
   }
 </script>
