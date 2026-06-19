@@ -7,28 +7,35 @@ export const translations: Record<string, Record<string, string>> = {
     resume: "Resume",
     light: "Light",
     dark: "Dark",
+    previous: "Previous",
+    next: "Next",
+    more: "More",
   },
   pt: {
     home: "Início",
+    previous: "Anterior",
+    next: "Próxima",
+    more: "Mais",
     art: "Arte",
-    "art.traditional": "Tradicional",
-    "art.digital": "Digital",
-    "art.painting": "Pintura",
-    "art.drawing": "Desenho",
-    "art.gouache": "Guache",
-    "art.oil-pastel": "Pastel de óleo",
-    "art.digital-painting": "Pintura digital",
-    "art.urban-sketching": "Esboço urbano",
-    "art.fictional-cityscapes": "Paisagens fictícias",
-    "art.ink": "Tinta",
-    "art.pencil": "Lápis",
-    "art.mixed-media": "Mídia mista",
-    "art.other": "Outro",
-    "art.ui-design": "Design de UI",
-    "art.illustration": "Ilustração",
-    "wiki.encryption": "Criptografia",
-    "wiki.networking": "Redes",
-    "wiki.programming": "Programação",
+    traditional: "Tradicional",
+    digital: "Digital",
+    "digital-painting": "Pintura digital",
+    "urban-sketching": "Esboço urbano",
+    "fictional-cityscapes": "Paisagens fictícias",
+    "mixed-media": "Mídia mista",
+    other: "Outro",
+    "ui-design": "Design de UI",
+    illustration: "Ilustração",
+    painting: "Pintura",
+    drawing: "Desenho",
+    gouache: "Guache",
+    "oil-pastel": "Pastel de óleo",
+    ink: "Tinta",
+    pencil: "Lápis",
+    cityscape: "Paisagem urbana",
+    encryption: "Criptografia",
+    networking: "Redes",
+    programming: "Programação",
     resume: "Currículo",
     light: "Claro",
     dark: "Escuro",
@@ -43,15 +50,14 @@ function formatSegment(segment: string): string {
 
 export type TranslateLabel = (segment: string) => Record<string, string>;
 
-export function createTranslateLabel(collection: string): TranslateLabel {
+export function createTranslateLabel(): TranslateLabel {
   return (segment: string) => {
     const labels: Record<string, string> = {};
     for (const locale of SUPPORTED_LOCALES) {
-      const key = `${collection}.${segment}`;
       labels[locale] =
         locale === "en"
           ? formatSegment(segment)
-          : (translations[locale]?.[key] ?? formatSegment(segment));
+          : (translations[locale]?.[segment] ?? formatSegment(segment));
     }
     return labels;
   };

@@ -10,6 +10,7 @@ import {
   PaginationPrevious,
 } from "@components/core/pagination";
 import { getPageUrl } from "@lib/url";
+import { SUPPORTED_LOCALES, translations } from "@i18n/labels";
 
 type Props = {
   baseUrl: string;
@@ -25,6 +26,17 @@ const prevUrl =
   currentPage > 1 ? getPageUrl(baseUrl, currentPage - 1) : undefined;
 const nextUrl =
   currentPage < totalPages ? getPageUrl(baseUrl, currentPage + 1) : undefined;
+
+const prevLabels = JSON.stringify(
+  Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, translations[l]?.previous ?? "Previous"]),
+  ),
+);
+const nextLabels = JSON.stringify(
+  Object.fromEntries(
+    SUPPORTED_LOCALES.map((l) => [l, translations[l]?.next ?? "Next"]),
+  ),
+);
 ---
 
 {
@@ -33,10 +45,17 @@ const nextUrl =
       <PaginationContent>
         <PaginationItem>
           {prevUrl ? (
-            <PaginationPrevious href={prevUrl} />
+            <PaginationPrevious
+              href={prevUrl}
+              text="Previous"
+              textLocales={prevLabels}
+            />
           ) : (
-            <span class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50">
-              Anterior
+            <span
+              class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50"
+              data-locales={prevLabels}
+            >
+              Previous
             </span>
           )}
         </PaginationItem>
@@ -60,10 +79,17 @@ const nextUrl =
 
         <PaginationItem>
           {nextUrl ? (
-            <PaginationNext href={nextUrl} />
+            <PaginationNext
+              href={nextUrl}
+              text="Next"
+              textLocales={nextLabels}
+            />
           ) : (
-            <span class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50">
-              Próxima
+            <span
+              class="inline-flex h-8 items-center gap-1.5 px-2.5 text-sm opacity-50"
+              data-locales={nextLabels}
+            >
+              Next
             </span>
           )}
         </PaginationItem>

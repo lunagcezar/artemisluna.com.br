@@ -213,17 +213,18 @@ All UI strings, taxonomy labels, and segment names are centralized in `src/i18n/
 
 2. Add translations under the new key:
 
-   ```ts
+   ```
+   // Inside the translations object, add an "eo" key:
    eo: {
      art: "Arto",
-     "art.gouache": "Guŝo",
-     "art.traditional": "Tradicia",
+     gouache: "Guŝo",
+     traditional: "Tradicia",
      light: "Lumo",
      dark: "Malhela",
    },
    ```
 
-   Keys use dot notation: `collection.segment`. If a key has no translation, `formatSegment()` is used for segments (English) or the raw key for UI strings.
+   Keys are bare strings (no `collection.segment` prefix).
 
 3. Add the locale mapping to `src/lib/date.ts` `LOCALE_MAP` if the locale uses a different `Intl.DateTimeFormat` string (e.g. `eo` → `"eo"`):
 
@@ -235,29 +236,29 @@ All UI strings, taxonomy labels, and segment names are centralized in `src/i18n/
    };
    ```
 
-4. The switcher (`src/components/shared/_astro/AstroLocaleSwitcher.astro`) auto-generates its options from `SUPPORTED_LOCALES` — no manual UI changes needed.
+4. The locale switcher auto-generates its options from `SUPPORTED_LOCALES` — no manual UI changes needed.
 
 ### Translating segments / tags
 
-Segment keys follow the pattern `<collection>.<kebab-segment>`:
+Keys use the bare kebab-case segment name (no collection prefix):
 
-```ts
+```
 pt: {
-  "art.traditional": "Tradicional",
-  "art.oil-pastel": "Pastel de óleo",
-  "art.urban-sketching": "Esboço urbano",
-  "wiki.encryption": "Criptografia",
-  "wiki.networking": "Redes",
+  traditional: "Tradicional",
+  "oil-pastel": "Pastel de óleo",
+  "urban-sketching": "Esboço urbano",
+  encryption: "Criptografia",
+  networking: "Redes",
 }
 ```
 
-The `createTranslateLabel(collection)` helper returns a function that generates the full label map for all locales. Every consumer renders via `data-locales='{"en":"Oil Pastel","pt":"Pastel de óleo"}'` which is swapped client-side based on the user's locale cookie.
+The `createTranslateLabel()` helper returns a function that generates the full label map for all locales. Every consumer renders via `data-locales='{"en":"Oil Pastel","pt":"Pastel de óleo"}'` which is swapped client-side based on the user's locale cookie.
 
 Directory index pages (e.g. `/wiki/encryption/`) use the same mechanism for their `<h1>` title — the URL segment is passed through `translateLabel()` and rendered with `data-locales`, so the heading switches language with the UI locale. The `<title>` meta tag also reflects the translated segment name.
 
 ### Translating UI strings
 
-```ts
+```
 pt: {
   light: "Claro",
   dark: "Escuro",

@@ -95,7 +95,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
     document.addEventListener("click", (e) => {
       if (drawer.classList.contains("hidden")) return;
-      if (nav?.contains(e.target)) return;
+      if (nav?.contains(e.target as Node)) return;
       closeDrawer();
     });
   }

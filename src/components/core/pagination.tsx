@@ -67,35 +67,45 @@ function PaginationLink({
 
 function PaginationPrevious({
   className,
-  text = "Anterior",
+  text = "Previous",
+  textLocales,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  textLocales?: string;
+}) {
   return (
     <PaginationLink
-      aria-label="Ir para a página anterior"
       size="default"
       className={cn("pl-1.5!", className)}
       {...props}
     >
       <CaretLeftIcon data-icon="inline-start" />
-      <span className="hidden sm:block">{text}</span>
+      <span className="hidden sm:block" data-locales={textLocales}>
+        {text}
+      </span>
     </PaginationLink>
   );
 }
 
 function PaginationNext({
   className,
-  text = "Próxima",
+  text = "Next",
+  textLocales,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  textLocales?: string;
+}) {
   return (
     <PaginationLink
-      aria-label="Ir para a próxima página"
       size="default"
       className={cn("pr-1.5!", className)}
       {...props}
     >
-      <span className="hidden sm:block">{text}</span>
+      <span className="hidden sm:block" data-locales={textLocales}>
+        {text}
+      </span>
       <CaretRightIcon data-icon="inline-end" />
     </PaginationLink>
   );
@@ -116,7 +126,7 @@ function PaginationEllipsis({
       {...props}
     >
       <DotsThreeIcon />
-      <span className="sr-only">Mais páginas</span>
+      <span className="sr-only">More</span>
     </span>
   );
 }

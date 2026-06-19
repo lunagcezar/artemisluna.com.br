@@ -1,0 +1,34 @@
+---
+import { Badge } from "@components/core/badge";
+import type { TranslateLabel } from "@i18n/labels";
+
+type Props = {
+  tags: string[];
+  translateLabel: TranslateLabel;
+  variant?:
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "ghost"
+    | "link";
+  className?: string;
+};
+
+const { tags, translateLabel, variant = "outline", className } = Astro.props;
+---
+
+{
+  tags.map((tag) => {
+    const labels = translateLabel(tag);
+    return (
+      <Badge
+        variant={variant}
+        className={className}
+        data-locales={labels ? JSON.stringify(labels) : undefined}
+      >
+        {labels?.en ?? tag}
+      </Badge>
+    );
+  })
+}
