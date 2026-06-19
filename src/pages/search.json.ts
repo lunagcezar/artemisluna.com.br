@@ -2,9 +2,16 @@ import { getCollection } from "astro:content";
 import { stripMarkdown, extractHeadings, getTagLabels } from "@lib/search";
 import type { SearchDoc } from "../types/search";
 import { CONTENT_COLLECTIONS } from "../constants/collection";
+import { translations, SUPPORTED_LOCALES } from "@i18n/labels";
 
 function normalize(str: string): string {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function getCollectionLabels(name: string): string[] {
+  return SUPPORTED_LOCALES.map(
+    (locale) => translations[locale]?.[name] ?? "",
+  ).filter(Boolean);
 }
 
 export async function GET() {
@@ -23,6 +30,7 @@ export async function GET() {
       if ("index" in entry.data && entry.data.index) continue;
       const rawTags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
       const tagLabels = getTagLabels(rawTags);
+      const collectionLabels = getCollectionLabels(name);
       const body = "body" in entry ? (entry.body ?? "") : "";
       const content = stripMarkdown(body);
       const headings = extractHeadings(body);
@@ -30,7 +38,9 @@ export async function GET() {
         id: `${name}/${entry.id}`,
         title: normalize(entry.data.title),
         description: normalize(entry.data.description ?? ""),
-        tags: normalize([name, ...rawTags, ...tagLabels].join(" ")),
+        tags: normalize(
+          [name, ...collectionLabels, ...rawTags, ...tagLabels].join(" "),
+        ),
         headings: normalize(headings),
         content: normalize(content),
         url: `/${name}/${entry.id}/`,
@@ -48,6 +58,7 @@ export async function GET() {
   for (const entry of pages) {
     const rawTags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
     const tagLabels = getTagLabels(rawTags);
+    const collectionLabels = getCollectionLabels("page");
     const body = "body" in entry ? (entry.body ?? "") : "";
     const content = stripMarkdown(body);
     const headings = extractHeadings(body);
@@ -58,7 +69,9 @@ export async function GET() {
       id: `page/${entry.id}`,
       title: normalize(entry.data.title),
       description: normalize(entry.data.description ?? ""),
-      tags: normalize(["page", ...rawTags, ...tagLabels].join(" ")),
+      tags: normalize(
+        ["page", ...collectionLabels, ...rawTags, ...tagLabels].join(" "),
+      ),
       headings: normalize(headings),
       content: normalize(content),
       url,

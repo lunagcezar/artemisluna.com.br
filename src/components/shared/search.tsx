@@ -225,7 +225,7 @@ function Search() {
                     {doc.title}
                   </span>
                   <Badge variant="outline" className="shrink-0 text-[10px]">
-                    {COLLECTION_LABEL[doc.collection] ?? doc.collection}
+                    {translations[locale]?.[doc.collection] ?? doc.collection}
                   </Badge>
                 </div>
                 {doc.description && (

@@ -304,10 +304,10 @@ Use `t("light")` in any component (imported from `@i18n/labels`). For static HTM
 
 The site has a built-in search bar in the navbar powered by [Lunr.js](https://lunrjs.com). All content (art, wiki, and the home/resume pages) is indexed at build time into a static `search.json` file. The `blog` collection is indexed when it has entries.
 
-- **How it works**: `src/pages/search.json.ts` generates the index during `astro build`. On the client, the `Search` React component fetches `search.json` and builds a Lunr index.
-- **What's indexed**: title (boosted), headings (h1/h2 from markdown, boosted), description, tags (including translated labels for cross-locale queries), and body content.
+- **How it works**: `src/pages/search.json.ts` generates the index during `astro build`. All text fields are normalized to strip diacritics (c → ç) and translated labels are appended to tags. On the client, the `Search` React component fetches `search.json` and builds a Lunr index.
+- **What's indexed**: title (boosted), headings (h1/h2 from markdown, boosted), description, tags (including translated labels for cross-locale queries), collection names in all locales, and body content.
 - **Relevance**: Uses required prefix wildcards (`+term1* +term2*`) so every typed term must appear as a word prefix across all fields. Adding words narrows results (AND logic). Single-word queries also fall back to boosted exact and fuzzy matching. Results are sorted by relevance first, then by date descending for entries with similar scores.
-- **Cross-language**: Tag translations from `src/i18n/labels.ts` are appended to the `tags` field, so searching in Portuguese finds English-tagged documents.
+- **Cross-language**: Tag translations and collection name translations are indexed alongside the English text. Searching in any locale finds results from all languages. Result badges (Art / Wiki / Page) adapt to the current locale.
 
 ## Deployment
 
