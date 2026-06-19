@@ -3,6 +3,10 @@ import { stripMarkdown, extractHeadings, getTagLabels } from "@lib/search";
 import type { SearchDoc } from "../types/search";
 import { CONTENT_COLLECTIONS } from "../constants/collection";
 
+function normalize(str: string): string {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 export async function GET() {
   const docs: SearchDoc[] = [];
   const contentNames = CONTENT_COLLECTIONS;
@@ -24,11 +28,11 @@ export async function GET() {
       const headings = extractHeadings(body);
       docs.push({
         id: `${name}/${entry.id}`,
-        title: entry.data.title,
-        description: entry.data.description ?? "",
-        tags: [name, ...rawTags, ...tagLabels].join(" "),
-        headings,
-        content,
+        title: normalize(entry.data.title),
+        description: normalize(entry.data.description ?? ""),
+        tags: normalize([name, ...rawTags, ...tagLabels].join(" ")),
+        headings: normalize(headings),
+        content: normalize(content),
         url: `/${name}/${entry.id}/`,
         collection: name,
         lang: (entry.data as { lang?: string }).lang ?? "en",
@@ -52,11 +56,11 @@ export async function GET() {
     const url = isHome ? "/" : isResume ? "/resume/" : `/${entry.id}/`;
     docs.push({
       id: `page/${entry.id}`,
-      title: entry.data.title,
-      description: entry.data.description ?? "",
-      tags: ["page", ...rawTags, ...tagLabels].join(" "),
-      headings,
-      content,
+      title: normalize(entry.data.title),
+      description: normalize(entry.data.description ?? ""),
+      tags: normalize(["page", ...rawTags, ...tagLabels].join(" ")),
+      headings: normalize(headings),
+      content: normalize(content),
       url,
       collection: "page",
       lang: entry.data.lang ?? "en",

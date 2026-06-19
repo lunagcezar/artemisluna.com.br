@@ -58,6 +58,7 @@ function Search() {
 
   const idx = React.useMemo(() => {
     if (!docs.length) return null;
+
     return lunr(function () {
       this.pipeline.remove(lunr.stopWordFilter);
       this.pipeline.remove(lunr.stemmer);
@@ -85,8 +86,7 @@ function Search() {
       const mapped = raw
         .map((r) => ({ doc: docs.find((d) => d.id === r.ref), score: r.score }))
         .filter(
-          (d): d is { doc: SearchDoc; score: number } =>
-            d.doc !== undefined && d.doc.lang === locale,
+          (d): d is { doc: SearchDoc; score: number } => d.doc !== undefined,
         )
         .sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
@@ -174,7 +174,6 @@ function Search() {
                 handleKeyDown(e);
               }}
               placeholder={ready ? placeholder : "Loading index..."}
-              disabled={!ready}
               className="h-8 w-full rounded-lg pr-8 pl-7 text-sm max-sm:placeholder:text-transparent"
               role="combobox"
               aria-expanded={showDropdown}
