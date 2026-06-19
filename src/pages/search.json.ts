@@ -1,8 +1,13 @@
-import { getCollection } from "astro:content";
+import { getCollection, type DataEntryMap } from "astro:content";
 import { stripMarkdown, extractHeadings, getTagLabels } from "@lib/search";
 import type { SearchDoc } from "../types/search";
-import { CONTENT_COLLECTIONS } from "../constants/collection";
 import { translations, SUPPORTED_LOCALES } from "@i18n/labels";
+import {
+  getContentCollections,
+  getPagesCollection,
+  getPageBaseName,
+  getPageUrl,
+} from "@config/collections";
 
 function normalize(str: string): string {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -16,12 +21,12 @@ function getCollectionLabels(name: string): string[] {
 
 export async function GET() {
   const docs: SearchDoc[] = [];
-  const contentNames = CONTENT_COLLECTIONS;
+  const contentNames = getContentCollections();
 
   for (const name of contentNames) {
     let entries;
     try {
-      entries = await getCollection(name);
+      entries = await getCollection(name as keyof DataEntryMap);
     } catch {
       continue;
     }
@@ -54,34 +59,37 @@ export async function GET() {
     }
   }
 
-  const pages = await getCollection("page");
-  for (const entry of pages) {
-    const rawTags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
-    const tagLabels = getTagLabels(rawTags);
-    const collectionLabels = getCollectionLabels("page");
-    const body = "body" in entry ? (entry.body ?? "") : "";
-    const content = stripMarkdown(body);
-    const headings = extractHeadings(body);
-    const isHome = entry.id.startsWith("home");
-    const isResume = entry.id.startsWith("resume");
-    const url = isHome ? "/" : isResume ? "/resume/" : `/${entry.id}/`;
-    docs.push({
-      id: `page/${entry.id}`,
-      title: normalize(entry.data.title),
-      description: normalize(entry.data.description ?? ""),
-      tags: normalize(
-        ["page", ...collectionLabels, ...rawTags, ...tagLabels].join(" "),
-      ),
-      headings: normalize(headings),
-      content: normalize(content),
-      url,
-      collection: "page",
-      lang: entry.data.lang ?? "en",
-      date:
-        "date" in entry.data && entry.data.date
-          ? entry.data.date.toISOString()
-          : "",
-    });
+  const pagesCollection = getPagesCollection();
+  if (pagesCollection) {
+    const pages = await getCollection(pagesCollection as keyof DataEntryMap);
+    for (const entry of pages) {
+      const rawTags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
+      const tagLabels = getTagLabels(rawTags);
+      const collectionLabels = getCollectionLabels(pagesCollection);
+      const body = "body" in entry ? (entry.body ?? "") : "";
+      const content = stripMarkdown(body);
+      const headings = extractHeadings(body);
+      const baseName = getPageBaseName(entry.id);
+      docs.push({
+        id: `${pagesCollection}/${entry.id}`,
+        title: normalize(entry.data.title),
+        description: normalize(entry.data.description ?? ""),
+        tags: normalize(
+          [pagesCollection, ...collectionLabels, ...rawTags, ...tagLabels].join(
+            " ",
+          ),
+        ),
+        headings: normalize(headings),
+        content: normalize(content),
+        url: getPageUrl(baseName),
+        collection: pagesCollection,
+        lang: entry.data.lang ?? "en",
+        date:
+          "date" in entry.data && entry.data.date
+            ? entry.data.date.toISOString()
+            : "",
+      });
+    }
   }
 
   return new Response(JSON.stringify(docs), {

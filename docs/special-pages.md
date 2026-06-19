@@ -180,6 +180,15 @@ To create a new page type at a custom route (e.g., `/about/`):
    </MainLayout>
    ```
 
-3. **Add a sidebar node** in `src/lib/collections.ts` inside `buildFullSidebarTree()` — add a hardcoded `SidebarNode` for the new page (similar to `home` and `resume`).
+3. **Add translation** for the page name in `src/i18n/labels.ts` (optional but recommended):
 
-The `id` pattern (`about.en` / `about.pt`) and the `startsWith("about")` filter are the only wiring needed.
+   ```ts
+   pt: {
+     about: "Sobre",
+   },
+   eo: {
+     about: "Pri",
+   },
+   ```
+
+The sidebar automatically picks up the new page. The sidebar reads the `page` collection and derives page names from filenames (e.g., `about.en.md` → `about` → `/about/`). The translation label is used for the sidebar display name.

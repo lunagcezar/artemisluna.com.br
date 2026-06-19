@@ -1,10 +1,8 @@
 ---
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
-import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
+import AstroCollectionDetail from "@components/shared/_astro/AstroCollectionDetail.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
-import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
-import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
 import {
   buildDirectoryIndex,
   getRecursiveEntries,
@@ -14,11 +12,7 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
-import {
-  createTranslateLabel,
-  SUPPORTED_LOCALES,
-  translations,
-} from "@i18n/labels";
+import { createTranslateLabel } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   try {
@@ -72,27 +66,11 @@ const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
 >
   {
     mode === "detail" ? (
-      <article class="grid gap-4">
-        <div class="grid gap-2">
-          <AstroRecursiveBreadcrumb
-            baseUrl="/wiki/"
-            baseLabels={Object.fromEntries(
-              SUPPORTED_LOCALES.map((l) => [
-                l,
-                translations[l]?.["wiki"] ?? "Wiki",
-              ]),
-            )}
-            slug={parentSlug}
-            translateLabel={translateLabel}
-            isDetail
-          />
-          <h1 class="text-3xl font-semibold tracking-tight">
-            {entry.data.title}
-          </h1>
-          <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
-        </div>
-        <AstroArticleImageViewer entry={entry} />
-      </article>
+      <AstroCollectionDetail
+        entry={entry}
+        collection="wiki"
+        parentSlug={parentSlug}
+      />
     ) : (
       <AstroRecursiveCollectionIndex
         collection="wiki"

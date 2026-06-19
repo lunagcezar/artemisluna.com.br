@@ -3,12 +3,17 @@ import {
   type CollectionEntry,
   type DataEntryMap,
 } from "astro:content";
-import { collections } from "../content.config";
 import type {
   IndexPath,
   DetailPath,
   PaginationPath,
 } from "../types/collection";
+import {
+  getContentCollections,
+  getPagesCollection,
+  getPageBaseName,
+  getPageUrl,
+} from "@config/collections";
 
 export async function getIndexAndDetailPaths<C extends keyof DataEntryMap>(
   collection: C,
@@ -236,22 +241,32 @@ export async function buildFullSidebarTree(): Promise<{
   tree: SidebarNode[];
   collectionNames: string[];
 }> {
-  const collectionNames = Object.keys(collections).filter(
-    (name) => name !== "page",
-  );
+  const contentCollections = getContentCollections();
+  const pagesCollection = getPagesCollection();
 
-  const tree: SidebarNode[] = [
-    { name: "home", href: "/", children: [] },
-    { name: "resume", href: "/resume/", children: [] },
-  ];
+  const tree: SidebarNode[] = [];
 
-  for (const name of collectionNames) {
+  if (pagesCollection) {
+    const pages = await getCollection(pagesCollection as keyof DataEntryMap);
+    const uniqueNames = [
+      ...new Set(pages.map((p) => getPageBaseName(p.id))),
+    ].sort();
+    for (const name of uniqueNames) {
+      tree.push({
+        name,
+        href: getPageUrl(name),
+        children: [],
+      });
+    }
+  }
+
+  for (const name of contentCollections) {
     const entries = await getCollection(name as keyof DataEntryMap);
     if (entries.length === 0) continue;
     tree.push(buildCollectionRoot(name, entries));
   }
 
-  return { tree, collectionNames };
+  return { tree, collectionNames: contentCollections };
 }
 
 export interface DirectoryEntry<T> {

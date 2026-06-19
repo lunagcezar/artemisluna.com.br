@@ -72,13 +72,14 @@ SEO URL helpers live in `src/lib/url.ts`:
 - `getOgImageUrl(image)` — resolves frontmatter image paths to absolute URLs for Open Graph
 - `getSiteRoot()` — returns the site root from `SITE_URL` env var or empty string
 
-## Blog & Wiki routing
+## Wiki routing
 
-Both follow the same pattern as the art section:
+Wiki follows the same pattern as the art section:
 
-- `src/pages/blog/[...slug].astro` and `src/pages/wiki/[...slug].astro` handle the root index, directory indexes, and detail pages.
-- `src/pages/blog/[...slug]/page/[page].astro` and `src/pages/wiki/[...slug]/page/[page].astro` handle pagination with `/page/N/` URLs.
-- `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links for blog and wiki.
+- `src/pages/wiki/[...slug].astro` handles the root index, directory indexes, and detail pages.
+- `src/pages/wiki/[...slug]/page/[page].astro` handles pagination with `/page/N/` URLs.
+- `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links.
+- `src/components/shared/_astro/AstroCollectionDetail.astro` renders detail pages with breadcrumbs, metadata, and markdown content.
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
@@ -167,7 +168,7 @@ Code blocks rendered by Shiki (Astro's syntax highlighter) get a terminal-style 
 
 Same lightbox as above but scans a DOM container for `<img>` elements. Used in blog/wiki pages where images are embedded in markdown rather than listed in frontmatter. Lives at `src/components/shared/article-image-viewer.tsx`.
 
-- Mounted via `AstroArticleImageViewer.astro` with `client:load`.
+- Mounted via `AstroArticleImageViewer.astro` with `client:visible`.
 - On mount, queries `document.getElementById(containerId)` and indexes all `<img>` elements.
 - Clicking any image opens the dialog with arrow navigation and zoom/pan.
 
@@ -280,5 +281,19 @@ Run **Foam: Create New Template** in VSCode to use them. Fill in the placeholder
 - When implementing relevant modifications in this project, please update the AGENTS.md file with documentation
 - If a complex feature was being implemented, add a documentation file in the docs/ folder.
 - If in doubt, check the documentation files in the docs/ folder.
-- Collection names are centralized in `src/constants/collection.ts` — import `CONTENT_COLLECTIONS` or `ALL_COLLECTIONS` instead of hardcoding `["art", "wiki"]` etc.
+- Collection configuration is centralized in `src/config/collections.ts` — defines collection types (`content` or `pages`), sidebar visibility, and helper functions.
 - Locale values are centralized in `@i18n/labels` via `SUPPORTED_LOCALES` — use the type `Locale` instead of hardcoding `"en" | "pt" | "eo"`.
+
+## Adding a New Collection
+
+1. **Schema**: Add to `src/content.config.ts` with appropriate fields
+2. **Config**: Add to `COLLECTION_CONFIGS` in `src/config/collections.ts`:
+   - `type: "content"` for directory-tree collections (like wiki)
+   - `type: "pages"` for single-page collections (like page)
+3. **i18n**: Add labels for the collection name in `src/i18n/labels.ts` (all locales)
+4. **Routes**: Create `src/pages/<name>/[...slug].astro` and pagination file
+   - Copy from `src/pages/wiki/` as template for content collections
+   - Replace "wiki" with collection name throughout
+5. **Content**: Create `src/content/<name>/` directory
+
+For gallery-style collections (like art with frontmatter images), create custom components similar to `AstroArtGallery` and `AstroArtDetail` in `src/components/features/<name>/_astro/`.

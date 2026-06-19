@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry, DataEntryMap } from "astro:content";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
 import AstroTagBadges from "@components/core/_astro/AstroTagBadges.astro";
@@ -20,15 +20,15 @@ import {
 import { Separator } from "@components/core/separator";
 
 type Props = {
-  collection: "wiki";
-  entries: CollectionEntry<"wiki">[];
+  collection: string;
+  entries: CollectionEntry<keyof DataEntryMap>[];
   slug?: string;
   childFolders: string[];
   page: number;
   totalPages: number;
   baseUrl: string;
   baseLabel: string;
-  indexEntry?: CollectionEntry<"wiki">;
+  indexEntry?: CollectionEntry<keyof DataEntryMap>;
 };
 
 const {

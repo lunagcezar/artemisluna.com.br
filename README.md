@@ -61,11 +61,6 @@ src/content/blog/
 └── 20260511-my-post.md
 ```
 
-src/content/blog/
-└── 20260511-my-post.md
-
-````
-
 Blog entries are flat (no sub-folders). Frontmatter:
 
 ```yaml
@@ -78,7 +73,7 @@ date: 2026-05-11
 author: Your Name
 image: "/src/assets/blog/hero.jpg"
 ---
-````
+```
 
 ### Wiki
 
@@ -184,26 +179,26 @@ Each directory in a collection (e.g. `/art/traditional/painting/`, `/wiki/progra
 
 ### Adding a new content collection
 
-New collections (e.g., re-adding `blog` or adding a `photography` section) require creating a content directory, a schema entry in `src/content.config.ts`, catch-all and pagination route files, and translations. See `docs/collections.md` for the complete walkthrough.
+New collections (e.g., re-adding `blog` or adding a `photography` section) require creating a content directory, a schema entry in `src/content.config.ts`, a config entry in `src/config/collections.ts`, catch-all and pagination route files, and translations. See `docs/collections.md` for the complete walkthrough.
 
 To re-enable the blog section:
 
 1. Uncomment the `blog` definition in `src/content.config.ts`
-2. Restore the route files from `docs/collections.md` template
-3. Add `blog` to `contentNames` in `src/pages/search.json.ts`
+2. Add `{ name: "blog", type: "content" }` to `COLLECTION_CONFIGS` in `src/config/collections.ts`
+3. Restore the route files from `docs/collections.md` template
 
 ### Special pages
 
 Static pages (home, resume) live in `src/content/page/` as markdown files named `{name}.{locale}.md` (e.g., `home.en.md`, `home.pt.md`, `home.eo.md`). Each file's frontmatter sets `lang` to its locale. The page route (`/` for home, `/resume/` for resume) iterates `SUPPORTED_LOCALES` and renders each matching file, showing/hiding them client-side via `data-content-locale`. Adding a new locale means creating the corresponding page file (e.g., `resume.eo.md`). New page types can be added by creating a route file (e.g., `src/pages/about.astro`) and locale files (`about.en.md`, etc.). See `docs/special-pages.md` for the full breakdown.
 
-These pages are excluded from the auto-generated sidebar tree in `buildFullSidebarTree()`, which also includes hardcoded `home` and `resume` root nodes.
+These pages are included in the auto-generated sidebar tree in `buildFullSidebarTree()`, which reads the `page` collection and derives page names from filenames (e.g., `home.en.md` → `home` → `/`).
 
 ### Architecture
 
 The system has two key data structures:
 
 - **DirectoryIndex** — a flat `Record<string, DirectoryEntry>` built once from all entries. Each key is a directory path (`""` for root). Lookups are O(1): `children` (subfolder names), `entries` (articles in this directory), `indexEntry` (optional index page). The recursive listing function `getRecursiveEntries` walks the tree and returns all descendant entries globally sorted by date.
-- **SidebarNode** — a recursive tree of `{ name, href, children }` used by the sidebar and mobile drawer. Built by `buildFullSidebarTree()` which scans all collections from `content.config.ts` and adds hardcoded `home` and `resume` nodes.
+- **SidebarNode** — a recursive tree of `{ name, href, children }` used by the sidebar and mobile drawer. Built by `buildFullSidebarTree()` which scans all collections from `content.config.ts` and derives page nodes from the `page` collection.
 
 Both are rebuilt automatically when content is added, moved, or removed — no manual navigation updates required.
 
@@ -216,21 +211,27 @@ Both are rebuilt automatically when content is added, moved, or removed — no m
 
 These folder and tag values in kebab-case are used as URL segments. They also serve as translation keys in the i18n system — see the next section.
 
-### Collection constants
+### Collection configuration
 
-Collection names are centralized in `src/constants/collection.ts`:
+Collection metadata is centralized in `src/config/collections.ts`:
 
 ```ts
-export const CONTENT_COLLECTIONS = ["art", "wiki"] as const; // active collections
-export const ALL_COLLECTIONS = ["art", "wiki", "page"] as const; // includes page
-export type ContentCollection = (typeof CONTENT_COLLECTIONS)[number];
-export type AllCollection = (typeof ALL_COLLECTIONS)[number];
+export interface CollectionConfig {
+  name: string;
+  type: "content" | "pages";
+}
+
+export const COLLECTION_CONFIGS: CollectionConfig[] = [
+  { name: "art", type: "content" },
+  { name: "wiki", type: "content" },
+  { name: "page", type: "pages" },
+];
 ```
 
-- `CONTENT_COLLECTIONS` — collections that generate directory indexes and detail pages
-- `ALL_COLLECTIONS` — includes `page` for search indexing and wiki links
-- Add a new collection name to these arrays when creating a new section
-- Import from `@constants/collection` instead of hardcoding collection names
+- `type: "content"` — collections with directory-tree routing (index + detail pages, pagination)
+- `type: "pages"` — collections with single-page routing (home, resume)
+- Add a new collection config when creating a new section
+- Import from `@config/collections` instead of hardcoding collection names
 
 ## Adding translations
 
@@ -322,7 +323,11 @@ The config in `astro.config.mjs` reads `SITE_URL` from `node:process` and falls 
 ## SEO
 
 - **Canonical URLs** — set via `SITE_URL` env var (`getCanonicalUrl()` in `src/lib/url.ts`), emitted as `<link rel="canonical">` on every page.
-- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image` rendered from frontmatter fields. Image resolved via `getOgImageUrl()`.
+- **Sitemap** — `@astrojs/sitemap` integration generates `sitemap-index.xml` at build time. Configured in `astro.config.mjs`.
+- **Robots.txt** — `public/robots.txt` allows all crawlers and points to the sitemap.
+- **Open Graph** — `og:title`, `og:description`, `og:type`, `og:url`, `og:image`, and `article:published_time` (for articles) are rendered in `<head>`.
+- **Twitter Cards** — `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image` mirror Open Graph tags.
+- **JSON-LD Structured Data** — `MainLayout.astro` emits `<script type="application/ld+json">` with schema.org `Article` or `WebSite` type, including headline, description, url, datePublished (for articles), author, image, and publisher.
 - **Keywords** — `tags` frontmatter rendered as `<meta name="keywords">`.
 - **Semantic HTML** — `<article>`, `<nav>`, `<h1>`–`<h3>`, `<time datetime>`, breadcrumb with `aria-label`.
 - **`lang` attribute** — set from entry's `lang` frontmatter for correct hyphenation and language hints.

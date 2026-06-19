@@ -1,12 +1,12 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry, DataEntryMap } from "astro:content";
 import AstroTagBadges from "./AstroTagBadges.astro";
 import type { TranslateLabel } from "@i18n/labels";
 import { CalendarBlankIcon, TagIcon } from "@phosphor-icons/react";
 import { formatDateForLocales } from "@lib/date";
 
 type Props = {
-  entry: CollectionEntry<"art" | "wiki">;
+  entry: CollectionEntry<keyof DataEntryMap>;
   translateLabel?: TranslateLabel;
 };
 

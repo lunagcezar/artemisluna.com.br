@@ -10,11 +10,12 @@ Adding a new collection requires creating files in these locations:
 | ---- | ---------------------------------------------- | -------------------------------- |
 | 1    | `src/content/<name>/`                          | Markdown content files           |
 | 2    | `src/content.config.ts`                        | Collection schema definition     |
-| 3    | `src/pages/<name>/[...slug].astro`             | Catch-all route (index + detail) |
-| 4    | `src/pages/<name>/[...slug]/page/[page].astro` | Pagination route                 |
-| 5    | `src/components/features/<name>/`              | Collection-specific components   |
-| 6    | `src/lib/collections.ts`                       | Sidebar tree (automatic)         |
-| 7    | `src/i18n/labels.ts`                           | Collection name translation      |
+| 3    | `src/config/collections.ts`                    | Collection config entry          |
+| 4    | `src/pages/<name>/[...slug].astro`             | Catch-all route (index + detail) |
+| 5    | `src/pages/<name>/[...slug]/page/[page].astro` | Pagination route                 |
+| 6    | `src/components/features/<name>/`              | Collection-specific components   |
+| 7    | `src/lib/collections.ts`                       | Sidebar tree (automatic)         |
+| 8    | `src/i18n/labels.ts`                           | Collection name translation      |
 
 ## Step-by-step: adding a `photography` collection
 
@@ -52,7 +53,23 @@ export const collections = { art, blog, wiki, page, photography };
 
 The `lang` field must match the schema's enum. If you want to add a new locale, add it to ALL collections' `lang` enums and to `SUPPORTED_LOCALES` in `@i18n/labels`.
 
-### 3. Create the catch-all route
+### 3. Add collection config
+
+In `src/config/collections.ts`, add the collection to `COLLECTION_CONFIGS`:
+
+```ts
+export const COLLECTION_CONFIGS: CollectionConfig[] = [
+  { name: "art", type: "content" },
+  { name: "wiki", type: "content" },
+  { name: "page", type: "pages" },
+  { name: "photography", type: "content" }, // Add this line
+];
+```
+
+- `type: "content"` — collections with directory-tree routing (index + detail pages, pagination)
+- `type: "pages"` — collections with single-page routing (home, resume)
+
+### 4. Create the catch-all route
 
 Create `src/pages/photography/[...slug].astro`:
 
@@ -60,10 +77,8 @@ Create `src/pages/photography/[...slug].astro`:
 ---
 import type { GetStaticPaths } from "astro";
 import MainLayout from "@layouts/MainLayout.astro";
+import AstroCollectionDetail from "@components/shared/_astro/AstroCollectionDetail.astro";
 import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
-import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
-import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import {
   buildDirectoryIndex,
   getRecursiveEntries,
@@ -73,11 +88,7 @@ import {
   paginateEntries,
 } from "@lib/collections";
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
-import {
-  createTranslateLabel,
-  SUPPORTED_LOCALES,
-  translations,
-} from "@i18n/labels";
+import { createTranslateLabel } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
   return await getIndexAndDetailPaths("photography");
@@ -111,12 +122,6 @@ const pageTitleLabels = getPageTitleLabels(
 );
 const pageTitle = mode === "detail" ? entry.data.title : pageTitleLabels.en;
 const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
-const baseLabels = Object.fromEntries(
-  SUPPORTED_LOCALES.map((l) => [
-    l,
-    translations[l]?.["photography"] ?? "Photography",
-  ]),
-);
 ---
 
 <MainLayout
@@ -125,25 +130,18 @@ const baseLabels = Object.fromEntries(
   description={mode === "detail" ? entry.data.description : undefined}
   keywords={mode === "detail" ? entry.data.tags : undefined}
   lang={mode === "detail" ? entry.data.lang : undefined}
+  type={mode === "detail" ? "article" : "website"}
+  date={mode === "detail" && entry.data.date
+    ? entry.data.date.toISOString()
+    : undefined}
 >
   {
     mode === "detail" ? (
-      <article class="grid gap-4">
-        <div class="grid gap-2">
-          <AstroRecursiveBreadcrumb
-            baseUrl="/photography/"
-            baseLabels={baseLabels}
-            slug={parentSlug}
-            translateLabel={translateLabel}
-            isDetail
-          />
-          <h1 class="text-3xl font-semibold tracking-tight">
-            {entry.data.title}
-          </h1>
-          <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
-        </div>
-        <AstroArticleImageViewer entry={entry} />
-      </article>
+      <AstroCollectionDetail
+        entry={entry}
+        collection="photography"
+        parentSlug={parentSlug}
+      />
     ) : (
       <AstroRecursiveCollectionIndex
         collection="photography"
@@ -161,7 +159,7 @@ const baseLabels = Object.fromEntries(
 </MainLayout>
 ```
 
-### 4. Create the pagination route
+### 5. Create the pagination route
 
 Create `src/pages/photography/[...slug]/page/[page].astro`:
 
@@ -213,7 +211,7 @@ const childFolders = dir?.children ?? [];
 </MainLayout>
 ```
 
-### 5. Add translation for the collection name
+### 6. Add translation for the collection name
 
 In `src/i18n/labels.ts`, add the collection name:
 
@@ -228,7 +226,7 @@ eo: {
 },
 ```
 
-### 6. Result
+### 7. Result
 
 - Markdown files in `src/content/photography/` are served at `/photography/`
 - Directory indexes are generated automatically from folder structure
@@ -239,17 +237,17 @@ eo: {
 
 ## What happens automatically
 
-Once the schema and routes are in place, these features pick up the new collection without extra code:
+Once the schema, config, and routes are in place, these features pick up the new collection without extra code:
 
-| Feature               | How it works                                                                                                     |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Sidebar tree**      | `buildFullSidebarTree()` reads `collections` from `content.config.ts` — the new collection appears automatically |
-| **Directory indexes** | `buildDirectoryIndex()` groups entries by directory path — nested folders become navigable indexes               |
-| **Pagination**        | `getPaginationPaths()` generates `/page/N/` routes for directories with many entries                             |
-| **Breadcrumbs**       | `AstroRecursiveBreadcrumb` uses URL segments — no config needed                                                  |
-| **Search**            | `search.json.ts` iterates all collections — new entries are indexed automatically                                |
-| **Wiki links**        | `remark-wiki-links.ts` scans all collection directories at build time                                            |
-| **Bilingual labels**  | `createTranslateLabel` resolves bare keys — add `photography` to each locale's translations                      |
+| Feature               | How it works                                                                                       |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| **Sidebar tree**      | `buildFullSidebarTree()` reads `COLLECTION_CONFIGS` — the new collection appears automatically     |
+| **Directory indexes** | `buildDirectoryIndex()` groups entries by directory path — nested folders become navigable indexes |
+| **Pagination**        | `getPaginationPaths()` generates `/page/N/` routes for directories with many entries               |
+| **Breadcrumbs**       | `AstroRecursiveBreadcrumb` uses URL segments — no config needed                                    |
+| **Search**            | `search.json.ts` iterates all collections — new entries are indexed automatically                  |
+| **Wiki links**        | `remark-wiki-links.ts` scans all collection directories at build time                              |
+| **Bilingual labels**  | `createTranslateLabel` resolves bare keys — add `photography` to each locale's translations        |
 
 ## Schema field conventions
 
@@ -269,6 +267,7 @@ Once the schema and routes are in place, these features pick up the new collecti
 The `blog` and `wiki` collections share:
 
 - `AstroRecursiveCollectionIndex` — renders the list view with breadcrumbs
+- `AstroCollectionDetail` — renders detail pages with breadcrumbs, metadata, and markdown content
 - `AstroEntryMeta` — metadata bar (date + tags)
 - `AstroRecursiveBreadcrumb` — breadcrumb navigation
 - `AstroArticleImageViewer` — renders markdown content + image lightbox

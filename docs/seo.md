@@ -18,9 +18,52 @@ The `src/lib/url.ts` helper `getCanonicalUrl(path)` builds the full URL from the
 | ---------------- | ------------------------------------------------------------------------- |
 | `og:title`       | Entry `title`                                                             |
 | `og:description` | Entry `description`                                                       |
-| `og:type`        | Always `website`                                                          |
+| `og:type`        | `article` for detail pages, `website` for index pages                     |
 | `og:url`         | Canonical URL                                                             |
 | `og:image`       | Entry `image` field (absolute paths only, resolved via `getOgImageUrl()`) |
+
+## Twitter Cards
+
+Twitter Card meta tags mirror the Open Graph tags:
+
+| Tag                   | Source                       |
+| --------------------- | ---------------------------- |
+| `twitter:card`        | Always `summary_large_image` |
+| `twitter:title`       | Same as `og:title`           |
+| `twitter:description` | Same as `og:description`     |
+| `twitter:image`       | Same as `og:image`           |
+
+## JSON-LD Structured Data
+
+`MainLayout.astro` outputs JSON-LD structured data for search engines:
+
+- **WebSite** schema for index pages
+- **Article** schema for detail pages (when `type="article"`)
+
+The structured data includes:
+
+- `headline`: Entry title
+- `description`: Entry description
+- `url`: Canonical URL
+- `datePublished`: Entry date (for articles)
+- `author`: Entry author (if provided)
+- `image`: Entry image (if provided)
+- `publisher`: Organization name
+
+## Sitemap
+
+The site automatically generates a sitemap using `@astrojs/sitemap`. The sitemap is available at `/sitemap-index.xml` and includes all pages from content collections.
+
+## Robots.txt
+
+The `public/robots.txt` file allows all crawlers to access the site and points to the sitemap:
+
+```
+User-agent: *
+Allow: /
+
+Sitemap: https://artemisluna.com.br/sitemap-index.xml
+```
 
 ## Semantic HTML
 

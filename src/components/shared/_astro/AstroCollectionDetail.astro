@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry, DataEntryMap } from "astro:content";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
+import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
+import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
+import { formatSegment } from "@lib/collections";
+
+type Props = {
+  entry: CollectionEntry<keyof DataEntryMap>;
+  collection: string;
+  parentSlug?: string;
+};
+
+const { entry, collection, parentSlug } = Astro.props;
+const translateLabel = createTranslateLabel();
+const baseLabels = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    translations[locale]?.[collection] ?? formatSegment(collection),
+  ]),
+);
+---
+
+<article class="grid gap-4">
+  <div class="grid gap-2">
+    <AstroRecursiveBreadcrumb
+      baseUrl={`/${collection}/`}
+      baseLabels={baseLabels}
+      slug={parentSlug}
+      translateLabel={translateLabel}
+      isDetail
+    />
+    <h1 class="text-3xl font-semibold tracking-tight">
+      {entry.data.title}
+    </h1>
+    <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
+  </div>
+  <AstroArticleImageViewer entry={entry} />
+</article>

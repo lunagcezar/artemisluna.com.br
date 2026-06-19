@@ -1,10 +1,10 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry, DataEntryMap } from "astro:content";
 import { render } from "astro:content";
 import { ArticleImageViewer } from "../article-image-viewer";
 
 type Props = {
-  entry: CollectionEntry<"art" | "wiki" | "page">;
+  entry: CollectionEntry<keyof DataEntryMap>;
 };
 
 const { entry } = Astro.props;

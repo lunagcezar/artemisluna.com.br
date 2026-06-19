@@ -13,8 +13,8 @@ src/components/
     AstroSiteBranch.astro        ← recursive tree node renderer
   shared/
     search.tsx                   ← React Lunr search (client:load island)
-    locale-switcher.tsx          ← React shadcn DropdownMenu (client:load)
-    theme-switcher.tsx           ← React shadcn DropdownMenu (client:load)
+    locale-switcher.tsx          ← React shadcn DropdownMenu (client:visible)
+    theme-switcher.tsx           ← React shadcn DropdownMenu (client:visible)
 src/lib/
   collections.ts  ← DirectoryIndex + Sidebar tree builders
   sidebar.ts      ← shared branch helpers (labels, active state)
@@ -34,31 +34,40 @@ export async function buildFullSidebarTree(): Promise<{
   tree: SidebarNode[];
   collectionNames: string[];
 }> {
-  // Exclude "page" — special pages (home/resume) are added as hardcoded nodes
-  const collectionNames = Object.keys(collections).filter(
-    (name) => name !== "page",
-  );
+  const contentCollections = getContentCollections();
+  const pagesCollection = getPagesCollection();
 
-  // Hardcoded root nodes
-  const tree: SidebarNode[] = [
-    { name: "home", href: "/", children: [] },
-    { name: "resume", href: "/resume/", children: [] },
-  ];
+  const tree: SidebarNode[] = [];
+
+  // Read page collection dynamically — derive page names from filenames
+  if (pagesCollection) {
+    const pages = await getCollection(pagesCollection as keyof DataEntryMap);
+    const uniqueNames = [
+      ...new Set(pages.map((p) => getPageBaseName(p.id))),
+    ].sort();
+    for (const name of uniqueNames) {
+      tree.push({
+        name,
+        href: getPageUrl(name),
+        children: [],
+      });
+    }
+  }
 
   // For each content collection, build a tree from its entry IDs
-  for (const name of collectionNames) {
+  for (const name of contentCollections) {
     const entries = await getCollection(name as keyof DataEntryMap);
+    if (entries.length === 0) continue;
     tree.push(buildCollectionRoot(name, entries));
   }
 
-  return { tree, collectionNames };
+  return { tree, collectionNames: contentCollections };
 }
 ```
 
-1. Reads all collection names from `src/content.config.ts` (art, blog, wiki)
-2. Excludes the `page` collection (home/resume are handled separately)
-3. Prepends hardcoded `Home` and `Resume` nodes
-4. For each content collection, calls `buildCollectionRoot()` to generate the folder tree
+1. Reads content collection names from `COLLECTION_CONFIGS` (art, wiki)
+2. Reads the `page` collection and derives unique page names from filenames (e.g., `home.en.md` → `home` → `/`)
+3. For each content collection, calls `buildCollectionRoot()` to generate the folder tree
 
 ### 2. Per-collection tree — `buildCollectionRoot(name, entries)`
 
@@ -167,7 +176,7 @@ Locale and theme switchers use shadcn `DropdownMenu` (Radix UI) via React compon
 | `ThemeSwitcher`  | `src/components/shared/theme-switcher.tsx`  | shadcn `DropdownMenu` with Light/Dark options, reads/writes `theme` cookie, toggles `.dark` class                          |
 | `LocaleSwitcher` | `src/components/shared/locale-switcher.tsx` | shadcn `DropdownMenu` with locale options from `SUPPORTED_LOCALES`, calls `applyLocale()`, dispatches `localechange` event |
 
-Both are rendered via `client:load` directly in `AstroNavbar.astro`.
+Both are rendered via `client:visible` directly in `AstroNavbar.astro`.
 
 ## Shared helpers (`src/lib/sidebar.ts`)
 

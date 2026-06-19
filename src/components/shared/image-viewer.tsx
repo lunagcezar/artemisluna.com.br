@@ -108,8 +108,8 @@ function ImageLightbox({
                 didPanRef.current = true;
               }
             }}
-            onTouchEnd={(e) => {
-              zoom.handleTouchEnd(e);
+            onTouchEnd={() => {
+              zoom.handleTouchEnd();
             }}
           >
             <img
