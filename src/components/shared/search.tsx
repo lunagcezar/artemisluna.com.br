@@ -60,7 +60,9 @@ function Search() {
     if (!docs.length) return null;
     return lunr(function () {
       this.pipeline.remove(lunr.stopWordFilter);
+      this.pipeline.remove(lunr.stemmer);
       this.searchPipeline.remove(lunr.stopWordFilter);
+      this.searchPipeline.remove(lunr.stemmer);
 
       this.ref("id");
       this.field("title", { boost: 10 });
@@ -81,11 +83,20 @@ function Search() {
     try {
       const raw = searchIndex(idx, query);
       const mapped = raw
-        .map((r) => docs.find((d) => d.id === r.ref))
-        .filter((d): d is SearchDoc => d !== undefined)
-        .filter((d) => d.lang === locale)
-        .sort((a, b) => b.date.localeCompare(a.date))
-        .slice(0, 12);
+        .map((r) => ({ doc: docs.find((d) => d.id === r.ref), score: r.score }))
+        .filter(
+          (d): d is { doc: SearchDoc; score: number } =>
+            d.doc !== undefined && d.doc.lang === locale,
+        )
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          if (!a.doc.date && !b.doc.date) return 0;
+          if (!a.doc.date) return 1;
+          if (!b.doc.date) return -1;
+          return b.doc.date.localeCompare(a.doc.date);
+        })
+        .slice(0, 12)
+        .map((s) => s.doc);
       setResults(mapped);
       setSelectedIndex(-1);
     } catch {

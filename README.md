@@ -273,7 +273,7 @@ The site has a built-in search bar in the navbar powered by [Lunr.js](https://lu
 
 - **How it works**: `src/pages/search.json.ts` generates the index during `astro build`. On the client, the `Search` React component fetches `search.json` and builds a Lunr index.
 - **What's indexed**: title (boosted), headings (h1/h2 from markdown, boosted), description, tags (including translated labels for cross-locale queries), and body content.
-- **Relevance**: Multi-word queries first require ALL terms to be present in restricted fields (title, headings, description). Only if that returns nothing does it fall back to broad fuzzy matching.
+- **Relevance**: Uses required prefix wildcards (`+term1* +term2*`) so every typed term must appear as a word prefix across all fields. Adding words narrows results (AND logic). Single-word queries also fall back to boosted exact and fuzzy matching. Results are sorted by relevance first, then by date descending for entries with similar scores.
 - **Cross-language**: Tag translations from `src/i18n/labels.ts` are appended to the `tags` field, so searching in Portuguese finds English-tagged documents.
 
 ## Deployment

@@ -52,36 +52,12 @@ export function searchIndex(idx: lunr.Index, raw: string): lunr.Index.Result[] {
   const terms = raw.trim().split(/\s+/).filter(Boolean);
   if (!terms.length) return [];
 
-  const restricted = ["title", "headings", "description"];
-
-  const inRestricted = (r: lunr.Index.Result) =>
-    terms.every((t) => {
-      const meta = r.matchData.metadata as Record<
-        string,
-        Record<string, unknown>
-      >;
-      const info = meta[t];
-      if (!info) return false;
-      return restricted.some((f) => info[f]);
-    });
-
   try {
-    const required = terms.map((t) => `+${t}`).join(" ");
-    const rawResults = idx.search(required);
-    const filtered = rawResults.filter(inRestricted);
-    if (filtered.length > 0) return filtered;
-  } catch {
-    return [];
-  }
-
-  try {
-    return idx.search(
-      terms.map((t) => `${t}^3`).join(" ") +
-        " " +
-        terms.map((t) => `${t}*`).join(" ") +
-        " " +
-        terms.map((t) => `${t}~1`).join(" "),
-    );
+    if (terms.length === 1) {
+      return idx.search(`+${terms[0]}* ${terms[0]}^3 ${terms[0]}~1`);
+    }
+    const query = terms.map((t) => `+${t}*`).join(" ");
+    return idx.search(query);
   } catch {
     return [];
   }

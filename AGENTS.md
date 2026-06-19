@@ -204,8 +204,8 @@ The site uses client-side full-text search powered by [Lunr.js](https://lunrjs.c
 - **Search index** — `src/pages/search.json.ts` generates a static `search.json` at build time, containing every entry's `title`, `description`, `tags`, `headings` (h1/h2 text extracted from markdown), and `content` (markdown stripped to plain text). Home/resume routes are mapped to `/` and `/resume/` instead of `/home.en/`.
 - **Cross-locale indexing** — `getTagLabels()` from `src/lib/search.ts` appends translated tag labels (from `@i18n/labels`) to the `tags` field, so Portuguese queries like "pastel de óleo" find English-tagged docs.
 - **Search component** — `src/components/shared/search.tsx` (React) with `client:load`. The input is embedded in `AstroNavbar.astro`. Results appear in a dropdown below the input.
-- **Relevance strategy** — `searchIndex()` in `src/lib/search.ts` first searches with `+term1 +term2` (all terms required) across only `title`, `headings`, and `description`, then filters via `matchData.metadata` to exclude content-only hits. Falls back to broad fuzzy matching if the restricted search returns nothing.
-- **Lunr stop words removed** — `this.pipeline.remove(lunr.stopWordFilter)` ensures common words (about, me, the) are indexed, enabling proper phrase matching.
+- **Relevance strategy** — `searchIndex()` in `src/lib/search.ts` uses required prefix wildcards (`+term1* +term2*`), so every typed term must appear as a word prefix across all fields. Adding words narrows results (AND logic). Single-word queries also fall back to boosted exact and fuzzy matching. Results are sorted by Lunr score (relevance) first, then by date descending for entries with similar scores.
+- **Lunr stop words and stemmer removed** — `lunr.stopWordFilter` and `lunr.stemmer` are removed from both pipelines, ensuring common words (about, me, the) and partial prefixes (everythi → everything) work correctly.
 - **Shared types** in `src/types/search.ts` (`SearchDoc`). Search utilities in `src/lib/search.ts`.
 
 ## Wiki metadata convention
