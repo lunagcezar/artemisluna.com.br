@@ -1,10 +1,11 @@
 import { getCollection } from "astro:content";
 import { stripMarkdown, extractHeadings, getTagLabels } from "@lib/search";
 import type { SearchDoc } from "../types/search";
+import { CONTENT_COLLECTIONS } from "../constants/collection";
 
 export async function GET() {
   const docs: SearchDoc[] = [];
-  const contentNames = ["art", "wiki"] as const;
+  const contentNames = CONTENT_COLLECTIONS;
 
   for (const name of contentNames) {
     let entries;

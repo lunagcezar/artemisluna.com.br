@@ -264,3 +264,5 @@ Run **Foam: Create New Template** in VSCode to use them. Fill in the placeholder
 - When implementing relevant modifications in this project, please update the AGENTS.md file with documentation
 - If a complex feature was being implemented, add a documentation file in the docs/ folder.
 - If in doubt, check the documentation files in the docs/ folder.
+- Collection names are centralized in `src/constants/collection.ts` — import `CONTENT_COLLECTIONS` or `ALL_COLLECTIONS` instead of hardcoding `["art", "wiki"]` etc.
+- Locale values are centralized in `@i18n/labels` via `SUPPORTED_LOCALES` — use the type `Locale` instead of hardcoding `"en" | "pt" | "eo"`.

@@ -216,6 +216,22 @@ Both are rebuilt automatically when content is added, moved, or removed — no m
 
 These folder and tag values in kebab-case are used as URL segments. They also serve as translation keys in the i18n system — see the next section.
 
+### Collection constants
+
+Collection names are centralized in `src/constants/collection.ts`:
+
+```ts
+export const CONTENT_COLLECTIONS = ["art", "wiki"] as const; // active collections
+export const ALL_COLLECTIONS = ["art", "wiki", "page"] as const; // includes page
+export type ContentCollection = (typeof CONTENT_COLLECTIONS)[number];
+export type AllCollection = (typeof ALL_COLLECTIONS)[number];
+```
+
+- `CONTENT_COLLECTIONS` — collections that generate directory indexes and detail pages
+- `ALL_COLLECTIONS` — includes `page` for search indexing and wiki links
+- Add a new collection name to these arrays when creating a new section
+- Import from `@constants/collection` instead of hardcoding collection names
+
 ## Adding translations
 
 All UI strings, taxonomy labels, and segment names are centralized in `src/i18n/labels.ts` in a single `translations` object. The system is **locale-agnostic** — every consumer iterates over `SUPPORTED_LOCALES` to produce labels for all configured locales. Adding a new locale to `SUPPORTED_LOCALES` automatically extends every i18n feature.

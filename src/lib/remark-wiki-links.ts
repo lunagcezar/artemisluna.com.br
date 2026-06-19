@@ -12,12 +12,14 @@ import type {
   PhrasingContent,
 } from "mdast";
 
+import { ALL_COLLECTIONS } from "../constants/collection";
+
 const ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../content",
 );
 
-const CONTENT_DIRS = ["wiki", "blog", "art"] as const;
+const CONTENT_DIRS: readonly string[] = ALL_COLLECTIONS;
 
 interface ContentEntry {
   collection: string;
