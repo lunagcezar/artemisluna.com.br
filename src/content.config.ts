@@ -8,7 +8,7 @@ const art = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     lang: z.enum(["en", "pt", "eo"]).default("en"),
-    tags: z.array(z.string()),
+    tags: z.array(z.string()).default([]),
     date: z.coerce.date(),
     author: z.string().optional(),
     images: z.array(
@@ -21,17 +21,30 @@ const art = defineCollection({
   }),
 });
 
-// const blog = defineCollection({
-//   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
-//   schema: z.object({
-//     title: z.string(),
-//     description: z.string().optional(),
-//     lang: z.enum(["en", "pt", "eo"]).default("en"),
-//     tags: z.array(z.string()),
-//     date: z.coerce.date(),
-//     author: z.string().optional(),
-//   }),
-// });
+const blog = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
+    tags: z.array(z.string()).default([]),
+    date: z.coerce.date(),
+    author: z.string().optional(),
+  }),
+});
+
+const writing = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/writing" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    lang: z.enum(["en", "pt", "eo"]).default("en"),
+    tags: z.array(z.string()).default([]),
+    date: z.coerce.date(),
+    author: z.string().optional(),
+    layout: z.enum(["prose", "play"]).default("prose"),
+  }),
+});
 
 const wiki = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/wiki" }),
@@ -57,4 +70,4 @@ const page = defineCollection({
   }),
 });
 
-export const collections = { art, wiki, page };
+export const collections = { art, blog, wiki, page, writing };

@@ -1,0 +1,88 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroCollectionDetail from "@components/shared/_astro/AstroCollectionDetail.astro";
+import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
+import {
+  buildDirectoryIndex,
+  getRecursiveEntries,
+  filterOutIndexEntries,
+  getIndexAndDetailPaths,
+  getPageTitleLabels,
+  paginateEntries,
+} from "@lib/collections";
+import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
+import { createTranslateLabel } from "@i18n/labels";
+
+export const getStaticPaths = (async () => {
+  try {
+    return await getIndexAndDetailPaths("blog");
+  } catch {
+    return [];
+  }
+}) satisfies GetStaticPaths;
+
+const { mode, entry, slug, entries } = Astro.props;
+const translateLabel = createTranslateLabel();
+
+const index = buildDirectoryIndex(entries ?? []);
+const dir = index[slug ?? ""];
+const indexEntry = dir?.indexEntry;
+const allEntries =
+  mode === "index"
+    ? filterOutIndexEntries(getRecursiveEntries(slug ?? "", index))
+    : [];
+const childFolders = dir?.children ?? [];
+const { pageEntries, totalPages, currentPage } =
+  mode === "index"
+    ? paginateEntries(allEntries, 1, DEFAULT_PAGE_SIZE)
+    : { pageEntries: [], totalPages: 1, currentPage: 1 };
+const baseUrl = slug ? `/blog/${slug}/` : "/blog/";
+const segments = slug ? slug.split("/") : [];
+const parentSlug =
+  mode === "detail" ? entry.id.split("/").slice(0, -1).join("/") : slug;
+const lastSegment = segments.length > 0 ? segments.at(-1)! : undefined;
+const pageTitleLabels = getPageTitleLabels(
+  mode,
+  lastSegment,
+  "Blog",
+  translateLabel,
+);
+const pageTitle = mode === "detail" ? entry.data.title : pageTitleLabels.en;
+const titleLabels = mode === "detail" ? undefined : pageTitleLabels.labelsJson;
+---
+
+<MainLayout
+  title={pageTitle}
+  titleLabels={titleLabels}
+  description={mode === "detail" ? entry.data.description : undefined}
+  keywords={mode === "detail" ? entry.data.tags : undefined}
+  author={mode === "detail" ? entry.data.author : undefined}
+  lang={mode === "detail" ? entry.data.lang : undefined}
+  type={mode === "detail" ? "article" : "website"}
+  date={mode === "detail" && entry.data.date
+    ? entry.data.date.toISOString()
+    : undefined}
+>
+  {
+    mode === "detail" ? (
+      <AstroCollectionDetail
+        entry={entry}
+        collection="blog"
+        parentSlug={parentSlug}
+      />
+    ) : (
+      <AstroRecursiveCollectionIndex
+        collection="blog"
+        entries={pageEntries}
+        slug={slug}
+        childFolders={childFolders}
+        page={currentPage}
+        totalPages={totalPages}
+        baseUrl={baseUrl}
+        baseLabel="Blog"
+        indexEntry={indexEntry}
+      />
+    )
+  }
+</MainLayout>

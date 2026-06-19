@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "@layouts/MainLayout.astro";
+import AstroRecursiveCollectionIndex from "@components/shared/_astro/AstroRecursiveCollectionIndex.astro";
+import {
+  buildDirectoryIndex,
+  getRecursiveEntries,
+  filterOutIndexEntries,
+  getPaginationPaths,
+  paginateEntries,
+} from "@lib/collections";
+import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
+
+export const getStaticPaths = (async () => {
+  try {
+    return await getPaginationPaths("writing", DEFAULT_PAGE_SIZE);
+  } catch {
+    return [];
+  }
+}) satisfies GetStaticPaths;
+
+const { slug, page, entries } = Astro.props;
+
+const index = buildDirectoryIndex(entries);
+const dir = index[slug ?? ""];
+const allEntries = filterOutIndexEntries(
+  getRecursiveEntries(slug ?? "", index),
+);
+const { pageEntries, totalPages, currentPage } = paginateEntries(
+  allEntries,
+  page,
+  DEFAULT_PAGE_SIZE,
+);
+const baseUrl = slug ? `/writing/${slug}/` : "/writing/";
+const childFolders = dir?.children ?? [];
+---
+
+<MainLayout>
+  <AstroRecursiveCollectionIndex
+    collection="writing"
+    entries={pageEntries}
+    slug={slug}
+    childFolders={childFolders}
+    page={currentPage}
+    totalPages={totalPages}
+    baseUrl={baseUrl}
+    baseLabel="Writing"
+  />
+</MainLayout>

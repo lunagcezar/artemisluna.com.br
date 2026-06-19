@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from "astro:content";
+import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
+import AstroEntryMeta from "@components/core/_astro/AstroEntryMeta.astro";
+import { ArticleImageViewer } from "@components/shared/article-image-viewer";
+import {
+  createTranslateLabel,
+  SUPPORTED_LOCALES,
+  translations,
+} from "@i18n/labels";
+import { formatSegment } from "@lib/collections";
+import { render } from "astro:content";
+
+type Props = {
+  entry: CollectionEntry<"writing">;
+  parentSlug?: string;
+};
+
+const { entry, parentSlug } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const translateLabel = createTranslateLabel();
+const contentId = "writing-content-" + entry.id.replace(/[/\\]/g, "-");
+const baseLabels = Object.fromEntries(
+  SUPPORTED_LOCALES.map((locale) => [
+    locale,
+    translations[locale]?.["writing"] ?? formatSegment("writing"),
+  ]),
+);
+const isPlay = data.layout === "play";
+---
+
+<article class="grid gap-4">
+  <div class="grid gap-2">
+    <AstroRecursiveBreadcrumb
+      baseUrl="/writing/"
+      baseLabels={baseLabels}
+      slug={parentSlug}
+      translateLabel={translateLabel}
+      isDetail
+    />
+    <h1 class="text-3xl font-semibold tracking-tight">{data.title}</h1>
+    <AstroEntryMeta entry={entry} translateLabel={translateLabel} />
+  </div>
+
+  <div id={contentId} class:list={["article-content", isPlay && "play-script"]}>
+    <Content />
+  </div>
+
+  {isPlay && <ArticleImageViewer containerId={contentId} client:visible />}
+</article>

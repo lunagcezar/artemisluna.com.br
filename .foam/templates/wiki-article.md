@@ -1,11 +1,4 @@
 ---
-name: Wiki Article
-description: New wiki article
-filepath: "src/content/wiki/$FOAM_SLUG.md"
----
-
----
-
 title: $FOAM_TITLE
 description: "Meta description."
 tags: []
@@ -15,7 +8,6 @@ lang: en
 image: ""
 status: published
 index: false
-
 ---
 
 Write your content here.

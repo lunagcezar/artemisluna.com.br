@@ -35,7 +35,9 @@ The art portfolio is built around Astro content collections and a directory-tree
 
 ## Collection schema (`src/content.config.ts`)
 
-All collections (art, blog, wiki, page) share the `lang` field: `lang: z.enum(["en", "pt", "eo"]).default("en")`. Set `lang: pt` for Portuguese content or `lang: eo` for Esperanto content to enable correct hyphenation via `<html lang>`. The `blog` collection is currently commented out in `content.config.ts` — uncomment when blog posts are ready.
+All collections (art, blog, wiki, writing, page) share the `lang` field: `lang: z.enum(["en", "pt", "eo"]).default("en")`. Set `lang: pt` for Portuguese content or `lang: eo` for Esperanto content to enable correct hyphenation via `<html lang>`.
+
+The `writing` collection has an additional `layout` field: `layout: z.enum(["prose", "play"]).default("prose")`. Set `layout: play` for play scripts and screenplays that need monospace formatting with centered scene headings and character names.
 
 ## Content organization
 
@@ -80,6 +82,28 @@ Wiki follows the same pattern as the art section:
 - `src/pages/wiki/[...slug]/page/[page].astro` handles pagination with `/page/N/` URLs.
 - `src/components/shared/_astro/AstroRecursiveCollectionIndex.astro` renders the list view with breadcrumbs and child-folder links.
 - `src/components/shared/_astro/AstroCollectionDetail.astro` renders detail pages with breadcrumbs, metadata, and markdown content.
+
+## Writing routing
+
+Writing follows the same pattern as wiki, with an additional layout option for play scripts:
+
+- `src/pages/writing/[...slug].astro` handles the root index, directory indexes, and detail pages.
+- `src/pages/writing/[...slug]/page/[page].astro` handles pagination with `/page/N/` URLs.
+- `src/components/features/writing/_astro/AstroWritingDetail.astro` renders detail pages with support for both prose and play layouts.
+
+### Play script layout
+
+When a writing entry has `layout: play` in its frontmatter, the content is rendered with:
+
+- Monospace font throughout
+- Centered scene headings (lines starting with `INT.` or `EXT.`)
+- Centered character names (all-caps lines)
+- Centered stage directions (lines in parentheses)
+- Centered act/section headings (bold text)
+
+The CSS class `.play-script` in `global.css` handles the formatting.
+
+See `docs/writing-plays.md` for detailed formatting conventions and examples.
 
 Shared recursive UI pieces live in `src/components/core/_astro/`:
 
@@ -268,11 +292,12 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 Foam templates live in `.foam/templates/` and are used by the Foam VSCode extension to scaffold new content with proper frontmatter:
 
-| File              | Collection | When to use                               |
-| ----------------- | ---------- | ----------------------------------------- |
-| `art-entry.md`    | `art`      | New artwork post (digital or traditional) |
-| `blog-post.md`    | `blog`     | New blog article                          |
-| `wiki-article.md` | `wiki`     | New wiki article                          |
+| File               | Collection | When to use                               |
+| ------------------ | ---------- | ----------------------------------------- |
+| `art-entry.md`     | `art`      | New artwork post (digital or traditional) |
+| `blog-post.md`     | `blog`     | New blog article                          |
+| `wiki-article.md`  | `wiki`     | New wiki article                          |
+| `writing-entry.md` | `writing`  | New writing piece (prose or play script)  |
 
 Run **Foam: Create New Template** in VSCode to use them. Fill in the placeholders (`title`, `description`, `tags`, etc.) after creation.
 

@@ -12,7 +12,9 @@ export const translations: Record<string, Record<string, string>> = {
     next: "Next",
     more: "More",
     art: "Art",
+    blog: "Blog",
     wiki: "Wiki",
+    writing: "Writing",
     page: "Page",
   },
   pt: {
@@ -90,6 +92,7 @@ export const translations: Record<string, Record<string, string>> = {
     resume: "Currículo",
     light: "Claro",
     dark: "Escuro",
+    writing: "Escritos",
   },
   eo: {
     home: "Hejmo",
@@ -166,6 +169,7 @@ export const translations: Record<string, Record<string, string>> = {
     resume: "Resumo",
     light: "Lumo",
     dark: "Malhela",
+    writing: "Verkado",
   },
 };
 

@@ -7,7 +7,9 @@ export interface CollectionConfig {
 
 export const COLLECTION_CONFIGS: CollectionConfig[] = [
   { name: "art", type: "content" },
+  { name: "blog", type: "content" },
   { name: "wiki", type: "content" },
+  { name: "writing", type: "content" },
   { name: "page", type: "pages" },
 ];
 

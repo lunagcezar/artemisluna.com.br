@@ -333,4 +333,84 @@
       pointer-events: none;
     }
   }
+
+  .play-script {
+    font-family: var(--font-monospace);
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    & p {
+      text-align: left;
+      hyphens: none;
+      margin-bottom: 0.5rem;
+    }
+
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
+      font-family: var(--font-monospace);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.5rem 0 1rem;
+    }
+
+    & h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    & h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    & h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    & strong {
+      display: block;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin: 1.5rem 0 1rem;
+    }
+
+    & em {
+      display: block;
+      text-align: center;
+      font-style: italic;
+      margin: 0.5rem 0;
+    }
+
+    & p:has(strong:only-child),
+    & p:has(em:only-child) {
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+
+    & p:has(strong:only-child) {
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    & blockquote {
+      border-left: none;
+      padding-left: 0;
+      text-align: center;
+      font-style: italic;
+      color: var(--color-muted-foreground);
+      margin: 0.5rem 0;
+    }
+
+    & ul,
+    & ol {
+      padding-left: 0;
+      list-style-position: inside;
+    }
+  }
 }
