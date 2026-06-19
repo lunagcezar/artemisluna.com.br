@@ -21,6 +21,12 @@ Front-end Developer with professional experience building web applications using
 
 Combines a Bachelor's degree in Design from the Federal University of Ceará with previous studies in Computer Engineering, bringing a strong understanding of both software development and user experience. Has experience working on governmental platforms, international projects and assistive technology initiatives.
 
+## Contact
+
+You can contact me on this email address: [lunagondimcezar@gmail.com](mailto:lunagondimcezar@gmail.com)
+
+## Skills
+
 **Front-end skills:** React, Vue.js, Astro, JavaScript (ES6+), TypeScript, HTML5, CSS3, Tailwind, Mantine, Bootstrap
 
 **Back-end skills:** Ruby on Rails, Laravel, REST APIs, Prisma, Supabase
@@ -28,18 +34,6 @@ Combines a Bachelor's degree in Design from the Federal University of Ceará wit
 **Design skills:** UI Design, UX Design, Design Systems, Wireframing, Prototyping, Figma
 
 **Tools:** Git, GitHub, GitLab, Linux, Docker
-
-## Contact
-
-You can contact me on this email address: [lunagondimcezar@gmail.com](mailto:lunagondimcezar@gmail.com)
-
-## Skills
-
-**Areas:** Front-end (React), Back-end (Rails), UI/UX Design, Graphic Design
-
-**Languages:** TypeScript, JavaScript, Ruby, HTML, CSS
-
-**Frameworks:** React, Rails, Tailwind CSS, Bootstrap
 
 ## Portfolio
 
