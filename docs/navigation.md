@@ -10,7 +10,7 @@ src/components/
   shared/_astro/
     AstroSidebar.astro           ← desktop sticky tree sidebar
     AstroNavbar.astro            ← mobile collapsible tree drawer
-    AstroSidebarBranch.astro     ← recursive tree node renderer
+    AstroSiteBranch.astro     ← recursive tree node renderer
     AstroLocaleSwitcher.astro    ← locale dropdown (auto-detects SUPPORTED_LOCALES)
     AstroThemeSwitcher.astro     ← theme dropdown (CSS-controlled icons, no flash)
 src/lib/
@@ -80,7 +80,7 @@ Wiki (/wiki/)
 
 ### Rendering
 
-`AstroSidebarBranch.astro` is a recursive component (using `Astro.self`) that renders a single tree node. It receives helper functions as props:
+`AstroSiteBranch.astro` is a recursive component (using `Astro.self`) that renders a single tree node. It receives helper functions as props:
 
 - `getLabels(node)` — returns bilingual labels (`{ en, pt }`) for `data-locales` embedding
 - `isActive(node)` — whether the node matches `currentPath`
