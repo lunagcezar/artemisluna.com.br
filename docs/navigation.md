@@ -106,7 +106,7 @@ Locale and theme switchers use shadcn `DropdownMenu` (Radix UI) via React compon
 | `ThemeSwitcher`  | `src/components/shared/theme-switcher.tsx`  | shadcn `DropdownMenu` with Light/Dark options, reads/writes `theme` cookie, toggles `.dark` class                          |
 | `LocaleSwitcher` | `src/components/shared/locale-switcher.tsx` | shadcn `DropdownMenu` with locale options from `SUPPORTED_LOCALES`, calls `applyLocale()`, dispatches `localechange` event |
 
-Both are rendered via Astro island wrappers (`src/components/shared/_astro/AstroThemeSwitcher.astro`, `AstroLocaleSwitcher.astro`) with `client:load`.
+Both are rendered via `client:load` directly in `AstroNavbar.astro`.
 
 ## Shared helpers (`src/lib/sidebar.ts`)
 

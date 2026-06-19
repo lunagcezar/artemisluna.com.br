@@ -8,4 +8,5 @@ export type SearchDoc = {
   url: string;
   collection: string;
   lang: string;
+  date: string;
 };

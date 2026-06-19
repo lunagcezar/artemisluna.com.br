@@ -1,12 +1,20 @@
 import * as React from "react";
 import lunr from "lunr";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@components/core/dropdown-menu";
 import { Input } from "@components/core/input";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Badge } from "@components/core/badge";
+import { Kbd } from "@components/core/kbd";
 import { cn } from "@lib/utils";
-import { searchIndex, getLocale } from "@lib/search";
 import type { SearchDoc } from "../../types/search";
 import { COLLECTION_LABEL } from "@constants/collection";
+import { translations } from "@i18n/labels";
+import { searchIndex } from "@lib/search";
 
 function Search() {
   const [query, setQuery] = React.useState("");
@@ -14,6 +22,7 @@ function Search() {
   const [docs, setDocs] = React.useState<SearchDoc[]>([]);
   const [ready, setReady] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  const [locale, setLocale] = React.useState("en");
   const inputRef = React.useRef<HTMLInputElement>(null);
   const rootRef = React.useRef<HTMLDivElement>(null);
 
@@ -24,6 +33,27 @@ function Search() {
         setDocs(data);
         setReady(true);
       });
+  }, []);
+
+  React.useEffect(() => {
+    function update() {
+      const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+      setLocale(match?.[1] ?? "en");
+    }
+    update();
+    window.addEventListener("localechange", update);
+    return () => window.removeEventListener("localechange", update);
+  }, []);
+
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
   }, []);
 
   const idx = React.useMemo(() => {
@@ -50,11 +80,11 @@ function Search() {
     }
     try {
       const raw = searchIndex(idx, query);
-      const locale = getLocale();
       const mapped = raw
         .map((r) => docs.find((d) => d.id === r.ref))
         .filter((d): d is SearchDoc => d !== undefined)
         .filter((d) => d.lang === locale)
+        .sort((a, b) => b.date.localeCompare(a.date))
         .slice(0, 12);
       setResults(mapped);
       setSelectedIndex(-1);
@@ -75,6 +105,9 @@ function Search() {
       return () => document.removeEventListener("mousedown", handler);
     }
   }, [query]);
+
+  const showDropdown = query.trim().length > 0 && (results.length > 0 || ready);
+  const placeholder = translations[locale]?.search ?? "Search";
 
   const navigateTo = (doc: SearchDoc) => {
     setQuery("");
@@ -114,56 +147,66 @@ function Search() {
     }
   };
 
-  const showDropdown = query.trim().length > 0;
-
   return (
-    <div ref={rootRef} className="relative">
-      <div className="relative">
-        <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
-        <Input
-          ref={inputRef}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={ready ? "Search..." : "Loading index..."}
-          disabled={!ready}
-          className="h-8 w-full rounded-lg pl-7 text-sm"
-          role="combobox"
-          aria-expanded={showDropdown}
-          aria-activedescendant={
-            selectedIndex >= 0 ? `search-result-${selectedIndex}` : undefined
-          }
-        />
-      </div>
+    <div ref={rootRef} className="relative max-sm:max-w-28">
+      <DropdownMenu open={showDropdown} onOpenChange={() => {}}>
+        <DropdownMenuTrigger asChild>
+          <div className="relative cursor-text">
+            <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
+            <Input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                handleKeyDown(e);
+              }}
+              placeholder={ready ? placeholder : "Loading index..."}
+              disabled={!ready}
+              className="h-8 w-full rounded-lg pr-8 pl-7 text-sm max-sm:placeholder:text-transparent"
+              role="combobox"
+              aria-expanded={showDropdown}
+              aria-activedescendant={
+                selectedIndex >= 0
+                  ? `search-result-${selectedIndex}`
+                  : undefined
+              }
+            />
+            {!query && ready && (
+              <Kbd className="absolute top-1/2 right-2 -translate-y-1/2 max-sm:hidden">
+                <span className="text-[10px]">⌘K</span>
+              </Kbd>
+            )}
+          </div>
+        </DropdownMenuTrigger>
 
-      {showDropdown && (
-        <div
-          className="bg-background/80 text-popover-foreground ring-foreground/10 absolute top-full right-0 z-50 mt-1 w-full overflow-hidden rounded-lg p-1 shadow-md ring-1 backdrop-blur-sm"
-          role="listbox"
+        <DropdownMenuContent
+          align="end"
+          sideOffset={4}
+          className="max-h-80 overflow-y-auto"
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          {...({ onOpenAutoFocus: (e: Event) => e.preventDefault() } as any)}
+          onPointerDownOutside={() => setQuery("")}
+          onEscapeKeyDown={() => setQuery("")}
         >
           {results.length === 0 && (
-            <p className="text-muted-foreground px-2 py-3 text-center text-xs">
+            <div className="text-muted-foreground px-2 py-3 text-center text-xs">
               No results found.
-            </p>
+            </div>
           )}
           {results.map((doc, i) => (
-            <a
+            <DropdownMenuItem
               key={doc.id}
               id={`search-result-${i}`}
-              role="option"
-              aria-selected={i === selectedIndex}
-              href={doc.url}
-              onClick={(e) => {
-                e.preventDefault();
-                navigateTo(doc);
-              }}
+              onSelect={() => navigateTo(doc)}
               onMouseEnter={() => setSelectedIndex(i)}
               className={cn(
-                "flex cursor-default items-center gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden transition-colors select-none",
+                "grid max-w-[calc(100vw-2rem)] cursor-pointer sm:max-w-md",
                 i === selectedIndex && "bg-accent text-accent-foreground",
               )}
             >
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 overflow-hidden">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm leading-tight font-medium">
                     {doc.title}
@@ -173,15 +216,15 @@ function Search() {
                   </Badge>
                 </div>
                 {doc.description && (
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="text-muted-foreground block truncate text-xs">
                     {doc.description}
                   </span>
                 )}
               </div>
-            </a>
+            </DropdownMenuItem>
           ))}
-        </div>
-      )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

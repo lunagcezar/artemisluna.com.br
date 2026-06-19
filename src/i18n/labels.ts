@@ -4,6 +4,7 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const translations: Record<string, Record<string, string>> = {
   en: {
     home: "Home",
+    search: "Search",
     resume: "Resume",
     light: "Light",
     dark: "Dark",
@@ -13,6 +14,7 @@ export const translations: Record<string, Record<string, string>> = {
   },
   pt: {
     home: "Início",
+    search: "Pesquisar",
     previous: "Anterior",
     next: "Próxima",
     more: "Mais",

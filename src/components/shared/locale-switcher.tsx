@@ -35,6 +35,7 @@ function LocaleSwitcher() {
             onClick={() => {
               setCookie("locale", code);
               applyLocale(code);
+              window.dispatchEvent(new Event("localechange"));
               setLocale(code);
             }}
           >

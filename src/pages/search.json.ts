@@ -25,6 +25,10 @@ export async function GET() {
         url: `/${name}/${entry.id}/`,
         collection: name,
         lang: (entry.data as { lang?: string }).lang ?? "en",
+        date:
+          "date" in entry.data && entry.data.date
+            ? entry.data.date.toISOString()
+            : "",
       });
     }
   }
@@ -49,6 +53,10 @@ export async function GET() {
       url,
       collection: "page",
       lang: entry.data.lang ?? "en",
+      date:
+        "date" in entry.data && entry.data.date
+          ? entry.data.date.toISOString()
+          : "",
     });
   }
 
