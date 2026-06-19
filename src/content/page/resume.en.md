@@ -1,6 +1,6 @@
 ---
 title: "Resume — Luna G. Cezar"
-description: "Front-end Developer with experience in React, Vue.js, Astro and Ruby on Rails. Currently contributing to digital transformation initiatives for the Government of Ceará."
+description: "Front-end Developer with experience in React, Vue.js, Astro and Ruby on Rails."
 tags:
   - front-end
   - react
@@ -9,6 +9,9 @@ tags:
   - ruby-on-rails
   - ui-ux-design
   - portfolio
+  - resume
+  - faciliart
+  - vibeye
 lang: en
 ---
 
@@ -66,7 +69,7 @@ Below, you can access direct links to projects that I participated.
 
 ## Experience
 
-This résumé is also available in my [LinkedIn profile](https://linkedin.com/in/lunagcezar/).
+This résumé is also available in my [LinkedIn](https://linkedin.com/in/lunagcezar/).
 
 ### FUNCAP
 
@@ -154,11 +157,13 @@ Initial training on web development.
 
 ## Patents
 
-**BR1020180095161A2.** Filed 2018-05-10. Brazil
+### Dispositivo e método auxiliar de mobilidade de deficientes visuais.
 
-**Inventors:** Samuel Jadson Lima, Murcio Gondim Cezar Filho, Danielo Gonçalves Gomes.
+**ID:** BR1020180095161A2
 
-**Title:** Dispositivo e método auxiliar de mobilidade de deficientes visuais.
+**Filed:** 2018-05-10. Brazil
+
+**Inventors:** Samuel Jadson Lima, Luna Gondim Cezar, Danielo Gonçalves Gomes.
 
 ## Certifications
 
