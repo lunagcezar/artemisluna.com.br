@@ -186,9 +186,12 @@ function Search() {
           sideOffset={4}
           className="max-h-80 overflow-y-auto"
           onCloseAutoFocus={(e) => e.preventDefault()}
-          {...({ onOpenAutoFocus: (e: Event) => e.preventDefault() } as any)}
           onPointerDownOutside={() => setQuery("")}
           onEscapeKeyDown={() => setQuery("")}
+          {...({ onOpenAutoFocus: (e: Event) => e.preventDefault() } as Record<
+            string,
+            (e: Event) => void
+          >)}
         >
           {results.length === 0 && (
             <div className="text-muted-foreground px-2 py-3 text-center text-xs">
