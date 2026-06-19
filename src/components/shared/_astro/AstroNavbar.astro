@@ -22,7 +22,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
 <nav
   class={cn(
-    "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm",
+    "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm lg:w-3/4 xl:w-2/3 justify-self-center lg:border-x w-full",
     className,
   )}
 >
@@ -32,6 +32,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
       aria-label="Toggle navigation"
       variant="ghost"
       size="icon"
+      className="lg:hidden"
     >
       <ListIcon id="nav-icon-open" />
       <XIcon id="nav-icon-close" className="hidden" />
@@ -47,7 +48,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
   <div
     id="nav-drawer"
-    class="border-border bg-background hidden max-h-[calc(100dvh-3rem)] overflow-y-auto border-t px-2 pt-2 pb-6"
+    class="border-border hidden max-h-[calc(100dvh-3rem)] overflow-y-auto border-y p-4"
   >
     <ul class="space-y-0.5">
       {
