@@ -14,7 +14,11 @@ import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
 import { createTranslateLabel } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
-  return await getIndexAndDetailPaths("art");
+  try {
+    return await getIndexAndDetailPaths("art");
+  } catch {
+    return [];
+  }
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;

@@ -247,6 +247,7 @@ export async function buildFullSidebarTree(): Promise<{
 
   for (const name of collectionNames) {
     const entries = await getCollection(name as keyof DataEntryMap);
+    if (entries.length === 0) continue;
     tree.push(buildCollectionRoot(name, entries));
   }
 

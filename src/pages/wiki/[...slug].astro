@@ -21,7 +21,11 @@ import {
 } from "@i18n/labels";
 
 export const getStaticPaths = (async () => {
-  return await getIndexAndDetailPaths("wiki");
+  try {
+    return await getIndexAndDetailPaths("wiki");
+  } catch {
+    return [];
+  }
 }) satisfies GetStaticPaths;
 
 const { mode, entry, slug, entries } = Astro.props;

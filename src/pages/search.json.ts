@@ -4,10 +4,16 @@ import type { SearchDoc } from "../types/search";
 
 export async function GET() {
   const docs: SearchDoc[] = [];
-  const contentNames = ["art", "blog", "wiki"] as const;
+  const contentNames = ["art", "wiki"] as const;
 
   for (const name of contentNames) {
-    const entries = await getCollection(name);
+    let entries;
+    try {
+      entries = await getCollection(name);
+    } catch {
+      continue;
+    }
+    if (entries.length === 0) continue;
     for (const entry of entries) {
       if ("index" in entry.data && entry.data.index) continue;
       const rawTags = Array.isArray(entry.data.tags) ? entry.data.tags : [];

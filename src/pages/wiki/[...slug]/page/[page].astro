@@ -12,7 +12,11 @@ import {
 import { DEFAULT_PAGE_SIZE } from "@constants/pagination";
 
 export const getStaticPaths = (async () => {
-  return await getPaginationPaths("wiki", DEFAULT_PAGE_SIZE);
+  try {
+    return await getPaginationPaths("wiki", DEFAULT_PAGE_SIZE);
+  } catch {
+    return [];
+  }
 }) satisfies GetStaticPaths;
 
 const { slug, page, entries } = Astro.props;
