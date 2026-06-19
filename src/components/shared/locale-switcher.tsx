@@ -5,43 +5,39 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@components/core/dropdown-menu";
-import { Button } from "@components/core/button";
 import { SUPPORTED_LOCALES, applyLocale } from "@i18n/labels";
 import { setCookie } from "@lib/cookie";
-
-function useLocale(): string {
-  const [locale, setLocale] = React.useState("en");
-  React.useEffect(() => {
-    function update() {
-      const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-      setLocale(match?.[1] ?? "en");
-    }
-    update();
-    window.addEventListener("localechange", update);
-    return () => window.removeEventListener("localechange", update);
-  }, []);
-  return locale;
-}
+import { Button } from "@components/core/button";
 
 function LocaleSwitcher() {
-  const locale = useLocale();
+  const [locale, setLocale] = React.useState<string | null>(null);
 
-  const selectLocale = (code: string) => {
-    setCookie("locale", code);
-    applyLocale(code);
-    window.dispatchEvent(new Event("localechange"));
-  };
+  React.useEffect(() => {
+    const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
+    setLocale(match?.[1] ?? "en");
+  }, []);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" aria-label="Switch language">
-          <span className="text-sm font-medium">{locale.toUpperCase()}</span>
+          {locale ? (
+            <span className="text-sm font-medium">{locale.toUpperCase()}</span>
+          ) : (
+            <span className="bg-muted inline-block h-4 w-8 animate-pulse rounded" />
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {SUPPORTED_LOCALES.map((code) => (
-          <DropdownMenuItem key={code} onClick={() => selectLocale(code)}>
+          <DropdownMenuItem
+            key={code}
+            onClick={() => {
+              setCookie("locale", code);
+              applyLocale(code);
+              setLocale(code);
+            }}
+          >
             {code.toUpperCase()}
           </DropdownMenuItem>
         ))}

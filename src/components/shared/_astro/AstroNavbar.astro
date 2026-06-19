@@ -72,6 +72,12 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
   const iconClose = document.getElementById("nav-icon-close");
 
   if (toggle && drawer) {
+    const closeDrawer = () => {
+      drawer.classList.add("hidden");
+      iconOpen?.classList.remove("hidden");
+      iconClose?.classList.add("hidden");
+    };
+
     toggle.addEventListener("click", () => {
       const isOpen = drawer.classList.toggle("hidden");
       iconOpen?.classList.toggle("hidden", !isOpen);
@@ -79,11 +85,11 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
     });
 
     drawer.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        drawer.classList.add("hidden");
-        iconOpen?.classList.remove("hidden");
-        iconClose?.classList.add("hidden");
-      });
+      link.addEventListener("click", closeDrawer);
+    });
+
+    window.matchMedia("(min-width: 1024px)").addEventListener("change", (e) => {
+      if (e.matches) closeDrawer();
     });
   }
 </script>

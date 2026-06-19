@@ -8,34 +8,26 @@ import {
 import { Button } from "@components/core/button";
 import { SunIcon, MoonIcon } from "@phosphor-icons/react";
 import { setCookie } from "@lib/cookie";
-import { translations } from "@i18n/labels";
-
-function useLocale(): string {
-  const [locale, setLocale] = React.useState("en");
-  React.useEffect(() => {
-    function update() {
-      const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-      setLocale(match?.[1] ?? "en");
-    }
-    update();
-    window.addEventListener("localechange", update);
-    return () => window.removeEventListener("localechange", update);
-  }, []);
-  return locale;
-}
 
 function ThemeSwitcher() {
-  const locale = useLocale();
+  const [ready, setReady] = React.useState(false);
 
-  const t = (key: string) =>
-    translations[locale]?.[key] ?? translations.en?.[key] ?? key;
+  React.useEffect(() => {
+    setReady(true);
+  }, []);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" aria-label="Toggle theme">
-          <SunIcon className="size-4 dark:hidden" />
-          <MoonIcon className="hidden size-4 dark:block" />
+          {ready ? (
+            <>
+              <SunIcon className="size-4 dark:hidden" />
+              <MoonIcon className="hidden size-4 dark:block" />
+            </>
+          ) : (
+            <span className="bg-muted inline-block size-4 animate-pulse rounded" />
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -46,7 +38,7 @@ function ThemeSwitcher() {
           }}
         >
           <SunIcon className="size-4" />
-          {t("light")}
+          Light
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -55,7 +47,7 @@ function ThemeSwitcher() {
           }}
         >
           <MoonIcon className="size-4" />
-          {t("dark")}
+          Dark
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
