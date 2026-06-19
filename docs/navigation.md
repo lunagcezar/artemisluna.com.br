@@ -93,19 +93,16 @@ Ancestor expansion is automatic: nodes whose descendants are active always show 
 - **Desktop** (`lg:` and up): `AstroSidebar` is a sticky sidebar (`sticky top-0 h-screen overflow-y-auto`) beside the main content
 - **Mobile** (below `lg:`): `AstroNavbar` is a fixed top bar with a hamburger toggle that opens a drawer containing the same tree
 
-## Dropdown menus (`src/lib/dropdown.ts`)
+## Dropdown menus
 
-Locale and theme switchers use a shared vanilla JS dropdown via `initSelectMenus(config)`:
+Locale and theme switchers use shadcn `DropdownMenu` (Radix UI) via React components mounted as Astro islands:
 
-| Config          | Purpose                                                  |
-| --------------- | -------------------------------------------------------- |
-| `rootSelector`  | CSS selector for the root element                        |
-| `optionAttr`    | Data attribute on each option (e.g. `data-theme-option`) |
-| `valueSelector` | Optional element whose text shows the selected value     |
-| `initialValue`  | Pre-selected option on page load                         |
-| `onSelect`      | Callback fired when an option is picked                  |
+| Component        | File                                        | Description                                                                                                                |
+| ---------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `ThemeSwitcher`  | `src/components/shared/theme-switcher.tsx`  | shadcn `DropdownMenu` with Light/Dark options, reads/writes `theme` cookie, toggles `.dark` class                          |
+| `LocaleSwitcher` | `src/components/shared/locale-switcher.tsx` | shadcn `DropdownMenu` with locale options from `SUPPORTED_LOCALES`, calls `applyLocale()`, dispatches `localechange` event |
 
-The library handles: open/close positioning via `fixed`, keyboard navigation (ArrowDown/ArrowUp/Enter/Escape), ARIA attributes (`aria-expanded`, `role`), click-outside-to-close, and hover-to-highlight.
+Both are rendered via Astro island wrappers (`src/components/shared/_astro/AstroThemeSwitcher.astro`, `AstroLocaleSwitcher.astro`) with `client:load`.
 
 ## Shared helpers (`src/lib/sidebar.ts`)
 
