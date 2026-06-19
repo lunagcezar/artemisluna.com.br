@@ -106,7 +106,12 @@ function Search() {
 
   React.useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const isInsideRoot = rootRef.current && rootRef.current.contains(target);
+      const isInsideDropdown = (target as Element).closest?.(
+        "[data-radix-popper-content-wrapper]",
+      );
+      if (!isInsideRoot && !isInsideDropdown) {
         setQuery("");
       }
     };
@@ -195,7 +200,6 @@ function Search() {
           sideOffset={4}
           className="max-h-80 overflow-y-auto"
           onCloseAutoFocus={(e) => e.preventDefault()}
-          onPointerDownOutside={() => setQuery("")}
           onEscapeKeyDown={() => setQuery("")}
           {...({ onOpenAutoFocus: (e: Event) => e.preventDefault() } as Record<
             string,
