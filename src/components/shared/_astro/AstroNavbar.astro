@@ -3,11 +3,13 @@ import { cn } from "@lib/utils";
 import { buildFullSidebarTree } from "@lib/collections";
 import { createSidebarHelpers } from "@lib/sidebar";
 import AstroSiteBranch from "./AstroSiteBranch.astro";
+import AstroSocialNetworks from "./AstroSocialNetworks.astro";
 import { XIcon, ListIcon } from "@phosphor-icons/react";
 import { Button } from "@components/core/button";
 import { LocaleSwitcher } from "../locale-switcher";
 import { ThemeSwitcher } from "../theme-switcher";
 import { Search } from "../search";
+import { Separator } from "@components/core/separator";
 
 type Props = {
   currentPath: string;
@@ -53,7 +55,7 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
   <div
     id="nav-drawer"
-    class="border-border hidden max-h-[calc(100dvh-3rem)] overflow-y-auto border-y p-4"
+    class="border-border hidden max-h-[calc(100dvh-3rem)] flex-col gap-2 overflow-y-auto border-y p-4"
   >
     <ul class="space-y-0.5">
       {
@@ -67,6 +69,8 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
         ))
       }
     </ul>
+    <Separator orientation="horizontal" />
+    <AstroSocialNetworks className="pl-2" />
   </div>
 </nav>
 
@@ -79,13 +83,16 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
   if (toggle && drawer) {
     const closeDrawer = () => {
+      drawer.classList.remove("flex");
       drawer.classList.add("hidden");
       iconOpen?.classList.remove("hidden");
       iconClose?.classList.add("hidden");
     };
 
     toggle.addEventListener("click", () => {
-      const isOpen = drawer.classList.toggle("hidden");
+      const isOpen = drawer.classList.contains("hidden");
+      drawer.classList.toggle("hidden", !isOpen);
+      drawer.classList.toggle("flex", isOpen);
       iconOpen?.classList.toggle("hidden", !isOpen);
       iconClose?.classList.toggle("hidden", isOpen);
     });

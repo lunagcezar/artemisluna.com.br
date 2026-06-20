@@ -1,0 +1,41 @@
+---
+import { SOCIAL_LINKS } from "@config/social";
+import { buttonVariants } from "@components/core/button";
+import { cn } from "@lib/utils";
+import { createTranslateLabel } from "@i18n/labels";
+
+type Props = {
+  className?: string;
+};
+
+const { className } = Astro.props;
+
+const t = createTranslateLabel();
+const headingLabels = t("social-networks");
+---
+
+<div class={cn("flex flex-col gap-1", className)}>
+  <p class="text-sm font-bold" data-locales={JSON.stringify(headingLabels)}>
+    {headingLabels.en}
+  </p>
+  <ul class="flex flex-col gap-0.5">
+    {
+      SOCIAL_LINKS.map((link) => (
+        <li>
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={buttonVariants({
+              variant: "ghost",
+              size: "xs",
+              className: "h-auto",
+            })}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

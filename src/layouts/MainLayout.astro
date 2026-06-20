@@ -2,7 +2,7 @@
 import AstroPageShell from "@components/shared/_astro/AstroPageShell.astro";
 import "@styles/global.css";
 import { getCanonicalUrl, getSiteRoot } from "@lib/url";
-import { SOCIAL_LINKS, SAME_AS_URLS } from "@config/social";
+import { SAME_AS_URLS } from "@config/social";
 
 export interface Props {
   title?: string;
@@ -77,7 +77,7 @@ const jsonLd = {
     <link rel="canonical" href={canonicalUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    {Object.values(SOCIAL_LINKS).map((url) => <link rel="me" href={url} />)}
+    {SAME_AS_URLS.map((url) => <link rel="me" href={url} />)}
     {description && <meta name="description" content={description} />}
     {author && <meta name="author" content={author} />}
     {

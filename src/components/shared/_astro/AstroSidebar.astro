@@ -3,6 +3,8 @@ import { cn } from "@lib/utils";
 import { buildFullSidebarTree } from "@lib/collections";
 import { createSidebarHelpers } from "@lib/sidebar";
 import AstroSiteBranch from "./AstroSiteBranch.astro";
+import AstroSocialNetworks from "./AstroSocialNetworks.astro";
+import { Separator } from "@components/core/separator";
 
 type Props = {
   currentPath: string;
@@ -18,20 +20,24 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
 
 <nav
   class={cn(
-    "sticky top-0 h-screen w-48 shrink-0 overflow-y-auto border-r pt-16 pb-8 lg:border-l border-border",
+    "sticky top-0 h-screen w-48 shrink-0 border-r pt-12 lg:border-l border-border ",
     className,
   )}
 >
-  <ul class="space-y-0.5 px-2">
-    {
-      tree.map((node) => (
-        <AstroSiteBranch
-          node={node}
-          getLabels={getNodeLabels}
-          isActive={nodeIsActive}
-          hasActiveDescendant={nodeHasActiveDescendant}
-        />
-      ))
-    }
-  </ul>
+  <div class="flex h-full flex-col gap-4 overflow-y-auto px-2 py-4">
+    <ul class="space-y-0.5">
+      {
+        tree.map((node) => (
+          <AstroSiteBranch
+            node={node}
+            getLabels={getNodeLabels}
+            isActive={nodeIsActive}
+            hasActiveDescendant={nodeHasActiveDescendant}
+          />
+        ))
+      }
+    </ul>
+    <Separator orientation="horizontal" />
+    <AstroSocialNetworks className="pl-2" />
+  </div>
 </nav>

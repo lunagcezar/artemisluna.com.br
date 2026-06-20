@@ -93,6 +93,7 @@ export const translations: Record<string, Record<string, string>> = {
     light: "Claro",
     dark: "Escuro",
     writing: "Escritos",
+    "social-networks": "Redes sociais",
   },
   eo: {
     home: "Hejmo",
@@ -170,6 +171,7 @@ export const translations: Record<string, Record<string, string>> = {
     light: "Lumo",
     dark: "Malhela",
     writing: "Verkado",
+    "social-networks": "Sociaj retoj",
   },
 };
 
