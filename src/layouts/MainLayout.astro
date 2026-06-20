@@ -2,6 +2,7 @@
 import AstroPageShell from "@components/shared/_astro/AstroPageShell.astro";
 import "@styles/global.css";
 import { getCanonicalUrl, getSiteRoot } from "@lib/url";
+import { SOCIAL_LINKS, SAME_AS_URLS } from "@config/social";
 
 export interface Props {
   title?: string;
@@ -37,13 +38,16 @@ const jsonLd = {
   description: description ?? "Art portfolio and wiki by Luna G. Cezar",
   url: canonicalUrl,
   ...(type === "article" && date && { datePublished: date }),
-  ...(author && { author: { "@type": "Person", name: author } }),
+  ...(author && {
+    author: { "@type": "Person", name: author, sameAs: SAME_AS_URLS },
+  }),
   ...(image && {
     image: image.startsWith("http") ? image : `${siteRoot}${image}`,
   }),
   publisher: {
     "@type": "Person",
     name: "Luna G. Cezar",
+    sameAs: SAME_AS_URLS,
   },
 };
 ---
@@ -73,6 +77,7 @@ const jsonLd = {
     <link rel="canonical" href={canonicalUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {Object.values(SOCIAL_LINKS).map((url) => <link rel="me" href={url} />)}
     {description && <meta name="description" content={description} />}
     {author && <meta name="author" content={author} />}
     {
