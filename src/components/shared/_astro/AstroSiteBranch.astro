@@ -1,6 +1,7 @@
 ---
-import { cn } from "@lib/utils";
+import { buttonVariants } from "@components/core/button";
 import type { SidebarNode } from "@lib/collections";
+import { cn } from "@lib/utils";
 
 type Props = {
   node: SidebarNode;
@@ -28,10 +29,12 @@ const hasChildren = node.children.length > 0;
   <a
     href={node.href}
     data-locales={JSON.stringify(labels)}
-    class={cn(
-      "block rounded px-2 py-1 text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
-      active && "bg-accent font-medium text-accent-foreground",
-    )}
+    style="white-space: normal"
+    class={buttonVariants({
+      variant: active ? "default" : "ghost",
+      size: "fluid",
+      className: cn(active && "font-bold!", "sm:w-full w-fit justify-start"),
+    })}
   >
     {labels.en}
   </a>
