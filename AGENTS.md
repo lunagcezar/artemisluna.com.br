@@ -192,7 +192,7 @@ Code blocks rendered by Shiki (Astro's syntax highlighter) get a terminal-style 
 
 Same lightbox as above but scans a DOM container for `<img>` elements. Used in blog/wiki pages where images are embedded in markdown rather than listed in frontmatter. Lives at `src/components/shared/article-image-viewer.tsx`.
 
-- Mounted via `AstroArticleImageViewer.astro` with `client:visible`.
+- Mounted via `AstroArticleImageViewer.astro` with `client:idle`.
 - On mount, queries `document.getElementById(containerId)` and indexes all `<img>` elements.
 - Clicking any image opens the dialog with arrow navigation and zoom/pan.
 
@@ -285,7 +285,7 @@ Client-side locale detection for UI strings. No server routing or content restru
 
 - **Resource hints** — `<link rel="preconnect">` for Google Fonts in `MainLayout.astro` to reduce font loading latency.
 - **Font display** — `font-display: swap` applied to web fonts in `global.css` to prevent FOIT.
-- **Lazy hydration** — React islands use `client:visible` instead of `client:load` where appropriate (LocaleSwitcher, ThemeSwitcher, ImageViewer, ArticleImageViewer) to defer hydration until components enter viewport.
+- **Lazy hydration** — Some React islands use `client:visible` instead of `client:load` where appropriate (LocaleSwitcher, ThemeSwitcher) to defer hydration until components enter viewport.
 - **Tailwind v4 classes** — Use canonical Tailwind v4 classes: `bg-linear-to-r` instead of `bg-gradient-to-r`, `not-focus-visible:` instead of `[&:not(:focus-visible)]:`.
 
 # Foam templates
