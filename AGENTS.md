@@ -29,6 +29,56 @@
 - The site is fully static (SSG) — no SSR adapter needed.
 - After implementing features, always run pnpm astro check and, after that, build it (pnpm build).
 
+# Index page / Recent entries
+
+The homepage (`src/pages/index.astro`) displays a "latest entries" section below the page content, configured via `RECENT_SECTIONS` in `src/constants/collections.ts`:
+
+```ts
+export const RECENT_SECTIONS: RecentSectionDef[] = [
+  { collection: "art", display: "art" }, // art cards with images
+  { collection: "blog", display: "list" }, // text entry list
+  { collection: "wiki", display: "list" }, // text entry list
+];
+```
+
+Each section shows up to `RECENT_PER_COLLECTION` entries (default 4), sorted by date DESC, filtered to exclude `index: true` wiki entries. The display mode controls rendering:
+
+- `"art"` — uses `AstroArtCard` with resolved images in a responsive grid
+- `"list"` — uses `AstroEntryList` with date, tags, title, and description
+
+Sections with no entries are hidden. The "More" link at the end of each section points to the collection root (`/art/`, `/wiki/`, `/blog/`).
+
+## AstroEntryList (`src/components/core/_astro/AstroEntryList.astro`)
+
+Reusable list component that renders entries as `Item` cards. Accepts `collection`, `entries`, `translateLabel`, optional `limit` (slices entries), and optional `showMoreHref` (renders a "More" link). Used by both the index page and `AstroRecursiveCollectionIndex`.
+
+## Constants (`src/constants/collections.ts`)
+
+- `RECENT_PER_COLLECTION` — max entries per section (4)
+- `RECENT_SECTIONS` — array of `{ collection, display }` defining which collections appear on the homepage and how they render
+
+## Types (`src/types/recent.d.ts`)
+
+- `RecentDisplay` — `"art" | "list"` (grid with art cards vs text list)
+- `RecentSectionDef` — `{ collection: string; display: RecentDisplay }`
+- `ArtCardData` — pre-resolved art card `{ entry, resolvedImage }`
+- `RecentSectionData` — resolved section `{ collection, entries, artCards? }`
+- `CollectionName` — `keyof DataEntryMap`
+
+## Adding a collection to the homepage
+
+Add an entry to `RECENT_SECTIONS` in `src/constants/collections.ts`:
+
+```ts
+{ collection: "writing", display: "list" }
+```
+
+The collection must:
+
+- Have entries in `src/content/<name>/`
+- Have translations in `src/i18n/labels.ts` for the collection name and a `latest` key
+- Support `["art" | "list"]` — `"list"` works for any collection with standard date/tags/title/description fields; `"art"` requires the art-specific `images` field and `AstroArtCard` component
+
 # Components
 
 - The UI components must be organized in three folders, like an atomic design:

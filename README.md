@@ -202,6 +202,30 @@ The system has two key data structures:
 
 Both are rebuilt automatically when content is added, moved, or removed — no manual navigation updates required.
 
+## Homepage / Recent entries
+
+The homepage (`src/pages/index.astro`) renders the page content (from `src/content/page/`) followed by a "latest entries" section for each collection configured in `RECENT_SECTIONS` (`src/constants/collections.ts`):
+
+```ts
+export const RECENT_SECTIONS: RecentSectionDef[] = [
+  { collection: "art", display: "art" }, // image card grid
+  { collection: "blog", display: "list" }, // text entry list
+  { collection: "wiki", display: "list" }, // text entry list
+];
+```
+
+Each section shows up to `RECENT_PER_COLLECTION` entries (default 4), sorted by date descending. The display mode controls rendering:
+
+- `"art"` — uses `AstroArtCard` with resolved images in a responsive `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` layout
+- `"list"` — uses `AstroEntryList` with date, tags, title, and description in styled `Item` cards
+
+Sections with no entries are hidden. Each section has a "More" link pointing to its collection root (`/art/`, `/wiki/`, `/blog/`). The `latest` translation key controls the parenthetical label (e.g., `Art (Latest)`, `Arte (Últimos)`).
+
+Adding a new collection to the homepage requires:
+
+1. Adding an entry to `RECENT_SECTIONS` in `src/constants/collections.ts`
+2. Ensuring the collection has content in `src/content/<name>/` and translations in `src/i18n/labels.ts`
+
 ## Naming conventions
 
 - **Folders**: `kebab-case` only (e.g. `oil-pastel`, `urban-sketching`, `fictional-cityscapes`).

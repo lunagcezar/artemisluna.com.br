@@ -2,22 +2,14 @@
 import type { CollectionEntry, DataEntryMap } from "astro:content";
 import AstroPagination from "@components/core/_astro/AstroPagination.astro";
 import AstroRecursiveBreadcrumb from "@components/core/_astro/AstroRecursiveBreadcrumb.astro";
-import AstroTagBadges from "@components/core/_astro/AstroTagBadges.astro";
+import AstroEntryList from "@components/core/_astro/AstroEntryList.astro";
 import AstroArticleImageViewer from "@components/shared/_astro/AstroArticleImageViewer.astro";
 import { formatSegment } from "@lib/collections";
-import { formatDateForLocales } from "@lib/date";
 import {
   createTranslateLabel,
   SUPPORTED_LOCALES,
   translations,
 } from "@i18n/labels";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@components/core/item";
-import { Separator } from "@components/core/separator";
 
 type Props = {
   collection: string;
@@ -77,51 +69,11 @@ const baseLabels = Object.fromEntries(
 
   {indexEntry && <AstroArticleImageViewer entry={indexEntry} />}
 
-  <ul class="grid gap-4">
-    {
-      entries.map((entry) => (
-        <li>
-          <a href={`/${collection}/${entry.id}/`}>
-            <Item
-              variant="outline"
-              className="hover:bg-muted transition-colors p-4"
-            >
-              <ItemContent>
-                <div class="flex gap-2">
-                  {entry.data.date && (
-                    <>
-                      <time
-                        class="text-muted-foreground text-sm"
-                        data-locales={JSON.stringify(
-                          formatDateForLocales(entry.data.date),
-                        )}
-                      >
-                        {formatDateForLocales(entry.data.date).en}
-                      </time>
-                      <Separator orientation="vertical" />
-                    </>
-                  )}
-                  {entry.data.tags && (
-                    <div class="flex gap-2">
-                      <AstroTagBadges
-                        tags={entry.data.tags}
-                        translateLabel={translateLabel}
-                        className="text-muted-foreground border-muted-foreground"
-                      />
-                    </div>
-                  )}
-                </div>
-                <ItemTitle>{entry.data.title}</ItemTitle>
-                {entry.data.description && (
-                  <ItemDescription>{entry.data.description}</ItemDescription>
-                )}
-              </ItemContent>
-            </Item>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+  <AstroEntryList
+    collection={collection}
+    entries={entries}
+    translateLabel={translateLabel}
+  />
 
   <AstroPagination
     baseUrl={baseUrl}

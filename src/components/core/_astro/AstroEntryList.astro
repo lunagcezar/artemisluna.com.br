@@ -1,0 +1,102 @@
+---
+import type { TranslateLabel } from "@i18n/labels";
+import { SUPPORTED_LOCALES, translations } from "@i18n/labels";
+import { formatDateForLocales } from "@lib/date";
+import AstroTagBadges from "./AstroTagBadges.astro";
+import {
+  Item,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+} from "@components/core/item";
+import { Separator } from "@components/core/separator";
+
+type EntryShape = {
+  id: string;
+  data: {
+    title: string;
+    description?: string;
+    date?: Date;
+    tags?: string[];
+  };
+};
+
+type Props = {
+  collection: string;
+  entries: EntryShape[];
+  translateLabel: TranslateLabel;
+  limit?: number;
+  showMoreHref?: string;
+};
+
+const { collection, entries, translateLabel, limit: rawLimit } = Astro.props;
+const showMoreHref =
+  "showMoreHref" in Astro.props ? Astro.props.showMoreHref : undefined;
+const limit = rawLimit && rawLimit > 0 ? rawLimit : undefined;
+const visible = limit ? entries.slice(0, limit) : entries;
+---
+
+<ul class="grid gap-4">
+  {
+    visible.map((entry) => (
+      <li>
+        <a href={`/${collection}/${entry.id}/`}>
+          <Item
+            variant="outline"
+            className="hover:bg-muted transition-colors p-4"
+          >
+            <ItemContent>
+              <div class="flex items-center gap-2">
+                {entry.data.date && (
+                  <time
+                    class="text-muted-foreground text-sm"
+                    data-locales={JSON.stringify(
+                      formatDateForLocales(entry.data.date),
+                    )}
+                  >
+                    {formatDateForLocales(entry.data.date).en}
+                  </time>
+                )}
+                {entry.data.tags && entry.data.tags.length > 0 && (
+                  <>
+                    <Separator orientation="vertical" />
+                    <AstroTagBadges
+                      tags={entry.data.tags}
+                      translateLabel={translateLabel}
+                      className="text-muted-foreground border-muted-foreground"
+                    />
+                  </>
+                )}
+              </div>
+              <ItemTitle>{entry.data.title}</ItemTitle>
+              {entry.data.description && (
+                <ItemDescription>{entry.data.description}</ItemDescription>
+              )}
+            </ItemContent>
+          </Item>
+        </a>
+      </li>
+    ))
+  }
+
+  {
+    showMoreHref && (
+      <li>
+        <a
+          href={showMoreHref}
+          class="text-muted-foreground hover:text-foreground flex items-center justify-center gap-1 py-2 text-sm transition-colors"
+          data-locales={JSON.stringify(
+            Object.fromEntries(
+              SUPPORTED_LOCALES.map((l) => [
+                l,
+                translations[l]?.more ?? "More",
+              ]),
+            ),
+          )}
+        >
+          {translations.en?.more ?? "More"}
+        </a>
+      </li>
+    )
+  }
+</ul>
