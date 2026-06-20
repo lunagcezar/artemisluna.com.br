@@ -164,84 +164,87 @@ function Search() {
 
   return (
     <div ref={rootRef} className="relative max-sm:max-w-28">
-      <DropdownMenu open={showDropdown} onOpenChange={() => {}}>
-        <DropdownMenuTrigger asChild>
-          <div className="relative cursor-text">
-            <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
-            <Input
-              ref={inputRef}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onPointerDown={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-                handleKeyDown(e);
-              }}
-              placeholder={ready ? placeholder : "Loading index..."}
-              className="h-8 w-full rounded-lg pr-8 pl-7 text-sm max-sm:placeholder:text-transparent"
-              role="combobox"
-              aria-expanded={showDropdown}
-              aria-activedescendant={
-                selectedIndex >= 0
-                  ? `search-result-${selectedIndex}`
-                  : undefined
-              }
-            />
-            {!query && ready && (
-              <Kbd className="absolute top-1/2 right-2 -translate-y-1/2 max-sm:hidden">
-                <span className="text-[10px]">⌘K</span>
-              </Kbd>
-            )}
-          </div>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent
-          align="end"
-          sideOffset={4}
-          className="max-h-80 overflow-y-auto"
-          onCloseAutoFocus={(e) => e.preventDefault()}
-          onEscapeKeyDown={() => setQuery("")}
-          {...({ onOpenAutoFocus: (e: Event) => e.preventDefault() } as Record<
-            string,
-            (e: Event) => void
-          >)}
-        >
-          {results.length === 0 && (
-            <div className="text-muted-foreground px-2 py-3 text-center text-xs">
-              No results found.
-            </div>
-          )}
-          {results.map((doc, i) => (
-            <DropdownMenuItem
-              key={doc.id}
-              id={`search-result-${i}`}
-              onSelect={() => navigateTo(doc)}
-              onMouseEnter={() => setSelectedIndex(i)}
-              className={cn(
-                "grid max-w-[calc(100vw-2rem)] cursor-pointer sm:max-w-md",
-                i === selectedIndex && "bg-accent text-accent-foreground",
+      {!ready ? (
+        <span className="bg-muted flex h-6 w-28 animate-pulse rounded-lg sm:w-46 md:w-48" />
+      ) : (
+        <DropdownMenu open={showDropdown} onOpenChange={() => {}}>
+          <DropdownMenuTrigger asChild>
+            <div className="relative cursor-text">
+              <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
+              <Input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onPointerDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  handleKeyDown(e);
+                }}
+                placeholder={placeholder}
+                className="h-8 w-full rounded-lg pr-8 pl-7 text-sm max-sm:placeholder:text-transparent"
+                role="combobox"
+                aria-expanded={showDropdown}
+                aria-activedescendant={
+                  selectedIndex >= 0
+                    ? `search-result-${selectedIndex}`
+                    : undefined
+                }
+              />
+              {!query && (
+                <Kbd className="absolute top-1/2 right-2 -translate-y-1/2 max-sm:hidden">
+                  <span className="text-[10px]">⌘K</span>
+                </Kbd>
               )}
-            >
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="flex items-center gap-2">
-                  <span className="truncate text-sm leading-tight font-medium">
-                    {doc.title}
-                  </span>
-                  <Badge variant="outline" className="shrink-0 text-[10px]">
-                    {translations[locale]?.[doc.collection] ??
-                      formatSegment(doc.collection)}
-                  </Badge>
-                </div>
-                {doc.description && (
-                  <span className="text-muted-foreground block truncate text-xs">
-                    {doc.description}
-                  </span>
-                )}
+            </div>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            sideOffset={4}
+            className="max-h-80 overflow-y-auto"
+            onCloseAutoFocus={(e) => e.preventDefault()}
+            onEscapeKeyDown={() => setQuery("")}
+            {...({
+              onOpenAutoFocus: (e: Event) => e.preventDefault(),
+            } as Record<string, (e: Event) => void>)}
+          >
+            {results.length === 0 && (
+              <div className="text-muted-foreground px-2 py-3 text-center text-xs">
+                No results found.
               </div>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            )}
+            {results.map((doc, i) => (
+              <DropdownMenuItem
+                key={doc.id}
+                id={`search-result-${i}`}
+                onSelect={() => navigateTo(doc)}
+                onMouseEnter={() => setSelectedIndex(i)}
+                className={cn(
+                  "grid max-w-[calc(100vw-2rem)] cursor-pointer sm:max-w-md",
+                  i === selectedIndex && "bg-accent text-accent-foreground",
+                )}
+              >
+                <div className="min-w-0 flex-1 overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-sm leading-tight font-medium">
+                      {doc.title}
+                    </span>
+                    <Badge variant="outline" className="shrink-0 text-[10px]">
+                      {translations[locale]?.[doc.collection] ??
+                        formatSegment(doc.collection)}
+                    </Badge>
+                  </div>
+                  {doc.description && (
+                    <span className="text-muted-foreground block truncate text-xs">
+                      {doc.description}
+                    </span>
+                  )}
+                </div>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 }

@@ -26,7 +26,7 @@ function ThemeSwitcher() {
               <MoonIcon className="hidden size-4 dark:block" />
             </>
           ) : (
-            <span className="bg-muted inline-block size-4 animate-pulse rounded" />
+            <span className="bg-muted flex h-6 w-8 animate-pulse rounded-lg" />
           )}
         </Button>
       </DropdownMenuTrigger>
