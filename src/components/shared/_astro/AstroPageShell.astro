@@ -12,7 +12,12 @@ const { currentPath, className } = Astro.props;
 ---
 
 <AstroNavbar currentPath={currentPath} />
-<div class={cn("flex w-full lg:w-3/4 xl:w-2/3 justify-self-center", className)}>
+<div
+  class={cn(
+    "flex w-full lg:w-3/4 xl:w-2/3 2xl:w-4/7 justify-self-center",
+    className,
+  )}
+>
   <AstroSidebar currentPath={currentPath} className="hidden lg:block" />
   <main class="min-w-0 flex-1 px-6 pt-16 pb-8 lg:border-r lg:px-8">
     <slot />
