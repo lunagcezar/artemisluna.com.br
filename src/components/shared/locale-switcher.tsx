@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@components/core/dropdown-menu";
-import { SUPPORTED_LOCALES, applyLocale } from "@i18n/labels";
+import { SUPPORTED_LOCALES, applyLocale, getLocale } from "@i18n/labels";
 import { setCookie } from "@lib/cookie";
 import { Button } from "@components/core/button";
 
@@ -13,8 +13,7 @@ function LocaleSwitcher() {
   const [locale, setLocale] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const match = document.cookie.match(/(?:^|;\s*)locale=([^;]*)/);
-    setLocale(match?.[1] ?? "en");
+    setLocale(getLocale("en"));
   }, []);
 
   return (
