@@ -33,7 +33,7 @@ const siteRoot = getSiteRoot();
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": type === "article" ? "Article" : "WebSite",
-  headline: title ?? "Artemis Luna",
+  headline: title ?? "Luna G. Cezar",
   description: description ?? "Art portfolio and wiki by Luna G. Cezar",
   url: canonicalUrl,
   ...(type === "article" && date && { datePublished: date }),
@@ -80,10 +80,10 @@ const jsonLd = {
         <meta name="keywords" content={keywords.join(", ")} />
       )
     }
-    <title>{title ?? "Artemis Luna"}</title>
+    <title>{title ?? "Luna G. Cezar"}</title>
     {titleLabels && <meta name="page-title-labels" content={titleLabels} />}
 
-    <meta property="og:title" content={title ?? "Artemis Luna"} />
+    <meta property="og:title" content={title ?? "Luna G. Cezar"} />
     {description && <meta property="og:description" content={description} />}
     <meta
       property="og:type"
@@ -105,7 +105,7 @@ const jsonLd = {
     }
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title ?? "Artemis Luna"} />
+    <meta name="twitter:title" content={title ?? "Luna G. Cezar"} />
     {description && <meta name="twitter:description" content={description} />}
     {
       image && (
