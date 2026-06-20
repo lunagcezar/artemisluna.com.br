@@ -93,8 +93,8 @@ const { getNodeLabels, nodeIsActive, nodeHasActiveDescendant } =
       const isOpen = drawer.classList.contains("hidden");
       drawer.classList.toggle("hidden", !isOpen);
       drawer.classList.toggle("flex", isOpen);
-      iconOpen?.classList.toggle("hidden", !isOpen);
-      iconClose?.classList.toggle("hidden", isOpen);
+      iconOpen?.classList.toggle("hidden", isOpen);
+      iconClose?.classList.toggle("hidden", !isOpen);
     });
 
     drawer.querySelectorAll("a").forEach((link) => {
