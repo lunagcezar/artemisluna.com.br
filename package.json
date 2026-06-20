@@ -17,7 +17,9 @@
     "lint:es": "eslint .",
     "check": "astro check",
     "tsc": "tsc --noEmit",
-    "ci": "pnpm lint && pnpm check && pnpm build"
+    "ci": "pnpm lint && pnpm check && pnpm build",
+    "deploy": "pnpm build && wrangler deploy",
+    "deploy:preview": "pnpm build && wrangler dev"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -63,7 +65,8 @@
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.8.0",
     "typescript-eslint": "^8.61.1",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "wrangler": "^4.103.0"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

@@ -18,6 +18,15 @@
 # Tooling
 
 - Always use pnpm instead of npm
+
+# Deployment
+
+- This project is a static site deployed to **Cloudflare Workers** via Wrangler.
+- `wrangler.jsonc` configures the static assets directory (`./dist`) and 404 handling.
+- `workerd` (Cloudflare Workers runtime) is approved for local preview.
+- Deploy: `pnpm run deploy` (builds + `wrangler deploy`)
+- Preview locally: `pnpm run deploy:preview` (builds + `wrangler dev`)
+- The site is fully static (SSG) — no SSR adapter needed.
 - After implementing features, always run pnpm astro check and, after that, build it (pnpm build).
 
 # Components
