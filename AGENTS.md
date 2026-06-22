@@ -396,11 +396,7 @@ Usage: navigate to the target folder in Obsidian → `Ctrl+P` → **Templater: I
 
 ## Syncthing
 
-`.stignore` mirrors `.gitignore` — ignores `node_modules/`, `dist/`, `.astro/`, `.wrangler/`, and Obsidian workspace/plugin binaries. Everything else (code + content + `.obsidian/` config) stays in sync between machines so there's no divergence between git and Syncthing.
-
-### Git ignores
-
-`.obsidian/` is entirely git-ignored and managed by Syncthing between devices (avoids reformatting noise from Obsidian mobile). Only workspace JSON, plugin binaries (`main.js`, `styles.css`, `theme.css`), recovery snapshots, and graph cache are excluded from Syncthing.
+`.stignore` only includes `src/content/`, `src/assets/`, and `.obsidian/` (minus workspace files and plugin binaries). Everything else is managed by git — no divergence or corruption risk.
 
 # For agents
 

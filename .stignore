@@ -1,18 +1,19 @@
-// Dependencies
-node_modules/
+// Only sync content, assets, and Obsidian config
+// Everything else is managed by git
+/**
+!src/content/**
+!src/assets/**
+!.obsidian/**
 
-// Build output
-dist/
-.astro/
-.wrangler/
+// Exclude per-machine Obsidian workspace layout
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
 
-// Environment
-.env
-.env.production
+// Exclude plugin/theme binaries (downloaded per machine)
+.obsidian/plugins/*/main.js
+.obsidian/plugins/*/styles.css
+.obsidian/themes/*/theme.css
 
-// Git data (each machine manages its own)
-.git/
-
-// Per-machine tooling
-.husky/
-.vscode/
+// Exclude local caches
+.obsidian/graph.json
+.obsidian/recovery/

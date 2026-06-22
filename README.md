@@ -403,7 +403,7 @@ Navigate to the target folder first (e.g. `src/content/art/digital/painting/`), 
 
 ### Syncthing
 
-If you write on multiple machines, `.stignore` mirrors `.gitignore` so Syncthing keeps content and code in sync without conflicts. Only per-machine layout (Obsidian workspace), plugin binaries, recovery snapshots, and graph cache are excluded from sync.
+Syncthing only syncs `src/content/`, `src/assets/`, and `.obsidian/` — the rest (code, config, git data) stays per-machine. Workspace layout (`workspace.json`) and plugin binaries are excluded to avoid conflicts between devices.
 
 ### Line endings
 
