@@ -2,23 +2,8 @@
 # On checkout, convert to native line endings (CRLF on Windows)
 * text=auto
 
-# Explicit text files
-*.md text
-*.ts text
-*.mjs text
-*.json text
-*.yaml text
-*.yml text
-*.css text
-*.astro text
+# Markdown: always LF (Obsidian saves LF even on Windows)
+# Without this, text=auto converts to CRLF on checkout,
+# then Obsidian overwrites with LF, creating false git diffs
+*.md text eol=lf
 
-# Binary files (no line ending conversion)
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.webp binary
-*.gif binary
-*.ico binary
-*.woff binary
-*.woff2 binary
-*.svg binary

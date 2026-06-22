@@ -436,13 +436,14 @@ Syncthing only scans `src/content/`, `src/assets/`, and `.obsidian/`. Per-machin
 
 ### Line endings
 
-A `.gitattributes` file (with `* text=auto`) ensures consistent line endings — LF in the repo, native per OS on checkout. This prevents Obsidian on Windows from producing false git diffs.
+Markdown files use `LF` everywhere (via `*.md text eol=lf` in `.gitattributes`). Obsidian saves with LF even on Windows, so no conversion happens — no false git diffs.
 
 **Important:** `core.autocrlf` must be `false` (or unset) for `.gitattributes` to work correctly. If you cloned this repo with default Git for Windows settings, run:
 
 ```bash
 git config core.autocrlf false
 git add --renormalize .
+git checkout HEAD -- src/content/ src/assets/
 ```
 
-Then commit the resulting changes. Without this, git may still show content files as modified after Obsidian saves them.
+The `checkout` step forces git to re-checkout files with the correct line endings. Without it, files checked out before the config change may have mismatched endings, producing false diffs when Obsidian saves them.
