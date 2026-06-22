@@ -25,3 +25,20 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# obsidian vault config - per-machine workspace layout (tabs, window positions)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# obsidian plugin binaries (downloaded by Obsidian per machine)
+.obsidian/plugins/*/main.js
+.obsidian/plugins/*/styles.css
+
+# obsidian theme binaries (downloaded per machine)
+.obsidian/themes/*/theme.css
+
+# obsidian
+.obsidian/graph.json
+
+# obsidian trash
+.trash/

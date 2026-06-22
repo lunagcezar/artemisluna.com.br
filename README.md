@@ -379,3 +379,28 @@ The project includes [Foam](https://foambubble.github.io/foam) templates in `.fo
 | `wiki-article.md` | **Wiki Article**                            | `src/content/wiki/$SLUG.md`                                     |
 
 After creation, fill in the frontmatter fields (`tags`, etc.) and write the content. Art entries should be moved to the appropriate subdirectory under `src/content/art/` (e.g. `digital/painting/`).
+
+## Obsidian vault
+
+The project root is also an [Obsidian](https://obsidian.md) vault. If you prefer writing in Obsidian over VSCode:
+
+1. Open Obsidian → **Open folder as vault** → select project root
+2. Enable **Templater** when prompted (installed in `community-plugins.json`)
+3. The file explorer already hides code folders — you'll only see `src/content/`, `src/assets/art/`, `_templates/`, and `.obsidian/`
+
+### Templates
+
+Use `Ctrl+P` → **Templater: Insert template** → pick the collection:
+
+| Template           | Creates content for |
+| ------------------ | ------------------- |
+| `art-entry.md`     | Artwork entry       |
+| `blog-post.md`     | Blog post           |
+| `wiki-article.md`  | Wiki article        |
+| `writing-entry.md` | Writing piece       |
+
+Navigate to the target folder first (e.g. `src/content/art/digital/painting/`), then insert the template. Fill in frontmatter fields after creation.
+
+### Syncthing
+
+If you write on multiple machines, `.stignore` mirrors `.gitignore` so Syncthing keeps content and code in sync without conflicts. Only per-machine layout (Obsidian workspace) and plugin binaries are excluded from sync.

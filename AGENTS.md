@@ -360,6 +360,50 @@ Foam templates live in `.foam/templates/` and are used by the Foam VSCode extens
 
 Run **Foam: Create New Template** in VSCode to use them. Fill in the placeholders (`title`, `description`, `tags`, etc.) after creation.
 
+# Obsidian vault
+
+The project root is an **Obsidian vault** for writing content. Images reference absolute paths from the project root (e.g. `/src/assets/art/...`) so the vault must be rooted at the project root for previews to resolve.
+
+## Setup on a new machine
+
+1. Open Obsidian → **Open folder as vault** → select project root
+2. Obsidian detects `community-plugins.json` with `templater-obsidian` → enable it when prompted
+3. Templater auto-loads the config from `.obsidian/plugins/templater-obsidian/data.json`
+4. `.obsidian/app.json` pre-configures `userIgnoreFilters` so only content folders appear in the explorer
+
+## What's visible in the file explorer
+
+Only content-related folders appear — everything else is hidden via `userIgnoreFilters` in `.obsidian/app.json`:
+
+| Visible                    | Hidden                                            |
+| -------------------------- | ------------------------------------------------- |
+| `src/content/` (markdown)  | `src/components/`, `src/lib/`, `src/pages/`, etc. |
+| `src/assets/art/` (images) | `node_modules/`, `dist/`, `.astro/`, etc.         |
+| `_templates/`              | All root config files (package.json, etc.)        |
+
+## Templates (`_templates/`)
+
+Obsidian templates (via **Templater** plugin) for scaffolding new content:
+
+| Template           | Collection |
+| ------------------ | ---------- |
+| `art-entry.md`     | art        |
+| `blog-post.md`     | blog       |
+| `wiki-article.md`  | wiki       |
+| `writing-entry.md` | writing    |
+
+Usage: navigate to the target folder in Obsidian → `Ctrl+P` → **Templater: Insert template** → pick the template. Fill in frontmatter fields after creation.
+
+The core Obsidian **Templates** plugin also has `templateFolder` set to `_templates` as a fallback.
+
+## Syncthing
+
+`.stignore` mirrors `.gitignore` — ignores `node_modules/`, `dist/`, `.astro/`, `.wrangler/`, and Obsidian workspace/plugin binaries. Everything else (code + content + `.obsidian/` config) stays in sync between machines so there's no divergence between git and Syncthing.
+
+### Git ignores
+
+`.gitignore` ignores `.obsidian/workspace.json`, `.obsidian/workspace-mobile.json` (per-machine layout), and `.obsidian/plugins/*/main.js` / `*.styles.css` (binaries downloaded by Obsidian). Plugin **config** (`data.json`, `manifest.json`) and vault settings (`app.json`, `core-plugins.json`, `community-plugins.json`) are versioned.
+
 # For agents
 
 - When implementing relevant modifications in this project, please update the AGENTS.md file with documentation
