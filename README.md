@@ -403,7 +403,7 @@ Navigate to the target folder first (e.g. `src/content/art/digital/painting/`), 
 
 ### Syncthing
 
-Syncthing only syncs `src/content/`, `src/assets/`, and `.obsidian/` — the rest (code, config, git data) stays per-machine. Workspace layout (`workspace.json`) and plugin binaries are excluded to avoid conflicts between devices.
+Syncthing only scans `src/content/`, `src/assets/`, and `.obsidian/`. Per-machine workspace layout (`workspace.json`) is excluded to avoid conflicts. Plugin binaries and caches are synced so Obsidian works immediately on every device.
 
 ### Line endings
 

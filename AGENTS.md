@@ -396,7 +396,7 @@ Usage: navigate to the target folder in Obsidian → `Ctrl+P` → **Templater: I
 
 ## Syncthing
 
-`.stignore` only includes `src/content/`, `src/assets/`, and `.obsidian/` (minus workspace files and plugin binaries). Everything else is managed by git — no divergence or corruption risk.
+`.stignore` uses rooted negated patterns (`!/path/**`) so Syncthing only scans `src/content/`, `src/assets/`, and `.obsidian/` — everything else is excluded by `*` and managed by git. Only `.obsidian/workspace.json` / `workspace-mobile.json` (per-machine layout) are excluded before the inclusion patterns to prevent conflicts between devices. Plugin binaries and caches are synced so Obsidian works out of the box on every device.
 
 # For agents
 

@@ -1,19 +1,11 @@
-// Only sync content, assets, and Obsidian config
-// Everything else is managed by git
-/**
-!src/content/**
-!src/assets/**
-!.obsidian/**
-
-// Exclude per-machine Obsidian workspace layout
+// Exclude per-machine Obsidian files first (before the broad inclusion)
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 
-// Exclude plugin/theme binaries (downloaded per machine)
-.obsidian/plugins/*/main.js
-.obsidian/plugins/*/styles.css
-.obsidian/themes/*/theme.css
+// Only sync content, assets, and Obsidian config
+!/src/content/**
+!/src/assets/**
+!/.obsidian/**
 
-// Exclude local caches
-.obsidian/graph.json
-.obsidian/recovery/
+// Everything else is managed by git
+*
