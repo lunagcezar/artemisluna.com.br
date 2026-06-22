@@ -10,19 +10,9 @@ dist/
 .env
 .env.production
 
-// Obsidian workspace (per-machine layout)
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
+// Git data (each machine manages its own)
+.git/
 
-// Obsidian plugin binaries (downloaded per machine)
-.obsidian/plugins/*/main.js
-.obsidian/plugins/*/styles.css
-
-// Obsidian theme binaries (downloaded per machine)
-.obsidian/themes/*/theme.css
-
-// obsidian
-.obsidian/graph.json
-
-// obsidian trash
-.trash/
+// Per-machine tooling
+.husky/
+.vscode/

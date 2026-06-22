@@ -392,9 +392,7 @@ Obsidian templates (via **Templater** plugin) for scaffolding new content:
 | `wiki-article.md`  | wiki       |
 | `writing-entry.md` | writing    |
 
-Usage: navigate to the target folder in Obsidian → `Ctrl+P` → **Templater: Insert template** → pick the template. Fill in frontmatter fields after creation.
-
-The core Obsidian **Templates** plugin also has `templateFolder` set to `_templates` as a fallback.
+Usage: navigate to the target folder in Obsidian → `Ctrl+P` → **Templater: Insert template** → pick the template. Fill in frontmatter fields after creation. Templater also auto-applies templates when creating files inside collection folders (`src/content/art/` → `art-entry.md`, etc.).
 
 ## Syncthing
 
@@ -402,7 +400,7 @@ The core Obsidian **Templates** plugin also has `templateFolder` set to `_templa
 
 ### Git ignores
 
-`.gitignore` ignores `.obsidian/workspace.json`, `.obsidian/workspace-mobile.json` (per-machine layout), and `.obsidian/plugins/*/main.js` / `*.styles.css` (binaries downloaded by Obsidian). Plugin **config** (`data.json`, `manifest.json`) and vault settings (`app.json`, `core-plugins.json`, `community-plugins.json`) are versioned.
+`.obsidian/` is entirely git-ignored and managed by Syncthing between devices (avoids reformatting noise from Obsidian mobile). Only workspace JSON, plugin binaries (`main.js`, `styles.css`, `theme.css`), recovery snapshots, and graph cache are excluded from Syncthing.
 
 # For agents
 

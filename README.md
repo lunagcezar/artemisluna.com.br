@@ -403,4 +403,8 @@ Navigate to the target folder first (e.g. `src/content/art/digital/painting/`), 
 
 ### Syncthing
 
-If you write on multiple machines, `.stignore` mirrors `.gitignore` so Syncthing keeps content and code in sync without conflicts. Only per-machine layout (Obsidian workspace) and plugin binaries are excluded from sync.
+If you write on multiple machines, `.stignore` mirrors `.gitignore` so Syncthing keeps content and code in sync without conflicts. Only per-machine layout (Obsidian workspace), plugin binaries, recovery snapshots, and graph cache are excluded from sync.
+
+### Line endings
+
+A `.gitattributes` file ensures consistent line endings (LF in repo, native per OS on checkout) so Obsidian on any platform doesn't produce false git diffs.
