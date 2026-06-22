@@ -382,24 +382,53 @@ After creation, fill in the frontmatter fields (`tags`, etc.) and write the cont
 
 ## Obsidian vault
 
-The project root is also an [Obsidian](https://obsidian.md) vault. If you prefer writing in Obsidian over VSCode:
+The project root is an [Obsidian](https://obsidian.md) vault for writing content. Images reference absolute paths from the project root (e.g. `/src/assets/art/...`) so the vault must be rooted at the project root for previews to resolve.
+
+> **`.obsidian/` is git-ignored** — vault config (plugins, theme, excluded files) is **not** in git. On machines with Syncthing, it syncs automatically. On machines without Syncthing, follow the manual setup below.
+
+### First-time setup (manual, no Syncthing)
 
 1. Open Obsidian → **Open folder as vault** → select project root
-2. Enable **Templater** when prompted (installed in `community-plugins.json`)
-3. The file explorer already hides code folders — you'll only see `src/content/`, `src/assets/art/`, `_templates/`, and `.obsidian/`
+2. Go to Settings → **Community plugins** → turn off Restricted Mode → **Browse**
+3. Search and install **Templater** → **Enable**
+4. In Templater settings, set **Template folder location** to `_templates`
+5. Enable **Trigger Templater on new file creation**
+6. In **Folder Templates**, add each collection:
 
-### Templates
+   | Folder                | Template                      |
+   | --------------------- | ----------------------------- |
+   | `src/content/art`     | `_templates/art-entry.md`     |
+   | `src/content/blog`    | `_templates/blog-post.md`     |
+   | `src/content/wiki`    | `_templates/wiki-article.md`  |
+   | `src/content/writing` | `_templates/writing-entry.md` |
 
-Use `Ctrl+P` → **Templater: Insert template** → pick the collection:
+7. In Settings → **Files & Links** → **Excluded files**, add patterns to hide code folders:
 
-| Template           | Creates content for |
-| ------------------ | ------------------- |
-| `art-entry.md`     | Artwork entry       |
-| `blog-post.md`     | Blog post           |
-| `wiki-article.md`  | Wiki article        |
-| `writing-entry.md` | Writing piece       |
+   ```
+   node_modules, dist, .astro, .wrangler, public,
+   .vscode, .husky, .foam, .git,
+   src/components, src/config, src/constants, src/hooks,
+   src/i18n, src/layouts, src/lib, src/pages, src/styles,
+   src/types, src/content.config.ts,
+   src/assets/documents, src/assets/photos,
+   .gitignore, .prettierrc, .stignore, AGENTS.md,
+   astro.config.mjs, components.json, docs, eslint.config.ts,
+   package.json, pnpm-lock.yaml, pnpm-workspace.yaml,
+   README.md, tsconfig.json, wrangler.jsonc
+   ```
 
-Navigate to the target folder first (e.g. `src/content/art/digital/painting/`), then insert the template. Fill in frontmatter fields after creation.
+### Writing content
+
+Navigate to the target folder (e.g. `src/content/art/digital/painting/`), create a new note, then use `Ctrl+P` → **Templater: Insert template** → pick the workflow:
+
+| Template           | Use for              |
+| ------------------ | -------------------- |
+| `art-entry.md`     | Artwork with images  |
+| `blog-post.md`     | Blog article         |
+| `wiki-article.md`  | Wiki documentation   |
+| `writing-entry.md` | Prose or play script |
+
+Templater also auto-applies templates when creating files directly inside collection folders.
 
 ### Syncthing
 
@@ -407,4 +436,13 @@ Syncthing only scans `src/content/`, `src/assets/`, and `.obsidian/`. Per-machin
 
 ### Line endings
 
-A `.gitattributes` file ensures consistent line endings (LF in repo, native per OS on checkout) so Obsidian on any platform doesn't produce false git diffs.
+A `.gitattributes` file (with `* text=auto`) ensures consistent line endings — LF in the repo, native per OS on checkout. This prevents Obsidian on Windows from producing false git diffs.
+
+**Important:** `core.autocrlf` must be `false` (or unset) for `.gitattributes` to work correctly. If you cloned this repo with default Git for Windows settings, run:
+
+```bash
+git config core.autocrlf false
+git add --renormalize .
+```
+
+Then commit the resulting changes. Without this, git may still show content files as modified after Obsidian saves them.

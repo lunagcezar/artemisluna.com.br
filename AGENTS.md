@@ -367,9 +367,17 @@ The project root is an **Obsidian vault** for writing content. Images reference 
 ## Setup on a new machine
 
 1. Open Obsidian → **Open folder as vault** → select project root
-2. Obsidian detects `community-plugins.json` with `templater-obsidian` → enable it when prompted
-3. Templater auto-loads the config from `.obsidian/plugins/templater-obsidian/data.json`
-4. `.obsidian/app.json` pre-configures `userIgnoreFilters` so only content folders appear in the explorer
+2. Install **Templater** via Settings → Community plugins → Browse → search "Templater" → Install → Enable
+3. Configure Templater: Settings → **Templater** → set **Template folder location** to `_templates`
+4. Enable **Trigger Templater on new file creation**
+5. Add **Folder Templates** mapping each collection:
+   - `src/content/art` → `_templates/art-entry.md`
+   - `src/content/blog` → `_templates/blog-post.md`
+   - `src/content/wiki` → `_templates/wiki-article.md`
+   - `src/content/writing` → `_templates/writing-entry.md`
+6. Configure **Excluded files** in Settings → Files & Links to hide code folders (copy from another machine's `.obsidian/app.json` or use the patterns in README.md)
+
+> `.obsidian/` is git-ignored and managed by Syncthing. On a machine with Syncthing, the vault config (plugins, theme, excluded files) syncs automatically. On a machine without Syncthing, follow the steps above.
 
 ## What's visible in the file explorer
 
