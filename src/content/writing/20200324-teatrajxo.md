@@ -1,9 +1,9 @@
 ---
 title: "Teatraĵo"
 description: "Esperanta teatraĵo pri geedzoj vojaĝantaj al Guaramiranga"
-tags: ["teatro", "esperanto", "komedio"]
+tags: ["teatro", "esperanto"]
 date: 2020-03-24
-author: Murcio Filho
+author: Luna G. Cezar
 lang: eo
 layout: play
 ---
