@@ -46,7 +46,7 @@ const visible = limit ? entries.slice(0, limit) : entries;
             className="hover:bg-muted transition-colors p-4"
           >
             <ItemContent>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-4">
                 {entry.data.date && (
                   <time
                     class="text-muted-foreground text-sm"
@@ -58,14 +58,13 @@ const visible = limit ? entries.slice(0, limit) : entries;
                   </time>
                 )}
                 {entry.data.tags && entry.data.tags.length > 0 && (
-                  <>
-                    <Separator orientation="vertical" />
+                  <div class="flex flex-wrap items-center gap-2">
                     <AstroTagBadges
                       tags={entry.data.tags}
                       translateLabel={translateLabel}
                       className="text-muted-foreground border-muted-foreground"
                     />
-                  </>
+                  </div>
                 )}
               </div>
               <ItemTitle>{entry.data.title}</ItemTitle>
