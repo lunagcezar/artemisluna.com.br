@@ -6,7 +6,7 @@ tags:
   - mogrify
   - scanning
   - sketch
-date: "2026-06-24"
+date: 2026-06-24
 author: Luna G. Cezar
 lang: en
 index: false

@@ -9,7 +9,7 @@ tags:
   - sha1sum
   - sha256sum
   - sha512sum
-date: "{{date}}"
+date: 2026-06-24
 author: Luna G. Cezar
 lang: en
 index: false
