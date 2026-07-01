@@ -20,8 +20,6 @@ wifi.powersave = 2
 
 Now the Realtek Wifi adapter will have stable pings.
 
-**Created:** 2025-09-26
-
 ## References
 
 1. https://github.com/lwfinger/rtw89/issues/36#issuecomment-2305564431
